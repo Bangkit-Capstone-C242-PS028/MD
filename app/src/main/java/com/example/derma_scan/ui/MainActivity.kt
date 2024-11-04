@@ -20,6 +20,8 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.example.derma_scan.ui.home.HomeScreen
+import com.example.derma_scan.ui.profile.ProfileScreen
+import com.example.derma_scan.ui.settings.SettingsScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,7 +50,7 @@ fun MainScreen() {
         BottomNavItem("Settings", Icons.Default.Settings)
     )
 
-    var selectedItem by remember { mutableStateOf(0) }
+    var selectedItem by remember { mutableIntStateOf(0) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -70,7 +72,7 @@ fun MainScreen() {
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(start = 15.dp, bottom = 15.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -81,17 +83,6 @@ fun MainScreen() {
             }
         }
     }
-}
-
-
-@Composable
-fun ProfileScreen() {
-    Text(text = "Profile Screen")
-}
-
-@Composable
-fun SettingsScreen() {
-    Text(text = "Settings Screen")
 }
 
 @Preview(showBackground = true)
