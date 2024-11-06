@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "68342240626",
+    "project_id": "dermascan-auth",
+    "storage_bucket": "dermascan-auth.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:68342240626:android:de26c692e4adef6b4039eb",
+        "android_client_info": {
+          "package_name": "com.bangkit.dermascan"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "68342240626-c7skqi6gdmei2lbdb9hvcuqj9l8lqbj5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCfa9_iSWUcR0xSW-EL-s8spWHgvFVod8A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "68342240626-c7skqi6gdmei2lbdb9hvcuqj9l8lqbj5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,4 +1,4 @@
-package com.example.derma_scan.ui.profile
+package com.bangkit.dermascan.ui.profile
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable

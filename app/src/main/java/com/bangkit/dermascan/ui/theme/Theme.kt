@@ -1,6 +1,5 @@
-package com.example.derma_scan.ui.theme
+package com.bangkit.dermascan.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

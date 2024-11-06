@@ -3,14 +3,15 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.dagger.hilt) // Alias untuk Hilt
     kotlin("kapt") // Alias untuk Kapt
+    id("com.google.gms.google-services")
 }
 
 android {
-    namespace = "com.example.derma_scan"
+    namespace = "com.bangkit.dermascan"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.derma_scan"
+        applicationId = "com.bangkit.dermascan"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
@@ -49,6 +50,8 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
+
 }
 
 dependencies {
@@ -66,6 +69,8 @@ dependencies {
 
     // Hilt dependencies
     implementation(libs.hilt.android)
+    implementation(libs.firebase.auth.ktx)
+    implementation(libs.androidx.navigation.runtime.ktx)
     kapt(libs.hilt.compiler) // Gunakan kapt untuk Hilt compiler
 
     // Testing dependencies
@@ -79,5 +84,12 @@ dependencies {
 
     // Lifecycle
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
+//    implementation("com.google.firebase:firebase-messaging-ktx:23.2.1")
+//    implementation("com.google.auth:google-auth-library-oauth2-http:1.19.0")
+    implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
+//    implementation ("com.google.firebase:firebase-auth-ktx:21.0.1")
+
+    implementation("androidx.navigation:navigation-compose:2.5.3")
+
 }

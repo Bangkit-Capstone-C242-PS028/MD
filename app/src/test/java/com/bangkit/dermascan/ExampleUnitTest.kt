@@ -1,4 +1,4 @@
-package com.example.derma_scan
+package com.bangkit.dermascan
 
 import org.junit.Test
 

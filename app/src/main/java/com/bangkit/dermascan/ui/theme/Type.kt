@@ -1,4 +1,4 @@
-package com.example.derma_scan.ui.theme
+package com.bangkit.dermascan.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
