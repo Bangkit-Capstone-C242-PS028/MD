@@ -1,6 +1,7 @@
 package com.bangkit.dermascan.ui.home
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -36,7 +37,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun HomeScreen(navController: NavController) {
 
-
+    val context = LocalContext.current
     // Menambahkan scroll state untuk memungkinkan scrolling pada Column
     val scrollState = rememberScrollState()
 
@@ -70,13 +71,13 @@ fun HomeScreen(navController: NavController) {
                     end = 30.dp
                 )
         )
-        ButtonWithCustomColor(navController = navController)
+        ButtonWithCustomColor(navController = navController,context)
     }
 }
 
 @SuppressLint("RememberReturnType")
 @Composable
-fun ButtonWithCustomColor(navController: NavController) {
+fun ButtonWithCustomColor(navController: NavController, context: Context) {
 //    val context = LocalContext.current
 //    val coroutineScope = rememberCoroutineScope()
 //
@@ -87,7 +88,7 @@ fun ButtonWithCustomColor(navController: NavController) {
     )
     Button(
         onClick = {
-            viewModel.logout()
+            viewModel.signOut(context)
 //            onLogOut()
             navController.navigate("onBoard") {
                 popUpTo("main") { inclusive = true }
