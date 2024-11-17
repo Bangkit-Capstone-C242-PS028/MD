@@ -23,14 +23,20 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.bangkit.dermascan.R
 //import com.bangkit.dermascan.data.AccesToken
-import com.bangkit.dermascan.data.signIn
+//import com.bangkit.dermascan.data.signIn
+import com.bangkit.dermascan.ui.MainViewModel
+import com.bangkit.dermascan.ui.ViewModelFactory
 import kotlinx.coroutines.launch
 
-@Preview(showBackground = true)
+//@Preview(showBackground = true)
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navController: NavController) {
+
+
     // Menambahkan scroll state untuk memungkinkan scrolling pada Column
     val scrollState = rememberScrollState()
 
@@ -64,30 +70,27 @@ fun HomeScreen() {
                     end = 30.dp
                 )
         )
-        ButtonWithCustomColor()
+        ButtonWithCustomColor(navController = navController)
     }
 }
 
 @SuppressLint("RememberReturnType")
 @Composable
-fun ButtonWithCustomColor() {
-    val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
-
-    // State untuk menyimpan token
-    var token by remember { mutableStateOf("") }
-
+fun ButtonWithCustomColor(navController: NavController) {
+//    val context = LocalContext.current
+//    val coroutineScope = rememberCoroutineScope()
+//
+//    // State untuk menyimpan token
+//    var token by remember { mutableStateOf("") }
+    val viewModel : MainViewModel = viewModel(
+        factory = ViewModelFactory.getInstance(LocalContext.current)
+    )
     Button(
         onClick = {
-            coroutineScope.launch {
-                signIn { idToken ->
-                    if (idToken != null) {
-                        token = idToken
-                        Toast.makeText(context, "Token fetched", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(context, "Failed to fetch token", Toast.LENGTH_SHORT).show()
-                    }
-                }
+            viewModel.logout()
+//            onLogOut()
+            navController.navigate("onBoard") {
+                popUpTo("main") { inclusive = true }
             }
         },
         colors = ButtonDefaults.buttonColors(
@@ -95,10 +98,10 @@ fun ButtonWithCustomColor() {
             contentColor = Color.White // Warna teks di dalam tombol
         )
     ) {
-        Text(text = "Show Token")
+        Text(text = "Log Out")
     }
 
     // Menampilkan token di UI
     Spacer(modifier = Modifier.height(16.dp))
-    Text(text = "Access Token: $token")
+//    Text(text = "Access Token: $token")
 }

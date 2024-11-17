@@ -1,10 +1,15 @@
 package com.bangkit.dermascan.ui
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -30,18 +36,23 @@ import com.bangkit.dermascan.ui.scan.ScanScreen
 //import com.bangkit.dermascan.ui.settings.SettingsScreen
 import com.bangkit.dermascan.ui.theme.DermaScanTheme
 import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.ui.graphics.Path
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.bangkit.dermascan.ui.navigation.AppNavHost
+import com.bangkit.dermascan.ui.theme.*
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setTheme(R.style.Theme_DermaScan)
         enableEdgeToEdge()
         setContent {
             DermaScanTheme {
                 val navController = rememberNavController()
-                AppNavHost(navController)
-//                MainScreen()
+                AppNavHost(navController = navController)
+
             }
         }
     }
@@ -55,18 +66,17 @@ data class BottomNavItem(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen() {
-    // Daftar item navigasi, beberapa menggunakan ikon drawable dan lainnya menggunakan ikon bawaan
+fun MainScreen(navController: NavHostController) {
     val items = listOf(
-        BottomNavItem("Home", Icons.Filled.Home),       // Ikon dari drawable
-        BottomNavItem("Feeds", R.drawable.ic_feed), // Ikon bawaan Jetpack Compose
-        BottomNavItem("Scan", R.drawable.ic_camera), // Ikon bawaan Jetpack Compose
-        BottomNavItem("Chat", R.drawable.ic_chat),  // Ikon dari drawable
-        BottomNavItem("Profile", Icons.Default.Person)    // Ikon bawaan Jetpack Compose
+        BottomNavItem("Home", Icons.Filled.Home),
+        BottomNavItem("Feeds", R.drawable.ic_feed),
+        BottomNavItem("Scan", R.drawable.ic_camera),
+        BottomNavItem("Chat", R.drawable.ic_chat),
+        BottomNavItem("Profile", Icons.Default.Person)
     )
 
     var selectedItem by remember { mutableIntStateOf(0) }
-
+//    val navController = rememberNavController()
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -75,39 +85,111 @@ fun MainScreen() {
                     Text(text = items[selectedItem].title)
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.onPrimaryContainer,      // Warna latar belakang
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary, // Warna teks judul
-                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary // Warna ikon navigasi
+                    containerColor = Blue,
+                    titleContentColor = LightBlue,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
                 )
             )
         },
         bottomBar = {
-            NavigationBar(containerColor = MaterialTheme.colorScheme.onPrimaryContainer) {
-                items.forEachIndexed { index, item ->
-                    NavigationBarItem(
-                        icon = {
-                            when (item.icon) {
-                                is ImageVector -> Icon(item.icon as ImageVector, contentDescription = item.title)
-                                is Int -> Icon(painterResource(id = item.icon as Int), contentDescription = item.title)
-                                else -> throw IllegalArgumentException("Icon type not supported")
-                            }
-                        },
-                        label = { Text(item.title) },
-                        colors = NavigationBarItemDefaults.colors( // Ganti dengan NavigationBarItemDefaults.colors
+            Box(
+                Modifier
+                    .fillMaxWidth()
+//                    .height(80.dp) // Menambahkan tinggi untuk menyesuaikan ruang lengkungan
+            ) {
+                Canvas(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(100.dp) // Tinggi disesuaikan agar cukup untuk lengkungan
+                ) {
+                    val width = size.width
+                    val height = size.height
+                    val cornerRadius = 24.dp.toPx() // Radius untuk lengkungan di kiri dan kanan atas
+                    val concaveDepth = 78.dp.toPx() // Kedalaman cekungan
 
-                            selectedIconColor = Color.Black, // Warna ikon saat dipilih
-                            unselectedIconColor = Color.Gray, // Warna ikon saat tidak dipilih
-                            selectedTextColor = Color.White, // Warna teks saat dipilih
-                            unselectedTextColor = Color.Gray // Warna teks saat tidak dipilih
-                        ),
-                        selected = selectedItem == index,
-                        onClick = { selectedItem = index }
+                    drawPath(
+                        path = Path().apply {
+                            moveTo(0f, height) // Mulai dari kiri bawah
+                            lineTo(0f, cornerRadius) // Garis vertikal ke atas
+                            quadraticTo(0f, 0f, cornerRadius, 0f) // Lengkungan di kiri atas
+                            lineTo(width * 0.4f, 0f) // Garis ke awal cekungan tengah
+                            quadraticTo(
+                                width * 0.5f, concaveDepth, // Titik kontrol di bawah (kedalaman cekungan)
+                                width * 0.6f, 0f // Akhir cekungan di kanan
+                            )
+                            lineTo(width - cornerRadius, 0f) // Garis horizontal ke kanan
+                            quadraticTo(width, 0f, width, cornerRadius) // Lengkungan di kanan atas
+                            lineTo(width, height) // Garis vertikal ke bawah
+                            close()
+                        },
+                        color = Blue // Warna NavigationBar
+                    )
+
+                }
+
+                NavigationBar(
+                    containerColor = Color.Transparent, // Set warna transparan karena sudah menggunakan Canvas
+                    modifier = Modifier.align(Alignment.BottomCenter)
+                ) {
+                    items.forEachIndexed { index, item ->
+                        if (index == 2) { // Index untuk FAB (Scan)
+                            Spacer(modifier = Modifier.weight(0.5f))
+                        } else {
+                            NavigationBarItem(
+                                icon = {
+                                    val offsetY = if (selectedItem == index) (-12).dp else 0.dp // Naikkan ikon jika dipilih
+                                    when (item.icon) {
+                                        is ImageVector -> Icon(
+                                            item.icon,
+                                            contentDescription = item.title,
+                                            modifier = Modifier.offset(y = offsetY) // Menambahkan offset ke ikon
+                                        )
+                                        is Int -> Icon(
+                                            painterResource(id = item.icon),
+                                            contentDescription = item.title,
+                                            modifier = Modifier.offset(y = offsetY) // Menambahkan offset ke ikon
+                                        )
+                                        else -> throw IllegalArgumentException("Icon type not supported")
+                                    }
+                                },
+                                label = {
+                                    Text(item.title, modifier = Modifier.offset(y = (0).dp))
+                                },
+                                colors = NavigationBarItemDefaults.colors(
+                                    selectedIconColor = LightBlue,
+                                    unselectedIconColor = LightBlue,
+                                    selectedTextColor = White,
+                                    unselectedTextColor = LightBlue,
+                                    indicatorColor = Blue
+                                ),
+                                selected = selectedItem == index,
+                                onClick = { selectedItem = index },
+                                interactionSource = MutableInteractionSource()
+                            )
+                        }
+                    }
+                }
+
+                FloatingActionButton(
+                    onClick = { selectedItem = 2 },
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .offset(y = (-34).dp).padding(10.dp), // Menyesuaikan posisi FAB
+                    containerColor = Blue,
+                    shape = CircleShape,
+                    elevation = FloatingActionButtonDefaults.elevation(0.dp)
+                ) {
+                    Icon(
+                        Icons.Filled.Search,
+                        contentDescription = "Scan",
+                        Modifier.size(40.dp),
+                        tint = LightBlue
                     )
                 }
             }
         }
+
     ) { innerPadding ->
-        // Konten sesuai dengan tab yang dipilih
         Column(
             modifier = Modifier
                 .padding(innerPadding)
@@ -117,7 +199,7 @@ fun MainScreen() {
             verticalArrangement = Arrangement.Center
         ) {
             when (selectedItem) {
-                0 -> HomeScreen()
+                0 -> HomeScreen(navController)
                 1 -> FeedsScreen()
                 2 -> ScanScreen()
                 3 -> ChatScreen()
@@ -131,9 +213,8 @@ fun MainScreen() {
 @Composable
 fun MainScreenPreview() {
     DermaScanTheme {
-        MainScreen()
+        MainScreen(navController = rememberNavController())
     }
-
 
 }
 
