@@ -41,6 +41,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bangkit.dermascan.ui.MainScreen
 import com.bangkit.dermascan.ui.MainViewModel
@@ -50,9 +51,8 @@ import com.example.storyapp.data.pref.UserModel
 
 @Composable
 fun LoginScreen(context: Context, onLoginSuccess: () -> Unit) {
-    val viewModel : MainViewModel = viewModel(
-        factory = ViewModelFactory.getInstance(LocalContext.current)
-    )
+    val viewModel : MainViewModel = hiltViewModel()
+
     val email = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
     var passwordVisibility by remember { mutableStateOf(false) }

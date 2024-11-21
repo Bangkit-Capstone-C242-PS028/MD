@@ -24,6 +24,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.bangkit.dermascan.R
@@ -83,9 +84,7 @@ fun ButtonWithCustomColor(navController: NavController, context: Context) {
 //
 //    // State untuk menyimpan token
 //    var token by remember { mutableStateOf("") }
-    val viewModel : MainViewModel = viewModel(
-        factory = ViewModelFactory.getInstance(LocalContext.current)
-    )
+    val viewModel : MainViewModel = hiltViewModel()
     Button(
         onClick = {
             viewModel.signOut(context)

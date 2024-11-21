@@ -7,7 +7,7 @@ import android.net.NetworkCapabilities
 import android.os.Build
 import android.util.Log
 import com.bangkit.dermascan.BuildConfig
-import com.example.storyapp.data.pref.UserPreference
+import com.bangkit.dermascan.data.local.UserPreference
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.Cache

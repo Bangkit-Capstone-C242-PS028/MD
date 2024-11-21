@@ -30,13 +30,17 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 
 import kotlinx.coroutines.launch
+import javax.inject.Inject
+
 //import com.google.firebase.auth.FirebaseAuth
 //import android.util.Log
 
-class MainViewModel(private val repository: UserRepository): ViewModel() {
+@HiltViewModel
+class MainViewModel @Inject constructor(private val repository: UserRepository): ViewModel() {
     private lateinit var auth: FirebaseAuth
     fun getSession(): LiveData<UserModel> {
         return repository.getSession().asLiveData()
@@ -48,7 +52,7 @@ class MainViewModel(private val repository: UserRepository): ViewModel() {
         }
     }
 
-    fun saveSession(user: UserModel) {
+    private fun saveSession(user: UserModel) {
         viewModelScope.launch {
             repository.saveSession(user)
         }

@@ -24,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.bangkit.dermascan.R
@@ -34,9 +35,7 @@ import com.bangkit.dermascan.ui.theme.*
 
 @Composable
 fun SplashScreen(navController: NavController) {
-    val viewModel : MainViewModel = viewModel(
-        factory = ViewModelFactory.getInstance(LocalContext.current)
-    )
+    val viewModel : MainViewModel = hiltViewModel()
     val userSession by viewModel.getSession().observeAsState()
     userSession?.let{ user ->
         LaunchedEffect(Unit) {

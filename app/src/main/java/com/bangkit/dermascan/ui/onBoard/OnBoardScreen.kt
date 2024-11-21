@@ -37,6 +37,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -55,9 +56,8 @@ import com.google.firebase.auth.auth
 @Composable
 fun OnBoardScreen(navController: NavController, onLoginSuccess: () -> Unit) {
     val context = LocalContext.current
-    val viewModel : MainViewModel = viewModel(
-        factory = ViewModelFactory.getInstance(context)
-    )
+    val viewModel : MainViewModel = hiltViewModel()
+
 
     val signInResult = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
