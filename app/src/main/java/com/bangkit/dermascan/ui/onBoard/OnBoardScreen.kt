@@ -44,6 +44,7 @@ import androidx.navigation.compose.rememberNavController
 import com.bangkit.dermascan.R
 import com.bangkit.dermascan.ui.MainViewModel
 import com.bangkit.dermascan.ui.ViewModelFactory
+import com.bangkit.dermascan.ui.login.AuthViewModel
 import com.bangkit.dermascan.ui.theme.*
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -56,23 +57,23 @@ import com.google.firebase.auth.auth
 @Composable
 fun OnBoardScreen(navController: NavController, onLoginSuccess: () -> Unit) {
     val context = LocalContext.current
-    val viewModel : MainViewModel = hiltViewModel()
+    val viewModel : AuthViewModel = hiltViewModel()
 
 
-    val signInResult = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val data: Intent? = result.data
-            viewModel.handleSignInResult(data)
-        }
-    }
-
-    val signInStatus by viewModel.signInStatus.observeAsState()
+//    val signInResult = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+//        if (result.resultCode == Activity.RESULT_OK) {
+//            val dataArticles: Intent? = result.dataArticles
+//            viewModel.handleSignInResult(dataArticles)
+//        }
+//    }
+//
+//    val signInStatus by viewModel.signInStatus.observeAsState()
 
 
 
 //    val auth : FirebaseAuth = FirebaseAuth.getInstance()
 //    val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
-    val auth: FirebaseAuth = Firebase.auth
+//    val auth: FirebaseAuth = Firebase.auth
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.TopCenter  // Menempatkan teks di bagian atas tengah
@@ -157,52 +158,52 @@ fun OnBoardScreen(navController: NavController, onLoginSuccess: () -> Unit) {
 
             Spacer(modifier = Modifier.height(24.dp))  // Spacer untuk memberi jarak antar tombol
 
-            Button(
-                onClick = {
-                    // Tambahkan fungsi untuk Sign In with Google di sini
-                    val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                        .requestIdToken(context.getString(R.string.default_web_client_id)) // Ambil dari Firebase Console
-                        .requestEmail()
-                        .build()
-
-                    val googleSignInClient = GoogleSignIn.getClient(context, gso)
-
-                    // Memulai proses sign-in
-                    val signInIntent = googleSignInClient.signInIntent
-                    signInResult.launch(signInIntent) // Meluncurkan intent sign-in
-                },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Blue, // Warna latar belakang tombol
-                    contentColor = LightBlue // Warna teks di dalam tombol
-                ),
-                modifier = Modifier
-                    .wrapContentHeight()
-                    .width(207.dp)  // Lebar tombol
-//                    .height(50.dp)  // Tinggi tombol
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    // Tambahkan ikon Google
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_google), // Pastikan kamu menambahkan ikon Google ke drawable
-                        contentDescription = "Google Icon",
-                        modifier = Modifier.width(50.dp), // Ukuran ikon
-                        tint = Color.Unspecified // Membuat warna ikon mengikuti warna aslinya dari file drawable
-                    )
-                    Spacer(modifier = Modifier.width(8.dp)) // Spasi antara ikon dan teks
-                    Text("Sign In with Google", fontSize = 16.sp)
-                }
-            }
+//            Button(
+//                onClick = {
+//                    // Tambahkan fungsi untuk Sign In with Google di sini
+//                    val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+//                        .requestIdToken(context.getString(R.string.default_web_client_id)) // Ambil dari Firebase Console
+//                        .requestEmail()
+//                        .build()
+//
+//                    val googleSignInClient = GoogleSignIn.getClient(context, gso)
+//
+//                    // Memulai proses sign-in
+//                    val signInIntent = googleSignInClient.signInIntent
+//                    signInResult.launch(signInIntent) // Meluncurkan intent sign-in
+//                },
+//                colors = ButtonDefaults.buttonColors(
+//                    containerColor = Blue, // Warna latar belakang tombol
+//                    contentColor = LightBlue // Warna teks di dalam tombol
+//                ),
+//                modifier = Modifier
+//                    .wrapContentHeight()
+//                    .width(207.dp)  // Lebar tombol
+////                    .height(50.dp)  // Tinggi tombol
+//            ) {
+//                Row(verticalAlignment = Alignment.CenterVertically) {
+//                    // Tambahkan ikon Google
+//                    Icon(
+//                        painter = painterResource(id = R.drawable.ic_google), // Pastikan kamu menambahkan ikon Google ke drawable
+//                        contentDescription = "Google Icon",
+//                        modifier = Modifier.width(50.dp), // Ukuran ikon
+//                        tint = Color.Unspecified // Membuat warna ikon mengikuti warna aslinya dari file drawable
+//                    )
+//                    Spacer(modifier = Modifier.width(8.dp)) // Spasi antara ikon dan teks
+//                    Text("Sign In with Google", fontSize = 16.sp)
+//                }
+//            }
         }
     }
 
     // Menavigasi ke mainScreen setelah login berhasil
-    LaunchedEffect(signInStatus) {
-        if (signInStatus == true) {
-            navController.navigate("main") {
-                popUpTo("onBoard") { inclusive = true }
-            }
-        }
-    }
+//    LaunchedEffect(signInStatus) {
+//        if (signInStatus == true) {
+//            navController.navigate("main") {
+//                popUpTo("onBoard") { inclusive = true }
+//            }
+//        }
+//    }
 }
 
 

@@ -1,7 +1,8 @@
 package com.bangkit.dermascan.data.repository
 
-import com.example.storyapp.data.pref.UserModel
-import com.bangkit.dermascan.data.local.UserPreference
+import UserPreference
+import com.bangkit.dermascan.data.local.UserModel
+//import com.bangkit.dermascan.dataArticles.local.UserPreference
 import kotlinx.coroutines.flow.Flow
 
 class UserRepository private constructor(
@@ -10,6 +11,10 @@ class UserRepository private constructor(
 
     suspend fun saveSession(user: UserModel) {
         userPreference.saveSession(user)
+    }
+
+    suspend fun updateToken(newToken: String) {
+        userPreference.updateToken(newToken)
     }
 
     fun getSession(): Flow<UserModel> {

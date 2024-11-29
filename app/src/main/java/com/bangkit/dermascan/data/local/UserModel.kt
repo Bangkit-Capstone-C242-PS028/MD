@@ -1,7 +1,8 @@
-package com.example.storyapp.data.pref
+package com.bangkit.dermascan.data.local
 
 data class UserModel(
-    val name: String,
+    val email: String,
     val token: String,
-    val isLogin: Boolean = false
+    val isLogin: Boolean = false,
 )
+

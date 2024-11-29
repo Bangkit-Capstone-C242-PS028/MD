@@ -28,17 +28,17 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.bangkit.dermascan.R
-//import com.bangkit.dermascan.data.AccesToken
-//import com.bangkit.dermascan.data.signIn
+//import com.bangkit.dermascan.dataArticles.AccesToken
+//import com.bangkit.dermascan.dataArticles.signIn
 import com.bangkit.dermascan.ui.MainViewModel
 import com.bangkit.dermascan.ui.ViewModelFactory
 import kotlinx.coroutines.launch
 
 //@Preview(showBackground = true)
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen() {
 
-    val context = LocalContext.current
+
     // Menambahkan scroll state untuk memungkinkan scrolling pada Column
     val scrollState = rememberScrollState()
 
@@ -72,36 +72,7 @@ fun HomeScreen(navController: NavController) {
                     end = 30.dp
                 )
         )
-        ButtonWithCustomColor(navController = navController,context)
+
     }
 }
 
-@SuppressLint("RememberReturnType")
-@Composable
-fun ButtonWithCustomColor(navController: NavController, context: Context) {
-//    val context = LocalContext.current
-//    val coroutineScope = rememberCoroutineScope()
-//
-//    // State untuk menyimpan token
-//    var token by remember { mutableStateOf("") }
-    val viewModel : MainViewModel = hiltViewModel()
-    Button(
-        onClick = {
-            viewModel.signOut(context)
-//            onLogOut()
-            navController.navigate("onBoard") {
-                popUpTo("main") { inclusive = true }
-            }
-        },
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.onPrimaryContainer, // Warna latar belakang tombol
-            contentColor = Color.White // Warna teks di dalam tombol
-        )
-    ) {
-        Text(text = "Log Out")
-    }
-
-    // Menampilkan token di UI
-    Spacer(modifier = Modifier.height(16.dp))
-//    Text(text = "Access Token: $token")
-}

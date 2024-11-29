@@ -1,5 +1,6 @@
 package com.bangkit.dermascan.ui.splashScreen
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,20 +31,25 @@ import androidx.navigation.NavController
 import com.bangkit.dermascan.R
 import com.bangkit.dermascan.ui.MainViewModel
 import com.bangkit.dermascan.ui.ViewModelFactory
+import com.bangkit.dermascan.ui.login.AuthViewModel
 import kotlinx.coroutines.delay
 import com.bangkit.dermascan.ui.theme.*
 
 @Composable
 fun SplashScreen(navController: NavController) {
-    val viewModel : MainViewModel = hiltViewModel()
+    val viewModel : AuthViewModel = hiltViewModel()
     val userSession by viewModel.getSession().observeAsState()
     userSession?.let{ user ->
         LaunchedEffect(Unit) {
             delay(2500)
+            Log.d("Session", user.toString())
             if(user.isLogin){
+                //panggil endpoint customToken
+                viewModel.refreshToken()
 //            LaunchedEffect(Unit) {
                 navController.navigate("main") {
                     popUpTo("splash") { inclusive = true }
+//
                 }
 //            }
             }else{

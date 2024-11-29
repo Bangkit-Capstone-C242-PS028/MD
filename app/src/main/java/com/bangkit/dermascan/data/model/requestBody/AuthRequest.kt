@@ -1,8 +1,8 @@
-package com.bangkit.dermascan.data.model
+package com.bangkit.dermascan.data.model.requestBody
 
 import com.google.gson.annotations.SerializedName
 
-data class SignUpRequest(
+data class AuthRequest(
 
 	@field:SerializedName("firstName")
 	val firstName: String,
@@ -25,10 +25,10 @@ data class SignUpRequest(
 	@field:SerializedName("confirmPassword")
 	val confirmPassword: String,
 
-	@field:SerializedName("specialization")
-	val specialization: String,
+	@field:SerializedName("specialization") // buat dokter only
+	val specialization: String? = null,
 
-	@field:SerializedName("workplace")
+	@field:SerializedName("workplace") // buat dokter only
 	val workplace: String? = null,
 
 	@field:SerializedName("email")

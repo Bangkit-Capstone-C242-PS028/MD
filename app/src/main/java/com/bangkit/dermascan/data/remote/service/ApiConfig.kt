@@ -1,5 +1,6 @@
 package com.bangkit.dermascan.data.remote.service
 
+import UserPreference
 import android.annotation.SuppressLint
 import android.content.Context
 import android.net.ConnectivityManager
@@ -7,7 +8,7 @@ import android.net.NetworkCapabilities
 import android.os.Build
 import android.util.Log
 import com.bangkit.dermascan.BuildConfig
-import com.bangkit.dermascan.data.local.UserPreference
+//import com.bangkit.dermascan.dataArticles.local.UserPreference
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.Cache
@@ -24,13 +25,17 @@ class ApiConfig(
 ) {
     private fun getAuthInterceptor(): Interceptor {
         return Interceptor { chain ->
-            val token = runBlocking { userPreference.getToken().first() }
-            val req = chain.request()
-            val requestHeaders = req.newBuilder()
-                .addHeader("Authorization", "Bearer $token")
-                .build()
-            Log.d("Token", "Token saat ini: Bearer $token")
-            chain.proceed(requestHeaders)
+            try {
+                val token = runBlocking { userPreference.getToken().first() }
+                val req = chain.request().newBuilder()
+                    .addHeader("Authorization", "Bearer $token")
+                    .build()
+                Log.d("Token", "Token saat ini: Bearer $token")
+                chain.proceed(req)
+            } catch (e: Exception) {
+                Log.e("Interceptor", "Error getting token", e)
+                chain.proceed(chain.request())
+            }
         }
     }
 

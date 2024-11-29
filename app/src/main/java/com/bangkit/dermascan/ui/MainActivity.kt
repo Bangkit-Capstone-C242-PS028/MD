@@ -1,11 +1,17 @@
 package com.bangkit.dermascan.ui
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.camera.core.CameraControl
+import androidx.camera.core.ImageCapture
+import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -36,19 +42,26 @@ import com.bangkit.dermascan.ui.scan.ScanScreen
 //import com.bangkit.dermascan.ui.settings.SettingsScreen
 import com.bangkit.dermascan.ui.theme.DermaScanTheme
 import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.bangkit.dermascan.ui.navigation.AppNavHost
+//import com.bangkit.dermascan.ui.scan.PhotoActivity
 import com.bangkit.dermascan.ui.theme.*
+import com.bangkit.dermascan.ui.upload.SharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setTheme(R.style.Theme_DermaScan)
         enableEdgeToEdge()
         setContent {
@@ -61,7 +74,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-// Data class untuk item navigasi
+// DataArticles class untuk item navigasi
 data class BottomNavItem(
     val title: String,
     val icon: Any // Mendukung baik ImageVector maupun drawable resource ID
@@ -69,16 +82,16 @@ data class BottomNavItem(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(navController: NavHostController) {
+fun MainScreen(context: Context, navController: NavHostController) {
     val items = listOf(
-        BottomNavItem("Home", Icons.Filled.Home),
-        BottomNavItem("Feeds", R.drawable.ic_feed),
+        BottomNavItem("Home", R.drawable.ic_home),
+        BottomNavItem("Feeds", R.drawable.ic_feeds),
         BottomNavItem("Scan", R.drawable.ic_camera),
-        BottomNavItem("Chat", R.drawable.ic_chat),
-        BottomNavItem("Profile", Icons.Default.Person)
+        BottomNavItem("Chat", R.drawable.ic_chatt),
+        BottomNavItem("Profile", R.drawable.ic_account)
     )
 
-    var selectedItem by remember { mutableIntStateOf(0) }
+    var selectedItem by rememberSaveable { mutableIntStateOf(0) }
 //    val navController = rememberNavController()
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -174,16 +187,19 @@ fun MainScreen(navController: NavHostController) {
                 }
 
                 FloatingActionButton(
-                    onClick = { selectedItem = 2 },
-                    modifier = Modifier
+                    onClick = {
+                        navController.navigate("scan_full")
+                    },
+                    modifier =  Modifier
                         .align(Alignment.TopCenter)
-                        .offset(y = (-34).dp).padding(10.dp), // Menyesuaikan posisi FAB
+                        .offset(y = (-34).dp)
+                        .padding(10.dp),
                     containerColor = Blue,
                     shape = CircleShape,
                     elevation = FloatingActionButtonDefaults.elevation(0.dp)
                 ) {
                     Icon(
-                        Icons.Filled.Search,
+                        painterResource(id = R.drawable.ic_camera),
                         contentDescription = "Scan",
                         Modifier.size(40.dp),
                         tint = LightBlue
@@ -202,11 +218,11 @@ fun MainScreen(navController: NavHostController) {
             verticalArrangement = Arrangement.Center
         ) {
             when (selectedItem) {
-                0 -> HomeScreen(navController)
+                0 -> HomeScreen()
                 1 -> FeedsScreen()
-                2 -> ScanScreen()
+                2 -> ScanScreen(viewModel = SharedViewModel(),onBackClick = { navController.navigateUp() }, onUploadClick = { })
                 3 -> ChatScreen()
-                4 -> ProfileScreen()
+                4 -> ProfileScreen(navController)
             }
         }
     }
@@ -216,7 +232,7 @@ fun MainScreen(navController: NavHostController) {
 @Composable
 fun MainScreenPreview() {
     DermaScanTheme {
-        MainScreen(navController = rememberNavController())
+//        MainScreen(navController = rememberNavController())
     }
 
 }
