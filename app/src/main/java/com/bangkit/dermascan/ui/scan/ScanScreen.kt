@@ -65,7 +65,6 @@ import com.bangkit.dermascan.ui.theme.LightBlue
 import com.bangkit.dermascan.ui.upload.SharedViewModel
 import java.io.File
 import java.io.FileInputStream
-import java.util.concurrent.ExecutionException
 
 @Composable
 fun ScanScreen(
@@ -142,7 +141,7 @@ fun ScanScreen(
             detectTransformGestures(
                 // Hanya proses zoom jika lebih dari satu jari
                 panZoomLock = true,
-                onGesture = { centroid, pan, gestureZoom, gestureRotation ->
+                onGesture = { _, _, gestureZoom, _ ->
                     // Pastikan hanya zoom yang dilakukan dengan dua jari
                     if (gestureZoom != 0f) {
                         isMultiTouch = true
@@ -207,8 +206,8 @@ fun CameraControls(
     onRotateCameraClick: () -> Unit,
     onBackClick: () -> Unit
 ) {
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val context = LocalContext.current
+//    val lifecycleOwner = LocalLifecycleOwner.current
+//    val context = LocalContext.current
 
     // Root Constraint Layout equivalent in Compose
     Box(modifier = Modifier.fillMaxSize()) {

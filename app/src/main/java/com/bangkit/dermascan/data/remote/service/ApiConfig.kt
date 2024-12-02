@@ -30,7 +30,7 @@ class ApiConfig(
                 val req = chain.request().newBuilder()
                     .addHeader("Authorization", "Bearer $token")
                     .build()
-                Log.d("Token", "Token saat ini: Bearer $token")
+                Log.d("Interceptor", "Token saat ini: Bearer $token")
                 chain.proceed(req)
             } catch (e: Exception) {
                 Log.e("Interceptor", "Error getting token", e)

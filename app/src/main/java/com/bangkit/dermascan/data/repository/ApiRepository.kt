@@ -2,27 +2,39 @@ package com.bangkit.dermascan.data.repository
 
 import android.util.Log
 import coil3.Uri
+import com.bangkit.dermascan.data.model.message.SuccessMessage
+import com.bangkit.dermascan.data.model.message.chat.ChatData
+import com.bangkit.dermascan.data.model.message.chat.ChatRequest
+import com.bangkit.dermascan.data.model.message.chat.ChatResponse
 import com.bangkit.dermascan.util.Result
 import com.bangkit.dermascan.util.*
 //import com.bangkit.dermascan.dataArticles.local.UserData
 import com.bangkit.dermascan.data.model.requestBody.AuthRequest
+import com.bangkit.dermascan.data.model.requestBody.DoctorSignupRequest
 import com.bangkit.dermascan.data.model.response.BaseResponse
 import com.bangkit.dermascan.data.model.response.SkinLesionItem
 //import com.bangkit.dermascan.data.model.response.SkinLesion
 import com.bangkit.dermascan.data.model.response.SkinLesionsData
 import com.bangkit.dermascan.data.model.response.SkinLesionsResponse
+import com.bangkit.dermascan.data.model.response.UserData
 import com.bangkit.dermascan.data.remote.service.ApiService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+//import kotlinx.coroutines.flow.internal.NopCollector.emit
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.ResponseBody
+import retrofit2.HttpException
 import retrofit2.Response
 import java.io.File
 import java.io.IOException
+import retrofit2.Call
+import retrofit2.Callback
 
 class ApiRepository(private val apiService: ApiService) {
     suspend fun signup(signupRequest: AuthRequest): Result<String> {
@@ -54,6 +66,78 @@ class ApiRepository(private val apiService: ApiService) {
             Result.Error(e.message.toString())
         }
     }
+
+    suspend fun doctorSignup(request: DoctorSignupRequest, documentFile: File): Response<SuccessMessage> {
+        val map = mapOf(
+            "role" to request.role,
+            "email" to request.email,
+            "password" to request.password,
+            "confirmPassword" to request.confirmPassword,
+            "firstName" to request.firstName,
+            "lastName" to request.lastName,
+            "dob" to request.dob,
+            "address" to request.address,
+            "workplace" to request.workplace,
+            "specialization" to request.specialization,
+            "whatsappUrl" to request.whatsappUrl
+        )
+
+        val bodyMap = map.mapValues { RequestBody.create("text/plain".toMediaTypeOrNull(), it.value) }
+        val documentPart = MultipartBody.Part.createFormData(
+            "document",
+            documentFile.name,
+            RequestBody.create("application/pdf".toMediaTypeOrNull(), documentFile)
+        )
+
+        return apiService.doctorSignup(
+            role = bodyMap["role"]!!,
+            email = bodyMap["email"]!!,
+            password = bodyMap["password"]!!,
+            confirmPassword = bodyMap["confirmPassword"]!!,
+            firstName = bodyMap["firstName"]!!,
+            lastName = bodyMap["lastName"]!!,
+            dob = bodyMap["dob"]!!,
+            address = bodyMap["address"]!!,
+            workplace = bodyMap["workplace"]!!,
+            specialization = bodyMap["specialization"]!!,
+            whatsappUrl = bodyMap["whatsappUrl"]!!,
+            document = documentPart
+        )
+    }
+
+
+
+    suspend fun getDetailUser(): Flow<Result<UserData>> = flow {
+        try {
+            val response = apiService.getUserDetail()
+            if (response.isSuccessful) {
+                // Pastikan body tidak null sebelum emit
+                response.body()?.let { userResponse ->
+                    userResponse.data?.let { userData ->
+                        emit(Result.Success(userData))
+                    } ?: emit(Result.Error("User detail is null"))
+                } ?: emit(Result.Error("Response body is null"))
+            } else {
+                // Mengambil pesan error dari errorBody
+                val errorBody = response.errorBody()?.string() ?: "Unknown error"
+                val errorMessage = parseErrorMessage(errorBody)
+                emit(Result.Error("Error: $errorMessage"))
+            }
+        } catch (e: IOException) {
+            // Menangani error koneksi
+            emit(Result.Error("Network error: ${e.localizedMessage}"))
+        } catch (e: HttpException) {
+            // Menangani error HTTP
+            emit(Result.Error("HTTP error: ${e.localizedMessage}"))
+        } catch (e: Exception) {
+            // Menangani error lainnya
+            emit(Result.Error("Unexpected error: ${e.localizedMessage}"))
+        }
+    }.catch { e ->
+        // Tambahan error handling di luar try-catch
+        emit(Result.Error("Flow error: ${e.localizedMessage}"))
+    }.flowOn(Dispatchers.IO)
+
 
     suspend fun uploadSkinImage(image: File): Result<String> {
         // Membuat RequestBody untuk gambar
@@ -124,7 +208,22 @@ class ApiRepository(private val apiService: ApiService) {
         }
     }.flowOn(Dispatchers.IO)
 
+    fun sendMessage(message: String, callback: (kotlin.Result<ChatData>) -> Unit) {
+        val requestBody = ChatRequest(message)
+        apiService.sendMessage(requestBody).enqueue(object : Callback<ChatResponse> {
+            override fun onResponse(call: Call<ChatResponse>, response: Response<ChatResponse>) {
+                if (response.isSuccessful && response.body() != null) {
+                    callback(kotlin.Result.success(response.body()!!.data))
+                } else {
+                    callback(kotlin.Result.failure(Exception("Response unsuccessful or empty")))
+                }
+            }
 
+            override fun onFailure(call: Call<ChatResponse>, t: Throwable) {
+                callback(kotlin.Result.failure(t))
+            }
+        })
+    }
 
 
 

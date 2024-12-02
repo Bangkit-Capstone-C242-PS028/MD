@@ -1,6 +1,11 @@
 package com.bangkit.dermascan.data.remote.service
 
+import android.util.Log
+import androidx.lifecycle.viewModelScope
+import com.bangkit.dermascan.data.local.UserModel
 import com.bangkit.dermascan.data.model.message.SuccessMessage
+import com.bangkit.dermascan.data.model.message.chat.ChatRequest
+import com.bangkit.dermascan.data.model.message.chat.ChatResponse
 import com.bangkit.dermascan.data.model.requestBody.AuthRequest
 import com.bangkit.dermascan.data.model.requestBody.ForumRequest
 import com.bangkit.dermascan.data.model.requestBody.UserRequest
@@ -17,8 +22,12 @@ import com.bangkit.dermascan.data.model.response.SkinLesionsData
 import com.bangkit.dermascan.data.model.response.SkinLesionsResponse
 import com.bangkit.dermascan.data.model.response.UserData
 import com.bangkit.dermascan.data.model.response.UserResponse
+import com.bangkit.dermascan.util.Result
+import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import okhttp3.ResponseBody
+import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -31,13 +40,31 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ApiService {
-    // AUTHENTICETION
+    // patient
     @POST("auth/signup")
     suspend fun signup(@Body signupRequest: AuthRequest): Response<SuccessMessage>
 
+    //doctor
+    @Multipart
+    @POST("auth/signup")
+    suspend fun doctorSignup(
+        @Part("role") role: RequestBody,
+        @Part("email") email: RequestBody,
+        @Part("password") password: RequestBody,
+        @Part("confirmPassword") confirmPassword: RequestBody,
+        @Part("firstName") firstName: RequestBody,
+        @Part("lastName") lastName: RequestBody,
+        @Part("dob") dob: RequestBody,
+        @Part("address") address: RequestBody,
+        @Part("workplace") workplace: RequestBody,
+        @Part("specialization") specialization: RequestBody,
+        @Part("whatsappUrl") whatsappUrl: RequestBody,
+        @Part document: MultipartBody.Part
+    ): Response<SuccessMessage>
+
     //USERS
     @GET("users/me")
-    suspend fun getUserDetail(): UserResponse
+    suspend fun getUserDetail(): Response<UserResponse>
 
     @PATCH("users/me")
     suspend fun updateDataUser(@Body userRequest: UserRequest): Response<BaseResponse<UserData>>
@@ -133,4 +160,9 @@ interface ApiService {
     suspend fun deleteSkinLesion(
         @Path("id") id: String
     ): Response<BaseResponse<SkinLesionsResponse>>
+
+
+    //chat bot
+    @POST("genai/chatbot")
+    fun sendMessage(@Body requestBody: ChatRequest): Call<ChatResponse>
 }

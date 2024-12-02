@@ -1,7 +1,5 @@
 package com.bangkit.dermascan.ui.profile
 
-import android.annotation.SuppressLint
-import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,28 +11,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -45,17 +37,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.bangkit.dermascan.ui.MainViewModel
 import com.bangkit.dermascan.ui.login.AuthViewModel
-import com.bangkit.dermascan.ui.theme.*
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(navController: NavController) {
     val context = LocalContext.current
     val viewModel: AuthViewModel = hiltViewModel()
 
-    Scaffold() { paddingValues ->
+    Scaffold { paddingValues ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -65,7 +54,7 @@ fun ProfileScreen(navController: NavController) {
         ) {
             // Profile Header
             item {
-                ProfileHeader()
+                ProfileHeader(viewModel)
                 Spacer(modifier = Modifier.height(34.dp))
             }
 
@@ -112,7 +101,7 @@ fun ProfileScreen(navController: NavController) {
 
             item {
                 ProfileMenuItem(
-                    icon = Icons.Default.Logout,
+                    icon = Icons.AutoMirrored.Filled.Logout,
                     title = "Logout",
                     onClick = {
                         viewModel.signOut(context)
@@ -128,7 +117,7 @@ fun ProfileScreen(navController: NavController) {
 }
 
 @Composable
-fun ProfileHeader() {
+fun ProfileHeader(viewModel: AuthViewModel) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth()
@@ -138,18 +127,22 @@ fun ProfileHeader() {
             imageVector = Icons.Default.AccountCircle,
             contentDescription = "Profile Picture",
             modifier = Modifier.size(100.dp),
-            tint = MaterialTheme.colorScheme.primary
+            tint = Color.Gray
         )
         Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = "User Name",
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold
-        )
-        Text(
-            text = "user@example.com",
-            style = MaterialTheme.typography.bodyMedium
-        )
+        val userSession by viewModel.getSession().observeAsState()
+        if(userSession?.firstName != null && userSession?.lastName != null){
+            Text(
+                text =" ${userSession!!.firstName} ${userSession!!.lastName}",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = userSession!!.email,
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+
     }
 }
 

@@ -20,6 +20,8 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 import java.text.SimpleDateFormat
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 
@@ -174,6 +176,17 @@ fun byteArrayToUri(context: Context, byteArray: ByteArray, fileName: String): Ur
         e.printStackTrace()
         return null
     }
+}
+
+fun formatTimestamp(input: String): String {
+    // Parsing input string ke ZonedDateTime
+    val zonedDateTime = ZonedDateTime.parse(input)
+
+    // Mengubah format sesuai kebutuhan
+    val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd, HH.mm")
+
+    // Mengonversi dan mengembalikan hasil
+    return zonedDateTime.format(dateFormatter)
 }
 
 /*using prepareFilePart():

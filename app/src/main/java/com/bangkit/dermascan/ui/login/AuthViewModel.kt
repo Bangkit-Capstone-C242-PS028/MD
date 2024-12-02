@@ -3,12 +3,16 @@ package com.bangkit.dermascan.ui.login
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.bangkit.dermascan.R
 import com.bangkit.dermascan.data.local.UserModel
+import com.bangkit.dermascan.data.model.message.SuccessMessage
 import com.bangkit.dermascan.data.model.requestBody.AuthRequest
+import com.bangkit.dermascan.data.model.requestBody.DoctorSignupRequest
+import com.bangkit.dermascan.data.model.response.UserData
 import com.bangkit.dermascan.data.repository.ApiRepository
 import com.bangkit.dermascan.data.repository.UserRepository
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -20,9 +24,34 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.bangkit.dermascan.util.Result
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.tasks.await
+import org.json.JSONObject
+import java.io.File
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(private val repository: UserRepository, private val apiRepository: ApiRepository) : ViewModel() {
+
+//    private val _userDetail = MutableLiveData<Result<UserData>>()
+//    val userDetail: LiveData<Result<UserData>> = _userDetail
+
+
+    // Fungsi untuk mengambil detail user dan menyimpan ke DataStore
+    private fun fetchUserDetail(onResult: (Result<UserData>) -> Unit) {
+        viewModelScope.launch {
+            val result = apiRepository.getDetailUser().first() // Collect data sekali
+            onResult(result) // Callback untuk mengembalikan hasil ke UI
+        }
+    }
+
+    // Fungsi untuk mendapatkan data user dari DataStore
+
+//    // Fungsi untuk mendapatkan data user dari DataStore sekali
+//    suspend fun getUserData(): UserData? {
+//        return repository.getUserData().first() // Collect hanya satu kali
+//    }
 
     private fun saveSession(user: UserModel) {
         viewModelScope.launch {
@@ -33,6 +62,13 @@ class AuthViewModel @Inject constructor(private val repository: UserRepository, 
         viewModelScope.launch {
             repository.updateToken(newToken)
         }
+    }
+
+    private fun saveUserData(userData: UserModel){
+        viewModelScope.launch {
+            repository.saveUserData(userData)
+        }
+//        return repository.saveUserData(userData)// Mengambil data dari DataStore sekali
     }
 
 
@@ -57,33 +93,70 @@ class AuthViewModel @Inject constructor(private val repository: UserRepository, 
 
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
 
-    fun signIn(email:String, pass:String, callback: (String?) -> Unit) {
-//        val email = "irun@gmail.com"
-//        val pass = "Irun1234"
+    fun signIn(email: String, pass: String, callback: (String?) -> Unit) {
+        viewModelScope.launch {
+            try {
+                firebaseAuth.signInWithEmailAndPassword(email, pass)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            firebaseAuth.currentUser?.getIdToken(true)
+                                ?.addOnCompleteListener { tokenTask ->
+                                    val idToken = tokenTask.result?.token
+                                    val userName = firebaseAuth.currentUser?.displayName ?: "Unknown"
+                                    Log.d("AccessToken", "Bearer $idToken")
+                                    Log.d("User Name", "User : $userName")
 
-        firebaseAuth.signInWithEmailAndPassword(email, pass)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    firebaseAuth.currentUser?.getIdToken(true)
-                        ?.addOnCompleteListener { tokenTask ->
-                            if (tokenTask.isSuccessful) {
-                                val idToken = tokenTask.result?.token
-                                val userName = firebaseAuth.currentUser?.displayName ?: "Unknown"
-                                Log.d("AccesToken", "Bearer $idToken")
-                                Log.d("User Name", "User : $userName")
-                                saveSession(UserModel(email, idToken.toString(), true))
-                                callback(idToken) // Kembalikan idToken melalui callback
-                            } else {
-                                Log.e("AccesToken", "Error getting ID token: ${tokenTask.exception?.message}")
-                                callback(null)
-                            }
+                                    // Gunakan suspend function untuk saveSession
+                                    viewModelScope.launch {
+                                        saveSession(UserModel(email = email, token = idToken.toString(), isLogin = true))
+
+                                        // Tunggu sebentar untuk memastikan session tersimpan
+                                        delay(1000L) // Bisa disesuaikan kebutuhannya
+
+                                        fetchUserDetail { result ->
+                                            when (result) {
+                                                is Result.Success -> {
+                                                    try {
+                                                        val userData = UserModel(
+                                                            uid = result.data.uid ?: "",
+                                                            firstName = result.data.firstName ?: "",
+                                                            lastName = result.data.lastName ?: "",
+                                                            role = result.data.role ?: "",
+                                                            dob = result.data.dob ?: "",
+                                                            address = result.data.address ?: "",
+                                                            email = result.data.email ?: "",
+                                                            specialization = result.data.doctor?.specialization ?: "Not Doctor",
+                                                            workplace = result.data.doctor?.workplace ?: "Not Doctor"
+                                                        )
+                                                        Log.d("UserData Ayam Ayam", userData.toString())
+                                                        saveUserData(userData)
+                                                    } catch (saveError: Exception) {
+                                                        Log.e("SaveUserData", "Error saving user data: ${saveError.localizedMessage}")
+                                                    }
+                                                }
+                                                is Result.Error -> {
+                                                    Log.e("FetchUserDetail", "Error fetching user details: ${result.message}")
+                                                }
+                                                else -> {}
+                                            }
+                                        }
+
+                                        callback(idToken)
+                                    }
+                                }
+                        } else {
+                            Log.e("AccessToken", "Sign in failed: ${task.exception?.message}")
+                            callback(null)
                         }
-                } else {
-                    Log.e("AccesToken", "Sign in failed: ${task.exception?.message}")
-                    callback(null)
-                }
+                    }
+            } catch (e: Exception) {
+                Log.e("SignInError", "Error during sign-in: ${e.localizedMessage}")
+                callback(null)
             }
+        }
     }
+
+
 
     fun signOut(context: Context) {
         viewModelScope.launch {
@@ -148,30 +221,67 @@ class AuthViewModel @Inject constructor(private val repository: UserRepository, 
         }
     }
 
-    fun signInWithCustomToken(customToken: String, callback: (String?) -> Unit) {
-        firebaseAuth.signInWithCustomToken(customToken)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    firebaseAuth.currentUser?.getIdToken(true)
-                        ?.addOnCompleteListener { tokenTask ->
-                            if (tokenTask.isSuccessful) {
-                                val idToken = tokenTask.result?.token
-                                val userName = firebaseAuth.currentUser?.displayName ?: "Unknown"
-                                Log.d("AccessToken", "Bearer $idToken")
-                                Log.d("User Name", "User : $userName")
-                                saveSession(UserModel(firebaseAuth.currentUser?.email ?: "Unknown", idToken.toString(), true))
-                                callback(idToken) // Kembalikan idToken melalui callback
-                            } else {
-                                Log.e("AccessToken", "Error getting ID token: ${tokenTask.exception?.message}")
-                                callback(null)
-                            }
-                        }
+    private val _signupResult = MutableLiveData<Result<SuccessMessage>>()
+    val signupResult: LiveData<Result<SuccessMessage>> get() = _signupResult
+
+    fun doctorSignup(request: DoctorSignupRequest, documentFile: File) {
+        viewModelScope.launch {
+            _signupResult.value = Result.Loading  // Indikator loading
+
+            try {
+                val response = apiRepository.doctorSignup(request, documentFile)
+                if (response.isSuccessful) {
+                    _signupResult.value = Result.Success(response.body()!!)
                 } else {
-                    Log.e("AccessToken", "Sign in failed: ${task.exception?.message}")
-                    callback(null)
+                    // Parsing error message array
+                    val errorBody = response.errorBody()?.string()
+                    val errorMessage = errorBody?.let { it ->
+                        val jsonObject = JSONObject(it)
+                        if (jsonObject.has("error")) {
+                            // Mengambil array pesan error dan menggabungkannya menjadi satu string
+                            val errorArray = jsonObject.getJSONArray("error")
+                            val errors = (0 until errorArray.length()).joinToString("\n") {
+                                errorArray.getString(it)
+                            }
+                            errors  // Mengembalikan semua pesan error
+                        } else {
+                            jsonObject.optString("message", "Signup failed")  // Default error message
+                        }
+                    } ?: "An unknown error occurred"
+
+                    _signupResult.value = Result.Error(errorMessage)
                 }
+            } catch (e: Exception) {
+                _signupResult.value = Result.Error(e.toString())
             }
+        }
     }
+
+//
+//    fun signInWithCustomToken(customToken: String, callback: (String?) -> Unit) {
+//        firebaseAuth.signInWithCustomToken(customToken)
+//            .addOnCompleteListener { task ->
+//                if (task.isSuccessful) {
+//                    firebaseAuth.currentUser?.getIdToken(true)
+//                        ?.addOnCompleteListener { tokenTask ->
+//                            if (tokenTask.isSuccessful) {
+//                                val idToken = tokenTask.result?.token
+//                                val userName = firebaseAuth.currentUser?.displayName ?: "Unknown"
+//                                Log.d("AccessToken", "Bearer $idToken")
+//                                Log.d("User Name", "User : $userName")
+//                                saveSession(UserModel(firebaseAuth.currentUser?.email ?: "Unknown", idToken.toString(), true))
+//                                callback(idToken) // Kembalikan idToken melalui callback
+//                            } else {
+//                                Log.e("AccessToken", "Error getting ID token: ${tokenTask.exception?.message}")
+//                                callback(null)
+//                            }
+//                        }
+//                } else {
+//                    Log.e("AccessToken", "Sign in failed: ${task.exception?.message}")
+//                    callback(null)
+//                }
+//            }
+//    }
 
 }
 

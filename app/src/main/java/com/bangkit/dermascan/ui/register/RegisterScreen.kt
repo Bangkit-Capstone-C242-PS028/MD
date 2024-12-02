@@ -1,6 +1,10 @@
 package com.bangkit.dermascan.ui.register
 
+import android.annotation.SuppressLint
+import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -29,6 +33,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -40,8 +45,12 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.bangkit.dermascan.R
 import com.bangkit.dermascan.data.model.requestBody.AuthRequest
+import com.bangkit.dermascan.data.model.requestBody.DoctorSignupRequest
 import com.bangkit.dermascan.ui.login.AuthViewModel
 import com.bangkit.dermascan.util.Result
+import com.bangkit.dermascan.util.parseErrorMessage
+import com.bangkit.dermascan.util.uriToFile
+import java.io.File
 import java.util.*
 
 //@OptIn(ExperimentalMaterial3Api::class)
@@ -60,38 +69,26 @@ fun RegisterScreen(onRegisterSuccess: () -> Unit) {
     val address = rememberSaveable { mutableStateOf("") }
     val workPlace = rememberSaveable { mutableStateOf("") }
     val birthday = rememberSaveable { mutableStateOf("") }
+    val waUrl = rememberSaveable { mutableStateOf("") }
     var passwordError by rememberSaveable { mutableStateOf("") }
     var emailError by rememberSaveable { mutableStateOf("") }
     var passwordVisibility by rememberSaveable { mutableStateOf(false) }
 //    var specializations by remember { mutableStateOf("") }
     val specializations = rememberSaveable { mutableStateOf("") }
     val roles = listOf("", "PATIENT","DOCTOR")
+    var selectedFileUri by rememberSaveable { mutableStateOf<Uri?>(null) }
 //    var selectedRole by remember { mutableStateOf(roles[0]) }
 //    var expanded by remember { mutableStateOf(false) }
 
     var expanded by rememberSaveable { mutableStateOf(false) }
     var selectedRole by rememberSaveable { mutableStateOf<String?>(null) }  // Inisialisasi null
     var roleError by rememberSaveable { mutableStateOf<String?>(null) }
-
+    var selectedFileError by rememberSaveable { mutableStateOf<Uri?>(null) }
     val signupState by registerViewModel.signupState.collectAsState()
+    val signupResult by registerViewModel.signupResult.observeAsState()
 
     // Handle signup state
-    LaunchedEffect(signupState) {
-        signupState?.let { result ->
-            when (result) {
-                is Result.Success -> {
-                    // Handle success result
-                    Toast.makeText(context, result.data, Toast.LENGTH_SHORT).show()
-                    onRegisterSuccess()  // Navigasi jika berhasil
-                }
-                is Result.Error -> {
-                    // Handle error result
-                    Toast.makeText(context, result.message, Toast.LENGTH_SHORT).show() // Tampilkan error
-                }
-                else -> {}
-            }
-        }
-    }
+
 
     fun validateEmail(input: String) {
         email.value = input
@@ -223,6 +220,18 @@ fun RegisterScreen(onRegisterSuccess: () -> Unit) {
                     value = specializations,
                     label = "Specializations"  // Input tambahan untuk dokter
                 )
+
+                CustomTextField(
+                    value = waUrl,
+                    label = "Whatsapp Url"
+                )// Input tambahan untuk dokter
+
+                PdfFilePicker(
+                    label = "Upload Document (PDF)",
+                    selectedFileName = selectedFileUri?.lastPathSegment,
+                    onFileSelected = { uri -> selectedFileUri = uri }
+                )
+
             }
 
 //            if (signupState is Result.Loading) {
@@ -257,24 +266,60 @@ fun RegisterScreen(onRegisterSuccess: () -> Unit) {
                             return@Button
                         }
 
+
                         val formattedBirthday = formatDateToISO(birthday.value)
                         if (formattedBirthday == null) {
                             Toast.makeText(context, "Invalid date format. Please use dd-MM-yyyy.", Toast.LENGTH_SHORT).show()
                             return@Button
                         }
-                        val reqBody = AuthRequest(
-                            firstName = firstName.value,
-                            lastName = lastName.value,
-                            email = email.value,
-                            password = password.value,
-                            confirmPassword = confirmPassword.value,
-                            address = address.value,
-                            dob = formattedBirthday,
-                            role = selectedRole ?: "PATIENT",
-                            workplace = workPlace.value,
-                            specialization = specializations.value
-                        )
-                        registerViewModel.signup(reqBody)
+                        if(selectedRole == "PATIENT"){
+                            val reqBody = AuthRequest(
+                                firstName = firstName.value,
+                                lastName = lastName.value,
+                                email = email.value,
+                                password = password.value,
+                                confirmPassword = confirmPassword.value,
+                                address = address.value,
+                                dob = formattedBirthday,
+                                role = selectedRole ?: "PATIENT",
+                                workplace = workPlace.value,
+                                specialization = specializations.value
+                            )
+                            registerViewModel.signup(reqBody)
+                        }else{
+                            val formattedBirthday = formatDateToISO(birthday.value)
+                            if (formattedBirthday == null) {
+                                Toast.makeText(context, "Invalid date format. Please use dd-MM-yyyy.", Toast.LENGTH_SHORT).show()
+                                return@Button
+                            }
+
+                            if(selectedFileUri == null){
+                                Toast.makeText(context, "Please select a file", Toast.LENGTH_SHORT).show()
+
+                                return@Button
+                            }
+
+
+                            val request = DoctorSignupRequest(
+                                role = selectedRole ?: "DOCTOR",
+                                email = email.value,
+                                password = password.value,
+                                confirmPassword = confirmPassword.value,
+                                firstName = firstName.value,
+                                lastName = lastName.value,
+                                dob = formattedBirthday,
+                                address = address.value,
+                                workplace = workPlace.value,
+                                specialization = specializations.value,
+                                whatsappUrl = waUrl.value,
+                            )
+                            val documentFile = selectedFileUri?.let { uriToFile(selectedFileUri!!,context) }
+//                            val documentFile = File(context.filesDir, "document.pdf")
+                            if (documentFile != null) {
+                                registerViewModel.doctorSignup(request, documentFile)
+                            }
+                        }
+
 
                     }
                 },
@@ -293,7 +338,7 @@ fun RegisterScreen(onRegisterSuccess: () -> Unit) {
 
 
     }
-    if (signupState is Result.Loading) {
+    if (signupState is Result.Loading || signupResult is Result.Loading) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -310,6 +355,45 @@ fun RegisterScreen(onRegisterSuccess: () -> Unit) {
             )
         }
     }
+
+    LaunchedEffect(signupState, signupResult) {
+        if(selectedRole == "PATIENT"){
+            signupState?.let { result ->
+                when (result) {
+                    is Result.Success -> {
+                        // Handle success result
+                        Toast.makeText(context, result.data, Toast.LENGTH_SHORT).show()
+                        onRegisterSuccess()  // Navigasi jika berhasil
+                    }
+                    is Result.Error -> {
+                        // Handle error result
+                        Toast.makeText(context, result.message, Toast.LENGTH_SHORT).show() // Tampilkan error
+                    }
+                    else -> {}
+                }
+            }
+        }else{
+            signupResult?.let { result ->
+                when (result) {
+//                    is Result.Loading -> {
+//                        CircularProgressIndicator() // Indikator loading
+//                    }
+                    is Result.Success -> {
+                        Toast.makeText(context, result.data.message, Toast.LENGTH_SHORT).show()
+                        onRegisterSuccess()
+                    }
+                    is Result.Error -> {
+                        Toast.makeText(context, result.message , Toast.LENGTH_SHORT).show()
+                    }
+                    else -> {}
+                }
+            }
+        }
+
+
+
+    }
+
 }
 
 
@@ -400,12 +484,13 @@ fun isValidePassword(password: String): Boolean {
     val passwordPattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%_^&+=])(?=\\S+$).{8,}$"
     return password.matches(passwordPattern.toRegex())
 }
-
+@SuppressLint("ModifierParameter")
 @Composable
 fun CustomTextField(
     value: MutableState<String>,
     label: String,
     keyboardType: KeyboardType = KeyboardType.Text,
+    modifier: Modifier = Modifier,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     trailingIcon: @Composable (() -> Unit)? = null,
     emailError: String = "",
@@ -685,7 +770,7 @@ fun CustomTextField(
 
         else -> {
             Surface(
-                modifier = Modifier
+                modifier = modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
                 shape = MaterialTheme.shapes.medium,
@@ -704,7 +789,7 @@ fun CustomTextField(
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = keyboardType
                     ),
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = modifier.fillMaxWidth(),
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = TextInp,
                         unfocusedContainerColor = TextInp,
@@ -724,8 +809,59 @@ fun CustomTextField(
         }
 //        "Email" -> CustomEmailInput(value = value, onValueChange = { validateEmail(it) })
     }
-
 }
+
+
+@Composable
+fun PdfFilePicker(
+
+    label: String,
+    selectedFileName: String?,
+    onFileSelected: (Uri) -> Unit
+) {
+    var selectedFileNameState by remember { mutableStateOf(selectedFileName ?: "STR ( Surat Tanda Registrasi) iirc") }
+
+    // Launcher for picking a PDF file
+    val filePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            onFileSelected(it)
+            selectedFileNameState = uri.lastPathSegment ?: "Selected PDF"
+        }
+    }
+
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .clickable { filePickerLauncher.launch("application/pdf") },  // Launch file picker on click
+        shape = MaterialTheme.shapes.medium,
+        color = docInp,  // Blue color
+//        shadowElevation = 1.dp
+    ) {
+        Column(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
+        ) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelLarge.copy(
+                    color = Blue
+                ),
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = selectedFileNameState,
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = Purple40
+                ),
+                maxLines = 1
+            )
+        }
+    }
+}
+
 
 //
 //@Composable

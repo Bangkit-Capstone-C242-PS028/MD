@@ -87,7 +87,7 @@ fun MainScreen(context: Context, navController: NavHostController) {
         BottomNavItem("Home", R.drawable.ic_home),
         BottomNavItem("Feeds", R.drawable.ic_feeds),
         BottomNavItem("Scan", R.drawable.ic_camera),
-        BottomNavItem("Chat", R.drawable.ic_chatt),
+        BottomNavItem("Chat Bot", R.drawable.ic_chatt),
         BottomNavItem("Profile", R.drawable.ic_account)
     )
 

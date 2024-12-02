@@ -34,3 +34,18 @@ data class AuthRequest(
 	@field:SerializedName("email")
 	val email: String
 )
+
+data class DoctorSignupRequest(
+	val role: String,
+	val email: String,
+	val password: String,
+	val confirmPassword: String,
+	val firstName: String,
+	val lastName: String,
+	val dob: String,
+	val address: String,
+	val workplace: String,
+	val specialization: String,
+	val whatsappUrl: String
+)
+

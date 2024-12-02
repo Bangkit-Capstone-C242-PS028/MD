@@ -7,11 +7,12 @@ import kotlinx.parcelize.Parcelize
 data class UserResponse(
     @SerializedName("statusCode") val statusCode: Int,
     @SerializedName("message") val message: String,
-    @SerializedName("dataArticles") val data: UserDataList
+//    @SerializedName("data") val data: UserDataList ?= null,
+    @SerializedName("data") val data: UserData ?= null,
 )
 
 data class UserDataList(
-    @SerializedName("dataArticles") val users: List<UserData>,
+    @SerializedName("data") val users: List<UserData>,
     @SerializedName("meta") val meta: Meta
 )
 

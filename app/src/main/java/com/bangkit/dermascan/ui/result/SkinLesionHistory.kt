@@ -12,13 +12,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -48,9 +46,11 @@ import com.bangkit.dermascan.R
 import com.bangkit.dermascan.data.model.response.SkinLesionItem
 import com.bangkit.dermascan.ui.theme.LightBlue
 import com.bangkit.dermascan.ui.upload.SkinLesionViewModel
+import com.bangkit.dermascan.util.Result
+import com.bangkit.dermascan.util.formatTimestamp
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.bangkit.dermascan.util.Result
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SkinLesionHistoryScreen(navController: NavController) {
@@ -85,7 +85,7 @@ fun SkinLesionHistoryScreen(navController: NavController) {
             }
         }
         is Result.Success -> {
-            val lesions = result.data ?: emptyList()
+            val lesions = result.data
             // Jika data berhasil dimuat, tampilkan daftar SkinLesion
             Scaffold(
                 topBar = {
@@ -93,7 +93,7 @@ fun SkinLesionHistoryScreen(navController: NavController) {
                         title = { Text("Skin Lesion History") },
                         navigationIcon = {
                             IconButton(onClick = { navController.navigateUp() }) {
-                                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+                                Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                             }
                         }
                     )
@@ -119,7 +119,7 @@ fun SkinLesionHistoryScreen(navController: NavController) {
                         title = { Text("Skin Lesion History") },
                         navigationIcon = {
                             IconButton(onClick = { navController.navigateUp() }) {
-                                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+                                Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                             }
                         }
                     )
@@ -208,7 +208,7 @@ fun SkinLesionItem(
             modifier = Modifier.padding(horizontal = 8.dp)
         ) {
             Text(
-                text = "Created At: ${skinLesion.createdAt}",
+                text = "Created At: ${formatTimestamp(skinLesion.createdAt)}",
                 style = MaterialTheme.typography.bodySmall,
                 textAlign = TextAlign.Center
             )
@@ -216,7 +216,7 @@ fun SkinLesionItem(
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = "Processed At: ${skinLesion.processedAt}",
+                text = "Processed At: ${formatTimestamp(skinLesion.processedAt)}",
                 style = MaterialTheme.typography.bodySmall,
                 textAlign = TextAlign.Center
             )
@@ -235,10 +235,3 @@ fun SkinLesionItem(
 }
 
 
-data class SkinLesionData(
-    val imageUrl: String,
-    val accuracy: Int,
-    val risk: String,
-    val desc: String,
-    val riskAssessment: String
-)
