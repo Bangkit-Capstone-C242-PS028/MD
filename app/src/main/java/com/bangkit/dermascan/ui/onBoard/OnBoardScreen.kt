@@ -80,7 +80,7 @@ fun OnBoardScreen(navController: NavController, onLoginSuccess: () -> Unit) {
     ) {
         Text(
             text = "Hello!",  // Nama aplikasi
-            style = MaterialTheme.typography.titleLarge,
+            style = Typography.titleLarge,
             fontSize = 34.sp,  // Ukuran teks
             color = Blue,
             modifier = Modifier.padding(top = 72.dp)  // Memberikan jarak dari bagian atas
@@ -100,16 +100,15 @@ fun OnBoardScreen(navController: NavController, onLoginSuccess: () -> Unit) {
             // Nama aplikasi dan deskripsi
             Text(
                 text = stringResource(id = R.string.app_name),  // Mengambil string dari resource"DermaScan",  // Nama aplikasi
-                style = MaterialTheme.typography.titleLarge,
+                style = Typography.titleLarge,
                 fontSize = 58.sp,// Gaya teks untuk nama aplikasi
                 color = Blue,
                 modifier = Modifier.padding(bottom = 50.dp)  // Padding bawah agar tidak terlalu dekat dengan deskripsi
             )
             Text(
                 text = "Scan your skin health with ease.",  // Deskripsi aplikasi
-                style = Typography.bodyLarge,  // Gaya teks untuk deskripsi
+                style = Typography.bodyMedium,  // Gaya teks untuk deskripsi
                 color = Black,
-                fontSize = 16.sp,
                 modifier = Modifier.padding(bottom = 32.dp)  // Padding bawah agar ada jarak antara deskripsi dan tombol
             )
 

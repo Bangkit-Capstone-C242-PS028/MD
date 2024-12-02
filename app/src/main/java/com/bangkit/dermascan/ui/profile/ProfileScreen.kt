@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.bangkit.dermascan.ui.login.AuthViewModel
+import com.bangkit.dermascan.ui.theme.Typography
 
 @Composable
 fun ProfileScreen(navController: NavController) {
@@ -134,12 +135,12 @@ fun ProfileHeader(viewModel: AuthViewModel) {
         if(userSession?.firstName != null && userSession?.lastName != null){
             Text(
                 text =" ${userSession!!.firstName} ${userSession!!.lastName}",
-                style = MaterialTheme.typography.titleLarge,
+                style = Typography.bodyMedium,
                 fontWeight = FontWeight.Bold
             )
             Text(
                 text = userSession!!.email,
-                style = MaterialTheme.typography.bodyMedium
+                style = Typography.bodyMedium
             )
         }
 
@@ -169,7 +170,7 @@ fun ProfileMenuItem(
         Spacer(modifier = Modifier.width(16.dp))
         Text(
             text = title,
-            style = MaterialTheme.typography.bodyLarge,
+            style = Typography.bodyMedium,
             color = if (isLogout) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.weight(1f)
         )

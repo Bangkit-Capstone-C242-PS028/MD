@@ -20,6 +20,13 @@ val Typography = Typography(
     bodyLarge = TextStyle(
         fontFamily = myFontFamily,  // Menggunakan myFontFamily untuk bodyLarge
         fontWeight = FontWeight.Light, // Bisa diubah sesuai kebutuhan
+        fontSize = 32.sp,
+        lineHeight = 24.sp,
+        letterSpacing = 0.5.sp
+    ),
+    bodyMedium = TextStyle(
+        fontFamily = myFontFamily,  // Menggunakan myFontFamily untuk bodyLarge
+        fontWeight = FontWeight.Medium, // Bisa diubah sesuai kebutuhan
         fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp

@@ -155,6 +155,23 @@ fun RegisterScreen(onRegisterSuccess: () -> Unit) {
     }
 
     Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 24.dp) // Padding di sekitar layar
+    ) {
+        // Teks "Hello!" di bagian atas
+        Text(
+            text = "Hello!",
+            style = Typography.titleLarge,
+            fontSize = 34.sp,
+            color = Blue,
+            modifier = Modifier
+                .align(Alignment.TopCenter) // Posisikan teks di atas tengah
+                .padding(top = 72.dp) // Beri jarak dari atas
+        )
+    }
+
+    Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
@@ -166,13 +183,6 @@ fun RegisterScreen(onRegisterSuccess: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Text(
-                text = "Hello!",  // Nama aplikasi
-                style = MaterialTheme.typography.titleLarge,
-                fontSize = 34.sp,  // Ukuran teks
-                color = Blue,
-                modifier = Modifier.padding(top = 72.dp)  // Memberikan jarak dari bagian atas
-            )
             Spacer(modifier = Modifier.height(16.dp))
 
             CustomTextField(value = firstName, label = "First Name")
@@ -432,7 +442,7 @@ fun RoleSpinner(
                         color = Blue
                     )
                 },
-                placeholder = { Text("Select Role", color = Color.Gray) },  // Placeholder
+                placeholder = { Text("Select Role", color = Color.Gray, style = Typography.bodyMedium) },  // Placeholder
                 trailingIcon = {
                     Icon(
                         imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
@@ -454,7 +464,7 @@ fun RoleSpinner(
                     cursorColor = Blue
                 ),
                 modifier = Modifier.fillMaxWidth(),
-                textStyle = MaterialTheme.typography.bodyLarge.copy(
+                textStyle = Typography.bodyMedium.copy(
                     color = Black,
                     fontWeight = FontWeight.Medium
                 )
@@ -484,6 +494,7 @@ fun isValidePassword(password: String): Boolean {
     val passwordPattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%_^&+=])(?=\\S+$).{8,}$"
     return password.matches(passwordPattern.toRegex())
 }
+
 @SuppressLint("ModifierParameter")
 @Composable
 fun CustomTextField(
@@ -532,7 +543,7 @@ fun CustomTextField(
                         focusedLabelColor = Blue,
                         cursorColor = Blue
                     ),
-                    textStyle = MaterialTheme.typography.bodyLarge.copy(
+                    textStyle = Typography.bodyMedium.copy(
                         color = Black,
                         fontWeight = FontWeight.Medium
                     )
@@ -569,7 +580,7 @@ fun CustomTextField(
                         focusedIndicatorColor = Blue,
                         cursorColor = Blue
                     ),
-                    textStyle = MaterialTheme.typography.bodyLarge.copy(
+                    textStyle = Typography.bodyMedium.copy(
                         color = Black,
                         fontWeight = FontWeight.Medium
                     ),
@@ -625,7 +636,7 @@ fun CustomTextField(
                             focusedIndicatorColor = Blue,
                             cursorColor = Blue
                         ),
-                        textStyle = MaterialTheme.typography.bodyLarge.copy(
+                        textStyle = Typography.bodyMedium.copy(
                             color = Black,
                             fontWeight = FontWeight.Medium
                         ),
@@ -697,7 +708,7 @@ fun CustomTextField(
                             focusedIndicatorColor = Blue,
                             cursorColor = Blue
                         ),
-                        textStyle = MaterialTheme.typography.bodyLarge.copy(
+                        textStyle = Typography.bodyMedium.copy(
                             color = Black,
                             fontWeight = FontWeight.Medium
                         ),
@@ -760,7 +771,7 @@ fun CustomTextField(
                         focusedLabelColor = Blue,
                         cursorColor = Blue
                     ),
-                    textStyle = MaterialTheme.typography.bodyLarge.copy(
+                    textStyle = Typography.bodyMedium.copy(
                         color = Black,
                         fontWeight = FontWeight.Medium
                     )
@@ -798,7 +809,7 @@ fun CustomTextField(
                         focusedLabelColor = Blue,
                         cursorColor = Blue
                     ),
-                    textStyle = MaterialTheme.typography.bodyLarge.copy(
+                    textStyle = Typography.bodyMedium.copy(
                         color = Black,
                         fontWeight = FontWeight.Medium
                     ),
@@ -853,7 +864,7 @@ fun PdfFilePicker(
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = selectedFileNameState,
-                style = MaterialTheme.typography.bodyMedium.copy(
+                style = Typography.bodyMedium.copy(
                     color = Purple40
                 ),
                 maxLines = 1
@@ -891,7 +902,7 @@ fun PdfFilePicker(
 //                focusedLabelColor = Blue,
 //                cursorColor = Blue
 //            ),
-//            textStyle = MaterialTheme.typography.bodyLarge.copy(
+//            textStyle = Typography.bodyMedium.copy(
 //                color = Black,
 //                fontWeight = FontWeight.Medium
 //            )
@@ -934,7 +945,7 @@ fun PdfFilePicker(
 //                focusedIndicatorColor = Blue,
 //                cursorColor = Blue
 //            ),
-//            textStyle = MaterialTheme.typography.bodyLarge.copy(
+//            textStyle = Typography.bodyMedium.copy(
 //                color = Black,
 //                fontWeight = FontWeight.Medium
 //            ),
@@ -996,7 +1007,7 @@ fun PdfFilePicker(
 //                    focusedIndicatorColor = Blue,
 //                    cursorColor = Blue
 //                ),
-//                textStyle = MaterialTheme.typography.bodyLarge.copy(
+//                textStyle = Typography.bodyMedium.copy(
 //                    color = Black,
 //                    fontWeight = FontWeight.Medium
 //                ),
@@ -1055,7 +1066,7 @@ fun PdfFilePicker(
 //                focusedLabelColor = Blue,
 //                cursorColor = Blue
 //            ),
-//            textStyle = MaterialTheme.typography.bodyLarge.copy(
+//            textStyle = Typography.bodyMedium.copy(
 //                color = Black,
 //                fontWeight = FontWeight.Medium
 //            )
@@ -1094,7 +1105,7 @@ fun PdfFilePicker(
 //                focusedLabelColor = Blue,
 //                cursorColor = Blue
 //            ),
-//            textStyle = MaterialTheme.typography.bodyLarge.copy(
+//            textStyle = Typography.bodyMedium.copy(
 //                color = Black,
 //                fontWeight = FontWeight.Medium
 //            )

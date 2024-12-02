@@ -212,13 +212,13 @@ fun MainScreen(context: Context, navController: NavHostController) {
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .fillMaxSize()
-                .padding(start = 15.dp, bottom = 15.dp),
+                .fillMaxSize(),
+//                .padding(start = 15.dp, bottom = 15.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             when (selectedItem) {
-                0 -> HomeScreen()
+                0 -> HomeScreen(navController)
                 1 -> FeedsScreen()
                 2 -> ScanScreen(viewModel = SharedViewModel(),onBackClick = { navController.navigateUp() }, onUploadClick = { })
                 3 -> ChatScreen()

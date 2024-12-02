@@ -48,6 +48,7 @@ import com.bangkit.dermascan.ui.register.CustomTextField
 import com.bangkit.dermascan.ui.theme.Black
 import com.bangkit.dermascan.ui.theme.Blue
 import com.bangkit.dermascan.ui.theme.LightBlue
+import com.bangkit.dermascan.ui.theme.Typography
 import com.bangkit.dermascan.ui.theme.White
 
 @Composable
@@ -84,8 +85,8 @@ fun ChatScreen() {
                 item {
                     Text(
                         text = "Mulai percakapan baru",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = Black,
+                        style = Typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier.fillMaxWidth().wrapContentWidth(Alignment.CenterHorizontally).padding(16.dp)
                     )
                 }
@@ -206,7 +207,7 @@ fun ChatBubble(message: String, isUser: Boolean) {
 
     // Menghitung offset untuk AI
     val offsetX by animateFloatAsState(
-        targetValue = if (isUser) 1f else -minOf(screenWidth / 2, 20f), // Membatasi offset untuk AI agar tidak keluar dari layar
+        targetValue = if (isUser) 1f else -minOf(screenWidth / 2, 8f), // Membatasi offset untuk AI agar tidak keluar dari layar
         animationSpec = tween(durationMillis = 500, easing = FastOutSlowInEasing)
     )
 
@@ -224,6 +225,7 @@ fun ChatBubble(message: String, isUser: Boolean) {
     ) {
         Text(
             text = annotatedMessage,
+            style = Typography.bodyMedium,
             color = if (isUser) White else Black,
             modifier = Modifier
                 .background(
