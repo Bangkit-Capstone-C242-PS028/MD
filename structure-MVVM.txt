@@ -1,0 +1,17 @@
+- app/
+  - src/
+    - main/
+      - java/
+        - com.example.project/
+          - data/         # Repository, DAO, model data
+            - YourRepository.kt
+          - di/           # Dependency Injection setup
+          - ui/
+            - MainActivity.kt       # Activity utama
+            - MainViewModel.kt      # ViewModel utama
+            - MainViewModelFactory.kt  # Jika perlu
+            - home/
+              - HomeScreen.kt
+            - profile/
+              - ProfileScreen.kt
+          - util/         # Utility functions
