@@ -47,6 +47,7 @@ fun ProfileScreen(navController: NavController) {
 
     val roles by viewModel.roles.observeAsState("PATIENT")
 
+
     Scaffold { paddingValues ->
         LazyColumn(
             modifier = Modifier
