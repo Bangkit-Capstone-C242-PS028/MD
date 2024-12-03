@@ -4,6 +4,7 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
+<<<<<<< HEAD
         <DropdownSelection timestamp="2024-12-02T19:27:45.056844100Z">
           <Target type="DEFAULT_BOOT">
             <handle>
@@ -15,6 +16,8 @@
       </SelectionState>
       <SelectionState runConfigName="LoginScreenPreview">
         <option name="selectionMode" value="DROPDOWN" />
+=======
+>>>>>>> master
       </SelectionState>
     </selectionStates>
   </component>
