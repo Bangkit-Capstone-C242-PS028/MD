@@ -45,9 +45,12 @@ fun ProfileScreen(navController: NavController) {
     val context = LocalContext.current
     val viewModel: AuthViewModel = hiltViewModel()
 
+<<<<<<< HEAD
+=======
     val roles by viewModel.roles.observeAsState("PATIENT")
 
 
+>>>>>>> master
     Scaffold { paddingValues ->
         LazyColumn(
             modifier = Modifier
@@ -72,6 +75,17 @@ fun ProfileScreen(navController: NavController) {
                     }
                 )
             }
+<<<<<<< HEAD
+
+            item {
+                ProfileMenuItem(
+                    icon = Icons.Default.History,
+                    title = "Skin Lesion History",
+                    onClick = {
+                        navController.navigate("skinLesionHistory")
+                    }
+                )
+=======
             if (roles != "DOCTOR") {
                 item {
                     ProfileMenuItem(
@@ -82,6 +96,7 @@ fun ProfileScreen(navController: NavController) {
                         }
                     )
                 }
+>>>>>>> master
             }
 
             item {
