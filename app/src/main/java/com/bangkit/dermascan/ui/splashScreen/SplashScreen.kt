@@ -38,12 +38,17 @@ fun SplashScreen(navController: NavController) {
     val userSession by viewModel.getSession().observeAsState()
     userSession?.let{ user ->
         LaunchedEffect(Unit) {
-            delay(2500)
+
             Log.d("Session", user.toString())
             if(user.isLogin){
-                Toast.makeText(context, "Welcome Back ${user.firstName} ${user.lastName}", Toast.LENGTH_SHORT).show()
+//                viewModel.login(user.email, "P@ssword1")
+//                viewModel.token.observeForever { token ->
+//                    Log.d("Token", token)
+//                }
+//                Toast.makeText(context, "Welcome Back ${user.firstName} ${user.lastName}", Toast.LENGTH_SHORT).show()
                 //panggil endpoint customToken
                 viewModel.refreshToken()
+                delay(2500)
 //            LaunchedEffect(Unit) {
                 navController.navigate("main") {
                     popUpTo("splash") { inclusive = true }
@@ -51,6 +56,7 @@ fun SplashScreen(navController: NavController) {
                 }
 //            }
             }else{
+                delay(2500)
                 navController.navigate("onBoard") {
                     popUpTo("splash") { inclusive = true }
                 }

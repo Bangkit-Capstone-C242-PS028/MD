@@ -25,6 +25,14 @@ class UserRepository private constructor(
         userPreference.updateToken(newToken)
     }
 
+    fun getToken(): Flow<String> {
+        return userPreference.getToken()
+    }
+
+    fun getRoles(): Flow<String> {
+        return userPreference.getRoles()
+    }
+
     fun getSession(): Flow<UserModel> {
         return userPreference.getSession()
     }

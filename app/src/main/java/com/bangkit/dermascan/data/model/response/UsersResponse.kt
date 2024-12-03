@@ -42,6 +42,22 @@ data class PatientData(
     @SerializedName("uid") val uid: String
 )
 
+data class LoginResponse(
+    val statusCode: Int,
+    val message: String,
+    val data: TokenData
+)
+
+data class TokenData(
+    val token: String
+)
+
+data class LoginRequest(
+    val email: String,
+    val password: String
+)
+
+
 
 
 

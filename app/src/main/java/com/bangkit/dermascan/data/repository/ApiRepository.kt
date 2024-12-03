@@ -12,6 +12,8 @@ import com.bangkit.dermascan.util.*
 import com.bangkit.dermascan.data.model.requestBody.AuthRequest
 import com.bangkit.dermascan.data.model.requestBody.DoctorSignupRequest
 import com.bangkit.dermascan.data.model.response.BaseResponse
+import com.bangkit.dermascan.data.model.response.LoginRequest
+import com.bangkit.dermascan.data.model.response.LoginResponse
 import com.bangkit.dermascan.data.model.response.SkinLesionItem
 //import com.bangkit.dermascan.data.model.response.SkinLesion
 import com.bangkit.dermascan.data.model.response.SkinLesionsData
@@ -37,6 +39,15 @@ import retrofit2.Call
 import retrofit2.Callback
 
 class ApiRepository(private val apiService: ApiService) {
+    fun login(email: String, password: String): Call<LoginResponse> {
+        return apiService.login(LoginRequest(email, password))
+    }
+
+    // Fungsi untuk mendapatkan token saja dari response
+    fun getTokenFromResponse(response: LoginResponse?): String? {
+        return response?.data?.token
+    }
+
     suspend fun signup(signupRequest: AuthRequest): Result<String> {
         // Menandakan loading
         Result.Loading

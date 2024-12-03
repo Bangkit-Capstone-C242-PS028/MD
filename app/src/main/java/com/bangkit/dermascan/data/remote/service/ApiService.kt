@@ -15,6 +15,8 @@ import com.bangkit.dermascan.data.model.response.DataArticles
 import com.bangkit.dermascan.data.model.response.ForumCreatedResponse
 import com.bangkit.dermascan.data.model.response.ForumData
 import com.bangkit.dermascan.data.model.response.ForumResponse
+import com.bangkit.dermascan.data.model.response.LoginRequest
+import com.bangkit.dermascan.data.model.response.LoginResponse
 import com.bangkit.dermascan.data.model.response.SignupResponse
 //import com.bangkit.dermascan.data.model.response.SkinLesion
 import com.bangkit.dermascan.data.model.response.SkinLesionItem
@@ -40,9 +42,13 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ApiService {
+    @POST("auth/login")
+    fun login(@Body request: LoginRequest): Call<LoginResponse>
+
     // patient
     @POST("auth/signup")
     suspend fun signup(@Body signupRequest: AuthRequest): Response<SuccessMessage>
+
 
     //doctor
     @Multipart

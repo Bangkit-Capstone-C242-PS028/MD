@@ -12,6 +12,7 @@ import com.bangkit.dermascan.data.local.UserModel
 import com.bangkit.dermascan.data.model.message.SuccessMessage
 import com.bangkit.dermascan.data.model.requestBody.AuthRequest
 import com.bangkit.dermascan.data.model.requestBody.DoctorSignupRequest
+import com.bangkit.dermascan.data.model.response.LoginResponse
 import com.bangkit.dermascan.data.model.response.UserData
 import com.bangkit.dermascan.data.repository.ApiRepository
 import com.bangkit.dermascan.data.repository.UserRepository
@@ -24,19 +25,49 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.bangkit.dermascan.util.Result
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.tasks.await
 import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.io.File
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(private val repository: UserRepository, private val apiRepository: ApiRepository) : ViewModel() {
 
-//    private val _userDetail = MutableLiveData<Result<UserData>>()
-//    val userDetail: LiveData<Result<UserData>> = _userDetail
 
+    private val _token = MutableLiveData<String>()
+    val token: LiveData<String> get() = _token
+
+//    val userToken: LiveData<String> = repository.getToken().asLiveData(viewModelScope.coroutineContext)
+    val currentUser: LiveData<UserModel> = repository.getSession().asLiveData(viewModelScope.coroutineContext)
+
+    val roles: LiveData<String> = repository.getRoles().asLiveData(viewModelScope.coroutineContext)
+
+    fun login(email: String, password: String) {
+        apiRepository.login(email, password).enqueue(object : Callback<LoginResponse> {
+            override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
+                if (response.isSuccessful) {
+                    // Ambil token dari response dan kirimkan ke UI
+                    _token.postValue(apiRepository.getTokenFromResponse(response.body()))
+                    Log.d("Token", _token.value.toString())
+                    Log.d("AuthVM", "Login Succes")
+                } else {
+                    // Tangani kesalahan login
+                    Log.e("LoginError", "Login failed: ${response.message()}")
+                }
+            }
+
+            override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
+                // Tangani kegagalan komunikasi
+                Log.e("LoginError", "Login request failed: ${t.message}")
+            }
+        })
+    }
 
     // Fungsi untuk mengambil detail user dan menyimpan ke DataStore
     private fun fetchUserDetail(onResult: (Result<UserData>) -> Unit) {
@@ -46,22 +77,19 @@ class AuthViewModel @Inject constructor(private val repository: UserRepository, 
         }
     }
 
-    // Fungsi untuk mendapatkan data user dari DataStore
-
-//    // Fungsi untuk mendapatkan data user dari DataStore sekali
-//    suspend fun getUserData(): UserData? {
-//        return repository.getUserData().first() // Collect hanya satu kali
-//    }
-
     private fun saveSession(user: UserModel) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.saveSession(user)
         }
     }
     private fun updateToken(newToken: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.updateToken(newToken)
         }
+    }
+
+    private fun getToken(): Flow<String> {
+        return repository.getToken()
     }
 
     private fun saveUserData(userData: UserModel){
@@ -72,26 +100,36 @@ class AuthViewModel @Inject constructor(private val repository: UserRepository, 
     }
 
 
+
+
+
+    private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
+
     fun refreshToken() {
-        val firebaseAuth = FirebaseAuth.getInstance()
 
         firebaseAuth.currentUser?.getIdToken(true)?.addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                val idToken = task.result?.token
-                if (idToken != null) {
-                    updateToken(idToken)  // Update token if successfully retrieved
-                    Log.d("Refresh Token", "Bearer $idToken")
-                } else {
-                    Log.e("TokenError", "Token is null")
+                viewModelScope.launch {
+                    val idToken = task.result?.token
+                    if (idToken != null) {
+                        updateToken(idToken)  // Simpan token baru
+
+                        // Ambil token setelah penyimpanan selesai
+                        val savedToken = getToken().first()  // Mengambil nilai tunggal terbaru
+                        Log.d("DataStore", "Saved Token: Bearer $savedToken")
+
+                        if (idToken == savedToken) {
+                            Log.d("TokenCheck", "Token matches!")
+                        } else {
+                            Log.e("TokenCheck", "Token mismatch detected")
+                        }
+                    }
                 }
             } else {
                 Log.e("TokenError", "Failed to refresh token: ${task.exception?.message}")
             }
         }
     }
-
-
-    private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
 
     fun signIn(email: String, pass: String, callback: (String?) -> Unit) {
         viewModelScope.launch {

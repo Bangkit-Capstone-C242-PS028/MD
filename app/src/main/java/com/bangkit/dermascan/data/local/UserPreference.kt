@@ -43,14 +43,22 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
     suspend fun updateToken(newToken: String) {
         dataStore.edit { preferences ->
             preferences[TOKEN_KEY] = newToken // Mengubah nilai token dengan token baru
+            Log.d("DataStore", "Token saved successfully: $newToken")
         }
     }
+
 
 
     // Get token only
     fun getToken(): Flow<String> {
         return dataStore.data.map { preferences ->
             preferences[TOKEN_KEY] ?: ""
+        }
+    }
+
+    fun getRoles(): Flow<String> {
+        return dataStore.data.map { preferences ->
+            preferences[ROLE_KEY] ?: ""
         }
     }
 

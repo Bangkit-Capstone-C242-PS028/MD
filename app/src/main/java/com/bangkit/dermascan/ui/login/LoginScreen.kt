@@ -146,6 +146,7 @@ fun LoginScreen(context: Context, onLoginSuccess: () -> Unit) {
                             if (idToken != null) {
 //                                viewModel.saveSession(UserModel(email.value, idToken))
                                 Toast.makeText(context, "Login berhasil", Toast.LENGTH_SHORT).show()
+
                                 onLoginSuccess()
                             } else {
                                 Toast.makeText(context, "Login gagal", Toast.LENGTH_SHORT).show()

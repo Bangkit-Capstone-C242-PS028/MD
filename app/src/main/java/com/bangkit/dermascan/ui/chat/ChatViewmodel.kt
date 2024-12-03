@@ -18,7 +18,7 @@ class ChatViewModel @Inject constructor(private val repository: ApiRepository) :
     val chatMessages: StateFlow<List<Pair<String, Boolean>>> = _chatMessages
 
     // StateFlow untuk balasan chatbot
-    private val _chatReply = MutableStateFlow<String>("")
+    private val _chatReply = MutableStateFlow("")
     val chatReply: StateFlow<String> get() = _chatReply
 
     // Fungsi untuk mengirim pesan
