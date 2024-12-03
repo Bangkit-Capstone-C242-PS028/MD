@@ -98,13 +98,10 @@ import com.bangkit.dermascan.R
 import com.bangkit.dermascan.data.model.requestBody.AuthRequest
 import com.bangkit.dermascan.data.model.requestBody.DoctorSignupRequest
 import com.bangkit.dermascan.ui.login.AuthViewModel
-//<<<<<<< HEAD
-//import com.bangkit.dermascan.util.Result
 import com.bangkit.dermascan.util.parseErrorMessage
 import com.bangkit.dermascan.util.uriToFile
 import java.io.File
 import java.util.*
-//=======
 import com.bangkit.dermascan.ui.theme.Black
 import com.bangkit.dermascan.ui.theme.Blue
 import com.bangkit.dermascan.ui.theme.DermaScanTheme
@@ -117,7 +114,7 @@ import com.bangkit.dermascan.util.Result
 import com.bangkit.dermascan.util.uriToFile
 import java.text.SimpleDateFormat
 import java.util.Locale
-//>>>>>>> master
+
 
 //@OptIn(ExperimentalMaterial3Api::class)
 //@Preview(showSystemUi = true)
@@ -557,11 +554,9 @@ fun RoleSpinner(
 
 fun isValidePassword(password: String): Boolean {
     if(password.isEmpty()) return true
-//<<<<<<< HEAD
-//    val passwordPattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%_^&+=])(?=\\S+$).{8,}$"
-//=======
+
     val passwordPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&_-])[A-Za-z\\d@$!%*?&_-]{8,}$"
-//>>>>>>> master
+
     return password.matches(passwordPattern.toRegex())
 }
 
