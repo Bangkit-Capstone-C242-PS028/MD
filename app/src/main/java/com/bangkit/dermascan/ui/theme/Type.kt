@@ -35,7 +35,7 @@ val Typography = Typography(
     titleLarge = TextStyle(
         fontFamily = myFontFamily,  // Menggunakan myFontFamily
         fontWeight = FontWeight.Bold,  // Menambahkan Bold pada titleLarge
-        fontSize = 22.sp,
+        fontSize = 28.sp,
         lineHeight = 28.sp,
         letterSpacing = 0.sp
     ),

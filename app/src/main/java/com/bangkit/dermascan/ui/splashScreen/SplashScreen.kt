@@ -1,7 +1,6 @@
 package com.bangkit.dermascan.ui.splashScreen
 
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,7 +25,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.bangkit.dermascan.R
-import com.bangkit.dermascan.ui.login.AuthViewModel
+import com.bangkit.dermascan.ui.authentication.AuthViewModel
 import com.bangkit.dermascan.ui.theme.Blue
 import com.bangkit.dermascan.ui.theme.White
 import kotlinx.coroutines.delay

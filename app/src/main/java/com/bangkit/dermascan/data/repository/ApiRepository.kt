@@ -2,15 +2,16 @@ package com.bangkit.dermascan.data.repository
 
 import android.util.Log
 import coil3.Uri
-import com.bangkit.dermascan.data.model.message.SuccessMessage
-import com.bangkit.dermascan.data.model.message.chat.ChatData
-import com.bangkit.dermascan.data.model.message.chat.ChatRequest
-import com.bangkit.dermascan.data.model.message.chat.ChatResponse
+import com.bangkit.dermascan.data.model.response.message.SuccessMessage
+import com.bangkit.dermascan.data.model.response.message.chat.ChatData
+import com.bangkit.dermascan.data.model.response.message.chat.ChatRequest
+import com.bangkit.dermascan.data.model.response.message.chat.ChatResponse
 import com.bangkit.dermascan.util.Result
 import com.bangkit.dermascan.util.*
 //import com.bangkit.dermascan.dataArticles.local.UserData
 import com.bangkit.dermascan.data.model.requestBody.AuthRequest
 import com.bangkit.dermascan.data.model.requestBody.DoctorSignupRequest
+import com.bangkit.dermascan.data.model.requestBody.UserRequest
 import com.bangkit.dermascan.data.model.response.BaseResponse
 import com.bangkit.dermascan.data.model.response.LoginRequest
 import com.bangkit.dermascan.data.model.response.LoginResponse
@@ -149,6 +150,9 @@ class ApiRepository(private val apiService: ApiService) {
         emit(Result.Error("Flow error: ${e.localizedMessage}"))
     }.flowOn(Dispatchers.IO)
 
+    suspend fun updateUser(userRequest: UserRequest): Response<BaseResponse<UserData>> {
+        return apiService.updateDataUser(userRequest)
+    }
 
     suspend fun uploadSkinImage(image: File): Result<String> {
         // Membuat RequestBody untuk gambar

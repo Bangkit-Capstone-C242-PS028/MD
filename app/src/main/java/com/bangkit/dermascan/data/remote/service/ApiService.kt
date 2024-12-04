@@ -1,11 +1,8 @@
 package com.bangkit.dermascan.data.remote.service
 
-import android.util.Log
-import androidx.lifecycle.viewModelScope
-import com.bangkit.dermascan.data.local.UserModel
-import com.bangkit.dermascan.data.model.message.SuccessMessage
-import com.bangkit.dermascan.data.model.message.chat.ChatRequest
-import com.bangkit.dermascan.data.model.message.chat.ChatResponse
+import com.bangkit.dermascan.data.model.response.message.SuccessMessage
+import com.bangkit.dermascan.data.model.response.message.chat.ChatRequest
+import com.bangkit.dermascan.data.model.response.message.chat.ChatResponse
 import com.bangkit.dermascan.data.model.requestBody.AuthRequest
 import com.bangkit.dermascan.data.model.requestBody.ForumRequest
 import com.bangkit.dermascan.data.model.requestBody.UserRequest
@@ -17,15 +14,11 @@ import com.bangkit.dermascan.data.model.response.ForumData
 import com.bangkit.dermascan.data.model.response.ForumResponse
 import com.bangkit.dermascan.data.model.response.LoginRequest
 import com.bangkit.dermascan.data.model.response.LoginResponse
-import com.bangkit.dermascan.data.model.response.SignupResponse
 //import com.bangkit.dermascan.data.model.response.SkinLesion
 import com.bangkit.dermascan.data.model.response.SkinLesionItem
-import com.bangkit.dermascan.data.model.response.SkinLesionsData
 import com.bangkit.dermascan.data.model.response.SkinLesionsResponse
 import com.bangkit.dermascan.data.model.response.UserData
 import com.bangkit.dermascan.data.model.response.UserResponse
-import com.bangkit.dermascan.util.Result
-import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.ResponseBody

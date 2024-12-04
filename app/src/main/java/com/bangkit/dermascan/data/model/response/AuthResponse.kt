@@ -1,7 +1,7 @@
 package com.bangkit.dermascan.data.model.response
 
-import com.bangkit.dermascan.data.model.message.ErrorMessage
-import com.bangkit.dermascan.data.model.message.SuccessMessage
+import com.bangkit.dermascan.data.model.response.message.ErrorMessage
+import com.bangkit.dermascan.data.model.response.message.SuccessMessage
 import com.google.gson.annotations.SerializedName
 
 data class SignupResponse (

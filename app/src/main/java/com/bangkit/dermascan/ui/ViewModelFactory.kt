@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.bangkit.dermascan.data.repository.ApiRepository
 import com.bangkit.dermascan.data.repository.UserRepository
 import com.bangkit.dermascan.di.Injection
+import com.bangkit.dermascan.ui.main.MainViewModel
 
 class ViewModelFactory(private val repository: UserRepository, private val apiRepository: ApiRepository):
     ViewModelProvider.NewInstanceFactory() {
