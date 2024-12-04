@@ -52,9 +52,7 @@ class ArticleActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
-    private fun showLoading(isLoading: Boolean) {
-        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.INVISIBLE
-    }
+
 //    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
 //        menuInflater.inflate(R.menu.appbar_menu, menu)
 //        return super.onCreateOptionsMenu(menu)
@@ -76,4 +74,7 @@ class ArticleActivity : AppCompatActivity() {
 //        }
 //    }
 
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.INVISIBLE
+    }
 }

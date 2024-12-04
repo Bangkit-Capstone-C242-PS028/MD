@@ -1,5 +1,6 @@
 package com.bangkit.dermascan.ui.article
 
+import UserPreference
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -23,6 +24,9 @@ class ArticleViewModel @Inject constructor(
 
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> = _errorMessage
+//
+//    private val _addArticleResponse = MutableLiveData<ArticleResponse>()
+//    val addArticleResponse: LiveData<ArticleResponse> = _addArticleResponse
 
     fun showArticles() {
         _isLoading.value = true
