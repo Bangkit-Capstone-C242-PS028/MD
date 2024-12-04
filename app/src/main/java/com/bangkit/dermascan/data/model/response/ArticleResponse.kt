@@ -31,30 +31,8 @@ data class ArticleItem(
     @field:SerializedName("content")
     val content: String? = null,
 
-    @field:SerializedName("image_url")
     val imageUrl: String? = null,
 
-    @field:SerializedName("created_at")
     val createdAt: String? = null,
 
-    @field:SerializedName("updated_at")
-    val updatedAt: String? = null,
-
-    @field:SerializedName("name")
-    val name: String? = null,
-
-    @field:SerializedName("avatar")
-    val avatar: Any? = null
 )
-
-//data class Meta(
-//    @field:SerializedName("total")
-//    val total: Int? = null,
-//
-//    @field:SerializedName("page")
-//    val page: Int? = null,
-//
-//    @field:SerializedName("lastPage")
-//    val lastPage: Int? = null
-//)
-

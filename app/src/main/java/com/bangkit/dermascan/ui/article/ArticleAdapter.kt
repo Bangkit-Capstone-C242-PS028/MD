@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bangkit.dermascan.R
 import com.bangkit.dermascan.data.model.response.ArticleItem
+
 import com.bangkit.dermascan.databinding.ItemArticleCardBinding
 import com.bangkit.dermascan.ui.articleDetail.ArticleDetailActivity
 import com.bangkit.dermascan.util.formatTime
