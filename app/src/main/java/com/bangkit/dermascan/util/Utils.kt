@@ -23,6 +23,7 @@ import java.io.InputStream
 import java.text.SimpleDateFormat
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -63,6 +64,24 @@ fun compressImageFromUri(context: Context, imageUri: Uri, maxSizeMB: Int): ByteA
     } else {
         null
     }
+}
+
+
+
+fun showDatePicker(context: Context, onDateSelected: (String) -> Unit) {
+    val calendar = Calendar.getInstance()
+    val datePickerDialog = DatePickerDialog(
+        context,
+        { _, year, month, dayOfMonth ->
+            val selectedDate = String.format("%02d-%02d-%04d", dayOfMonth, month + 1, year)
+            onDateSelected(selectedDate)
+        },
+        calendar.get(Calendar.YEAR),
+        calendar.get(Calendar.MONTH),
+        calendar.get(Calendar.DAY_OF_MONTH)
+    )
+    Log.d("DatePicker", "Dialog dipanggil")
+    datePickerDialog.show()
 }
 
 fun rotateBitmapIfNeeded(context: Context, imageUri: Uri, bitmap: Bitmap): Bitmap {

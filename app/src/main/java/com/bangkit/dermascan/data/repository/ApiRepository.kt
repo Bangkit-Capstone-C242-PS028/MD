@@ -12,6 +12,7 @@ import com.bangkit.dermascan.util.*
 import com.bangkit.dermascan.data.model.requestBody.AuthRequest
 import com.bangkit.dermascan.data.model.requestBody.DoctorSignupRequest
 import com.bangkit.dermascan.data.model.requestBody.UserRequest
+
 import com.bangkit.dermascan.data.model.response.ArticleDetailResponse
 import com.bangkit.dermascan.data.model.response.ArticleResponse
 import com.bangkit.dermascan.data.model.response.BaseResponse
@@ -152,6 +153,9 @@ class ApiRepository(private val apiService: ApiService) {
         emit(Result.Error("Flow error: ${e.localizedMessage}"))
     }.flowOn(Dispatchers.IO)
 
+    suspend fun updateUser(userRequest: UserRequest): Response<BaseResponse<UserData>> {
+        return apiService.updateDataUser(userRequest)
+    }
 
     suspend fun uploadSkinImage(image: File): Result<String> {
         // Membuat RequestBody untuk gambar
