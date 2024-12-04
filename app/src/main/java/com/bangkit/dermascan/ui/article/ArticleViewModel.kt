@@ -9,10 +9,13 @@ import com.bangkit.dermascan.data.model.response.ListArticleItem
 import com.bangkit.dermascan.data.repository.ApiRepository
 //import com.bangkit.dermascan.data.repository.ArticleRepository
 import com.bangkit.dermascan.data.repository.UserRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.io.File
+import javax.inject.Inject
 
-class ArticleViewModel(
+@HiltViewModel
+class ArticleViewModel @Inject constructor(
     private val apiRepository: ApiRepository) : ViewModel() {
 
     private val _listArticle = MutableLiveData<List<ListArticleItem>>()

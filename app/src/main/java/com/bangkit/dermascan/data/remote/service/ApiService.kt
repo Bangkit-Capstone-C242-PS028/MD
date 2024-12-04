@@ -161,7 +161,7 @@ interface ApiService {
     @POST("skin-lesions")
     suspend fun uploadSkinImage(
         @Part image: MultipartBody.Part
-    ): Response<BaseResponse<ResponseBody>>
+    ) : Response<BaseResponse<ResponseBody>>
 
     @GET("skin-lesions/my")
     suspend fun getSkinLesions(

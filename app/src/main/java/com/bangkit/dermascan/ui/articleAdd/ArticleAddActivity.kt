@@ -1,7 +1,10 @@
 package com.bangkit.dermascan.ui.articleAdd
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
@@ -10,6 +13,7 @@ import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.bangkit.dermascan.R
@@ -25,6 +29,8 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import java.time.Instant
+import java.time.format.DateTimeFormatter
 
 class ArticleAddActivity : AppCompatActivity() {
 
@@ -149,5 +155,26 @@ class ArticleAddActivity : AppCompatActivity() {
 
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    @SuppressLint("StringFormatMatches")
+    fun formatTime(context: Context, createdAt: String?): String {
+        if (createdAt.isNullOrEmpty()) return context.getString(R.string.time_is_not_available)
+
+
+        val formatter = DateTimeFormatter.ISO_DATE_TIME
+        val instant = Instant.from(formatter.parse(createdAt))
+
+
+        val now = Instant.now()
+        val duration = java.time.Duration.between(instant, now)
+
+
+        return when {
+            duration.toDays() > 0 -> context.getString(R.string.days_a_go, duration.toDays())
+            duration.toHours() > 0 -> context.getString(R.string.hours_a_go, duration.toHours())
+            duration.toMinutes() > 0 -> context.getString(R.string.minute_a_go, duration.toMinutes())
+            else -> context.getString(R.string.now)
+        }
     }
 }
