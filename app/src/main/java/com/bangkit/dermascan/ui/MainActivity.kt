@@ -50,6 +50,7 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.bangkit.dermascan.ui.article.ArticleActivity
 import com.bangkit.dermascan.ui.login.AuthViewModel
 import com.bangkit.dermascan.ui.navigation.AppNavHost
 //import com.bangkit.dermascan.ui.scan.PhotoActivity
@@ -276,7 +277,15 @@ fun MainScreen(context: Context, navController: NavHostController) {
             if (roles != "DOCTOR") {
                 when (selectedItem) {
                     0 -> HomeScreen(navController)
-                    1 -> FeedsScreen()
+//                    1 -> FeedsScreen()
+                    1 -> {
+                        // Navigasi ke ArticleActivity menggunakan Context
+                        val context = LocalContext.current
+                        LaunchedEffect(Unit) {
+                            val intent = Intent(context, ArticleActivity::class.java)
+                            context.startActivity(intent)
+                        }
+                    }
                     2 -> ScanScreen(
                         viewModel = SharedViewModel(),
                         onBackClick = { navController.navigateUp() },
@@ -288,7 +297,15 @@ fun MainScreen(context: Context, navController: NavHostController) {
             }else{
                 when (selectedItem) {
 //                    0 -> HomeScreen(navController)
-                    0 -> FeedsScreen()
+//                    0 -> FeedsScreen()
+                    0 -> {
+                        // Navigasi ke ArticleActivity menggunakan Context
+                        val context = LocalContext.current
+                        LaunchedEffect(Unit) {
+                            val intent = Intent(context, ArticleActivity::class.java)
+                            context.startActivity(intent)
+                        }
+                    }
                     1 -> ChatScreen()
                     2 -> ProfileScreen(navController)
                 }

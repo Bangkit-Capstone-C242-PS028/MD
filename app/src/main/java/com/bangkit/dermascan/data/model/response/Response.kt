@@ -1,69 +1,19 @@
 //package com.bangkit.dermascan.data.model.response
 //
-//import kotlinx.parcelize.Parcelize
-//import android.os.Parcelable
 //import com.google.gson.annotations.SerializedName
 //
-//@Parcelize
-//data class ArticlesResponse(
+//data class Response(
 //
-//	@field:SerializedName("success")
-//	val success: Success? = null,
+//	@field:SerializedName("data")
+//	val data: Data? = null,
+//
+//	@field:SerializedName("message")
+//	val message: String? = null,
 //
 //	@field:SerializedName("statusCode")
 //	val statusCode: Int? = null
-//) : Parcelable
+//)
 //
-////@Parcelize
-////dataArticles class Meta(
-////
-////	@field:SerializedName("total")
-////	val total: Int? = null,
-////
-////	@field:SerializedName("lastPage")
-////	val lastPage: Int? = null,
-////
-////	@field:SerializedName("page")
-////	val page: Int? = null
-////) : Parcelable
-//
-//@Parcelize
-//data class Success(
-//
-//	@field:SerializedName("data")
-//	val dataArticles: DataArticles? = null,
-//
-//	@field:SerializedName("message")
-//	val message: String? = null
-//) : Parcelable
-//
-//@Parcelize
-//data class Author(
-//
-//	@field:SerializedName("uid")
-//	val uid: String? = null,
-//
-//	@field:SerializedName("specialization")
-//	val specialization: String? = null,
-//
-//	@field:SerializedName("workplace")
-//	val workplace: String? = null,
-//
-//	@field:SerializedName("user")
-//	val user: User? = null
-//) : Parcelable
-//
-//@Parcelize
-//data class DataArticles(
-//
-//	@field:SerializedName("dataArticles")
-//	val data: List<DataItem?>? = null,
-//
-//	@field:SerializedName("meta")
-//	val meta: Meta? = null
-//) : Parcelable
-//
-//@Parcelize
 //data class User(
 //
 //	@field:SerializedName("uid")
@@ -95,9 +45,29 @@
 //
 //	@field:SerializedName("points")
 //	val points: Int? = null
-//) : Parcelable
+//)
 //
-//@Parcelize
+//data class Author(
+//
+//	@field:SerializedName("uid")
+//	val uid: String? = null,
+//
+//	@field:SerializedName("isVerified")
+//	val isVerified: Boolean? = null,
+//
+//	@field:SerializedName("documentUrl")
+//	val documentUrl: String? = null,
+//
+//	@field:SerializedName("specialization")
+//	val specialization: String? = null,
+//
+//	@field:SerializedName("workplace")
+//	val workplace: String? = null,
+//
+//	@field:SerializedName("user")
+//	val user: User? = null
+//)
+//
 //data class DataItem(
 //
 //	@field:SerializedName("updated_at")
@@ -106,15 +76,39 @@
 //	@field:SerializedName("author")
 //	val author: Author? = null,
 //
+//	@field:SerializedName("imageUrl")
+//	val imageUrl: String? = null,
+//
 //	@field:SerializedName("created_at")
 //	val createdAt: String? = null,
 //
 //	@field:SerializedName("id")
-//	val id: Int? = null,
+//	val id: String? = null,
 //
 //	@field:SerializedName("title")
 //	val title: String? = null,
 //
 //	@field:SerializedName("content")
 //	val content: String? = null
-//) : Parcelable
+//)
+//
+////data class Meta(
+////
+////	@field:SerializedName("total")
+////	val total: Int? = null,
+////
+////	@field:SerializedName("lastPage")
+////	val lastPage: Int? = null,
+////
+////	@field:SerializedName("page")
+////	val page: Int? = null
+////)
+//
+//data class Data(
+//
+//	@field:SerializedName("data")
+//	val data: List<DataItem?>? = null,
+//
+//	@field:SerializedName("meta")
+//	val meta: Meta? = null
+//)

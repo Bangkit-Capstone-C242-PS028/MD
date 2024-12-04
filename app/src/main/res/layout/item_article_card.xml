@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_gravity="center"
+    android:layout_marginTop="16dp"
+    android:layout_marginEnd="16dp"
+    app:cardBackgroundColor="@color/blue"
+    app:cardCornerRadius="24dp"
+    android:padding="20dp"
+    app:cardElevation="4dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/ivPhotocard"
+            android:layout_width="0dp"
+            android:layout_height="200dp"
+            android:contentDescription="@string/image_story_content_desc"
+            android:scaleType="centerCrop"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@tools:sample/avatars" />
+
+        <TextView
+            android:id="@+id/tvTitlecard"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:textColor="@android:color/white"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ivPhotocard"
+            tools:text="judul" />
+
+        <ImageView
+            android:id="@+id/ivIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="28dp"
+            android:contentDescription="@string/persondesc"
+            android:src="@drawable/person"
+            app:layout_constraintEnd_toStartOf="@+id/tvNamecard"
+            app:layout_constraintHorizontal_bias="0.842"
+            app:layout_constraintTop_toBottomOf="@+id/tvTitlecard"
+            card_view:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/tvNamecard"
+            android:layout_width="164dp"
+            android:layout_height="28dp"
+            android:layout_marginTop="28dp"
+            android:layout_marginEnd="24dp"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/tvTimecard"
+            app:layout_constraintTop_toBottomOf="@+id/tvTitlecard"
+            tools:text="nama" />
+
+        <TextView
+            android:id="@+id/tvTimecard"
+            android:layout_width="132dp"
+            android:layout_height="28dp"
+            android:layout_marginTop="28dp"
+            android:layout_marginEnd="8dp"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="@+id/tvTitlecard"
+            app:layout_constraintTop_toBottomOf="@+id/tvTitlecard"
+            tools:text="time" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>
