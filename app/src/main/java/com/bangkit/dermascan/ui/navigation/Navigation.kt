@@ -1,6 +1,5 @@
 package com.bangkit.dermascan.ui.navigation
 
-import android.net.Uri
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -9,21 +8,21 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import com.bangkit.dermascan.ui.MainScreen
+import com.bangkit.dermascan.ui.main.MainScreen
 import com.bangkit.dermascan.ui.onBoard.OnBoardScreen
-import com.bangkit.dermascan.ui.register.RegisterScreen
+import com.bangkit.dermascan.ui.authentication.register.RegisterScreen
 import androidx.navigation.compose.composable
+import com.bangkit.dermascan.ui.main.profile.editProfile.EditProfileScreen
 //import com.bangkit.dermascan.ui.home.ButtonWithCustomColor
 //import com.bangkit.dermascan.ui.home.HomeScreen
-import com.bangkit.dermascan.ui.login.LoginScreen
-import com.bangkit.dermascan.ui.result.SkinLesionHistoryScreen
-import com.bangkit.dermascan.ui.scan.ScanScreen
+import com.bangkit.dermascan.ui.authentication.login.LoginScreen
+import com.bangkit.dermascan.ui.main.profile.result.SkinLesionHistoryScreen
+import com.bangkit.dermascan.ui.main.scan.ScanScreen
 import com.bangkit.dermascan.ui.splashScreen.SplashScreen
-import com.bangkit.dermascan.ui.upload.SharedViewModel
-import com.bangkit.dermascan.ui.upload.UploadScreen
+import com.bangkit.dermascan.ui.main.scan.upload.SharedViewModel
+import com.bangkit.dermascan.ui.main.scan.upload.UploadScreen
 
 @Composable
 fun AppNavHost(navController: NavHostController) {
@@ -142,6 +141,17 @@ fun AppNavHost(navController: NavHostController) {
                     }
                 }
             )
+        }
+
+        composable("editProfile",
+            enterTransition = {
+                fadeIn(animationSpec = tween(300))
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(300))
+            }
+        ) {
+            EditProfileScreen()
         }
 
         composable("skinLesionHistory") {

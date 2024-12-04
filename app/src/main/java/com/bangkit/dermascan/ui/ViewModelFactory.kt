@@ -1,6 +1,5 @@
 package com.bangkit.dermascan.ui
 
-import UserPreference
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -10,18 +9,9 @@ import com.bangkit.dermascan.di.Injection
 import com.bangkit.dermascan.ui.article.ArticleViewModel
 import com.bangkit.dermascan.ui.articleAdd.ArticleAddViewModel
 import com.bangkit.dermascan.ui.articleDetail.ArticleDetailViewModel
+import com.bangkit.dermascan.ui.main.MainViewModel
 
-class ViewModelFactory(
-
-    private val repository: UserRepository,
-    private val apiRepository: ApiRepository,
-//    private val articleRepository: ArticleRepository? = null,
-//    private val articleDetailRepository: ArticleDetailRepository? = null,
-//    private val articleAddRepository: ArticleAddRepository? = null,
-//    private val userPreference: UserPreference? = null
-):
-
-
+class ViewModelFactory(private val repository: UserRepository, private val apiRepository: ApiRepository):
     ViewModelProvider.NewInstanceFactory() {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
