@@ -12,6 +12,9 @@ import com.bangkit.dermascan.util.*
 import com.bangkit.dermascan.data.model.requestBody.AuthRequest
 import com.bangkit.dermascan.data.model.requestBody.DoctorSignupRequest
 import com.bangkit.dermascan.data.model.requestBody.UserRequest
+
+import com.bangkit.dermascan.data.model.response.ArticleDetailResponse
+import com.bangkit.dermascan.data.model.response.ArticleResponse
 import com.bangkit.dermascan.data.model.response.BaseResponse
 import com.bangkit.dermascan.data.model.response.LoginRequest
 import com.bangkit.dermascan.data.model.response.LoginResponse

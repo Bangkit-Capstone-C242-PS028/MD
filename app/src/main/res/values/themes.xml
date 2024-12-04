@@ -9,4 +9,13 @@
         <item name="android:statusBarColor">@color/blue</item>
         <item name="android:navigationBarColor">@color/blue</item>
     </style>
+
+    <style name="Button.Primary" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@color/blue</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="cornerRadius">12dp</item> <!-- Optional: rounded corners -->
+        <item name="android:padding">8dp</item>
+    </style>
+
+
 </resources>

@@ -6,6 +6,11 @@ import androidx.lifecycle.ViewModelProvider
 import com.bangkit.dermascan.data.repository.ApiRepository
 import com.bangkit.dermascan.data.repository.UserRepository
 import com.bangkit.dermascan.di.Injection
+
+import com.bangkit.dermascan.ui.article.ArticleViewModel
+import com.bangkit.dermascan.ui.articleAdd.ArticleAddViewModel
+import com.bangkit.dermascan.ui.articleDetail.ArticleDetailViewModel
+
 import com.bangkit.dermascan.ui.main.MainViewModel
 
 class ViewModelFactory(private val repository: UserRepository, private val apiRepository: ApiRepository):
@@ -28,6 +33,19 @@ class ViewModelFactory(private val repository: UserRepository, private val apiRe
 //            modelClass.isAssignableFrom(SkinLesionViewModel::class.java) -> {
 //                SkinLesionViewModel(apiRepository) as T
 //            }
+
+            modelClass.isAssignableFrom(ArticleViewModel::class.java) -> {
+                ArticleViewModel(apiRepository) as T
+            }
+
+            modelClass.isAssignableFrom(ArticleDetailViewModel::class.java) -> {
+                ArticleDetailViewModel(apiRepository) as T
+            }
+
+            modelClass.isAssignableFrom(ArticleAddViewModel::class.java) -> {
+                ArticleAddViewModel(apiRepository) as T
+            }
+
             else -> throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
         }
     }

@@ -1,11 +1,25 @@
+
+package com.bangkit.dermascan.ui
+
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+
 package com.bangkit.dermascan.ui.main
 
 import android.content.Context
+
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+
+import androidx.activity.viewModels
+import androidx.camera.core.CameraControl
+import androidx.camera.core.ImageCapture
+import androidx.camera.lifecycle.ProcessCameraProvider
+
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -18,6 +32,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.MailOutline
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
+
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
@@ -33,10 +55,18 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.graphics.Path
+
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat.startActivity
+
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.bangkit.dermascan.ui.authentication.AuthViewModel
+
+import com.bangkit.dermascan.ui.article.ArticleActivity
+import com.bangkit.dermascan.ui.login.AuthViewModel
+
 import com.bangkit.dermascan.ui.navigation.AppNavHost
 //import com.bangkit.dermascan.ui.scan.PhotoActivity
 import com.bangkit.dermascan.ui.theme.*
