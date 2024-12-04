@@ -156,9 +156,6 @@ class ApiRepository(private val apiService: ApiService) {
         emit(Result.Error("Flow error: ${e.localizedMessage}"))
     }.flowOn(Dispatchers.IO)
 
-    suspend fun updateUser(userRequest: UserRequest): Response<BaseResponse<UserData>> {
-        return apiService.updateDataUser(userRequest)
-    }
 
     suspend fun uploadSkinImage(image: File): Result<String> {
         // Membuat RequestBody untuk gambar
@@ -290,6 +287,8 @@ class ApiRepository(private val apiService: ApiService) {
             throw Exception(errorBody.message)
         }
     }
+
+
 
 
 
