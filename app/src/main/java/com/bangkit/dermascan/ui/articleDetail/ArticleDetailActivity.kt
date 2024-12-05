@@ -39,7 +39,7 @@ class ArticleDetailActivity : AppCompatActivity() {
             binding.tvContextdetail.text = articleResponse.content
 
             Glide.with(binding.ivDetailPhoto.context)
-                .load(articleResponse.photoUrl)
+                .load(articleResponse.imageUrl)
                 .placeholder(R.drawable.img_placeholder)
                 .into(binding.ivDetailPhoto)
         }
