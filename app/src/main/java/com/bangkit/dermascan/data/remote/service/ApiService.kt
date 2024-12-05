@@ -80,7 +80,7 @@ interface ApiService {
         @Query("size") size: Int ?= 10,
         @Query("role") role: String? = null,
 
-    ): Response<UserResponse>
+        ): Response<UserResponse>
 
 
     //ARTICLES

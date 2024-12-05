@@ -46,3 +46,15 @@ data class ArticleItem(
     @field:SerializedName("avatar")
     val avatar: Any? = null
 )
+
+//data class Meta(
+//    @field:SerializedName("total")
+//    val total: Int? = null,
+//
+//    @field:SerializedName("page")
+//    val page: Int? = null,
+//
+//    @field:SerializedName("lastPage")
+//    val lastPage: Int? = null
+//)
+
