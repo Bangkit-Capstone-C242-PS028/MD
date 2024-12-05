@@ -83,7 +83,7 @@ fun MainScreen(context: Context, navController: NavHostController) {
     val authViewModel: AuthViewModel = hiltViewModel()
     val roles by authViewModel.roles.observeAsState("PATIENT")
 
-    Toast.makeText(context, "Welcome Back $roles", Toast.LENGTH_SHORT).show()
+//    Toast.makeText(context, "Welcome Back $roles", Toast.LENGTH_SHORT).show()
 
 
     val items = mutableListOf(
