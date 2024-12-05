@@ -6,9 +6,12 @@ import com.bangkit.dermascan.data.model.response.message.chat.ChatResponse
 import com.bangkit.dermascan.data.model.requestBody.AuthRequest
 import com.bangkit.dermascan.data.model.requestBody.ForumRequest
 import com.bangkit.dermascan.data.model.requestBody.UserRequest
-import com.bangkit.dermascan.data.model.response.ArticlesResponse
+import com.bangkit.dermascan.data.model.response.ArticleDetailResponse
+import com.bangkit.dermascan.data.model.response.ArticleResponse
+//import com.bangkit.dermascan.data.model.response.ArticlesResponse
 import com.bangkit.dermascan.data.model.response.BaseResponse
-import com.bangkit.dermascan.data.model.response.DataArticles
+import com.bangkit.dermascan.data.model.response.FileUploadResponse
+//import com.bangkit.dermascan.data.model.response.DataArticles
 import com.bangkit.dermascan.data.model.response.ForumCreatedResponse
 import com.bangkit.dermascan.data.model.response.ForumData
 import com.bangkit.dermascan.data.model.response.ForumResponse
@@ -77,29 +80,46 @@ interface ApiService {
         @Query("size") size: Int ?= 10,
         @Query("role") role: String? = null,
 
-    ): Response<UserResponse>
+        ): Response<UserResponse>
 
 
     //ARTICLES
-    @POST("articles")
-    suspend fun createArticle(@Body forumRequest: ForumRequest): Response<BaseResponse<ForumCreatedResponse>>
+//    @POST("articles")
+//    suspend fun createArticle(@Body forumRequest: ForumRequest): Response<BaseResponse<ForumCreatedResponse>>
+//
+//    @GET("articles")
+//    suspend fun getAllArticles(
+//        @Query("page") page: Int ?= 1,
+//        @Query("size") size: Int ?= 10,
+//        @Query("role") role: String? = null
+//    ): Response<ArticlesResponse>
+//
+//    @GET("articles/{articleId}")
+//    suspend fun getArticleDetail(
+//        @Path("articleId") articleId: String
+//    ): Response<BaseResponse<DataArticles>>
+//
+//    @DELETE("articles/{articleId}")
+//    suspend fun deleteArticle(
+//        @Path("articleId") articleId: String
+//    ): Response<BaseResponse<ArticlesResponse>>
+
 
     @GET("articles")
-    suspend fun getAllArticles(
-        @Query("page") page: Int ?= 1,
-        @Query("size") size: Int ?= 10,
-        @Query("role") role: String? = null
-    ): Response<ArticlesResponse>
+    suspend fun getArticles(): ArticleResponse
 
     @GET("articles/{articleId}")
     suspend fun getArticleDetail(
-        @Path("articleId") articleId: String
-    ): Response<BaseResponse<DataArticles>>
+        @Path("articleId") id: String
+    ): ArticleDetailResponse
 
-    @DELETE("articles/{articleId}")
-    suspend fun deleteArticle(
-        @Path("articleId") articleId: String
-    ): Response<BaseResponse<ArticlesResponse>>
+    @Multipart
+    @POST("articles")
+    suspend fun createArticle(
+        @Part("title") title: RequestBody,
+        @Part("content") content: RequestBody,
+        @Part image: MultipartBody.Part
+    ): FileUploadResponse
 
     //FORUMS
     @POST("forums")
@@ -142,7 +162,7 @@ interface ApiService {
     @POST("skin-lesions")
     suspend fun uploadSkinImage(
         @Part image: MultipartBody.Part
-    ): Response<BaseResponse<ResponseBody>>
+    ) : Response<BaseResponse<ResponseBody>>
 
     @GET("skin-lesions/my")
     suspend fun getSkinLesions(

@@ -12,7 +12,12 @@ import com.bangkit.dermascan.util.*
 import com.bangkit.dermascan.data.model.requestBody.AuthRequest
 import com.bangkit.dermascan.data.model.requestBody.DoctorSignupRequest
 import com.bangkit.dermascan.data.model.requestBody.UserRequest
+
+import com.bangkit.dermascan.data.model.response.ArticleDetailResponse
+import com.bangkit.dermascan.data.model.response.ArticleResponse
 import com.bangkit.dermascan.data.model.response.BaseResponse
+import com.bangkit.dermascan.data.model.response.ErrorResponse
+import com.bangkit.dermascan.data.model.response.FileUploadResponse
 import com.bangkit.dermascan.data.model.response.LoginRequest
 import com.bangkit.dermascan.data.model.response.LoginResponse
 import com.bangkit.dermascan.data.model.response.SkinLesionItem
@@ -21,6 +26,7 @@ import com.bangkit.dermascan.data.model.response.SkinLesionsData
 import com.bangkit.dermascan.data.model.response.SkinLesionsResponse
 import com.bangkit.dermascan.data.model.response.UserData
 import com.bangkit.dermascan.data.remote.service.ApiService
+import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -242,7 +248,48 @@ class ApiRepository(private val apiService: ApiService) {
 
 
 
+    suspend fun getArticles(): ArticleResponse {
+        return try {
+            val response = apiService.getArticles()
+            Log.d("ArticleRepository", "Success: $response")
+            response
+        } catch (e: HttpException) {
+            val jsonInString = e.response()?.errorBody()?.string()
+            val errorBody = Gson().fromJson(jsonInString, ErrorResponse::class.java)
+            Log.e("ArticleRepository", "Error: ${e.message}")
+            throw Exception(errorBody.message)
+        }
+    }
 
+    suspend fun createArticle(
+        title: RequestBody,
+        content: RequestBody,
+        image: MultipartBody.Part
+    ): FileUploadResponse {
+        return try {
+            val response = apiService.createArticle(title, content, image)
+            Log.d("ArticleAddRepository", "Success: $response")
+            response
+        } catch (e: HttpException) {
+            val jsonInString = e.response()?.errorBody()?.string()
+            val errorBody = Gson().fromJson(jsonInString, ErrorResponse::class.java)
+            Log.e("ArticleAddRepository", "Error: ${e.message}")
+            throw Exception(errorBody.message)
+        }
+    }
+
+    suspend fun getArticleDetail(id: String): ArticleDetailResponse {
+        return try {
+            val response = apiService.getArticleDetail(id)
+            Log.d("ArticleRepository", "Success: $response")
+            response
+        } catch (e: HttpException) {
+            val jsonInString = e.response()?.errorBody()?.string()
+            val errorBody = Gson().fromJson(jsonInString, ErrorResponse::class.java)
+            Log.e("ArticleRepository", "Error: ${e.message}")
+            throw Exception(errorBody.message)
+        }
+    }
 
 
 

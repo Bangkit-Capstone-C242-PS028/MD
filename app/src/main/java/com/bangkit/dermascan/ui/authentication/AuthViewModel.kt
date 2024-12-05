@@ -129,10 +129,16 @@ class AuthViewModel @Inject constructor(private val repository: UserRepository, 
             }
         }
     }
+    private val _signInStatus = MutableStateFlow<Result<Boolean>>(Result.Idle)
+//    val signInStatus: StateFlow<Result<Boolean>> = _signInStatus
 
-    fun signIn(email: String, pass: String, callback: (String?) -> Unit) {
+    // Mengonversi StateFlow menjadi LiveData
+    val signInStatusLiveData: LiveData<Result<Boolean>> = _signInStatus.asLiveData()
+
+    fun signIn(email: String, pass: String) {
         viewModelScope.launch {
             try {
+                _signInStatus.value = Result.Loading
                 firebaseAuth.signInWithEmailAndPassword(email, pass)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
@@ -143,52 +149,46 @@ class AuthViewModel @Inject constructor(private val repository: UserRepository, 
                                     Log.d("AccessToken", "Bearer $idToken")
                                     Log.d("User Name", "User : $userName")
 
-                                    // Gunakan suspend function untuk saveSession
                                     viewModelScope.launch {
                                         saveSession(UserModel(email = email, token = idToken.toString(), isLogin = true))
-
-                                        // Tunggu sebentar untuk memastikan session tersimpan
-                                        delay(1000L) // Bisa disesuaikan kebutuhannya
+                                        delay(1000L)
 
                                         fetchUserDetail { result ->
                                             when (result) {
                                                 is Result.Success -> {
-                                                    try {
-                                                        val userData = UserModel(
-                                                            uid = result.data.uid ?: "",
-                                                            firstName = result.data.firstName ?: "",
-                                                            lastName = result.data.lastName ?: "",
-                                                            role = result.data.role ?: "",
-                                                            dob = result.data.dob ?: "",
-                                                            address = result.data.address ?: "",
-                                                            email = result.data.email ?: "",
-                                                            specialization = result.data.doctor?.specialization ?: "Not Doctor",
-                                                            workplace = result.data.doctor?.workplace ?: "Not Doctor"
-                                                        )
-                                                        Log.d("UserData Ayam Ayam", userData.toString())
-                                                        saveUserData(userData)
-                                                    } catch (saveError: Exception) {
-                                                        Log.e("SaveUserData", "Error saving user data: ${saveError.localizedMessage}")
-                                                    }
+                                                    val userData = UserModel(
+                                                        uid = result.data.uid ?: "",
+                                                        firstName = result.data.firstName ?: "",
+                                                        lastName = result.data.lastName ?: "",
+                                                        role = result.data.role ?: "",
+                                                        dob = result.data.dob ?: "",
+                                                        address = result.data.address ?: "",
+                                                        email = result.data.email ?: "",
+                                                        specialization = result.data.doctor?.specialization ?: "Not Doctor",
+                                                        workplace = result.data.doctor?.workplace ?: "Not Doctor"
+                                                    )
+                                                    saveUserData(userData)
+                                                    _signInStatus.value = Result.Success(true)  // Sign-in berhasil
                                                 }
                                                 is Result.Error -> {
                                                     Log.e("FetchUserDetail", "Error fetching user details: ${result.message}")
+                                                    _signInStatus.value = Result.Error("Error fetching user details")
                                                 }
-                                                else -> {}
+
+                                                Result.Idle -> {}
+                                                Result.Loading -> {}
                                             }
                                         }
-
-                                        callback(idToken)
                                     }
                                 }
                         } else {
                             Log.e("AccessToken", "Sign in failed: ${task.exception?.message}")
-                            callback(null)
+                            _signInStatus.value = Result.Error("Sign-in failed")
                         }
                     }
             } catch (e: Exception) {
                 Log.e("SignInError", "Error during sign-in: ${e.localizedMessage}")
-                callback(null)
+                _signInStatus.value = Result.Error("Error during sign-in")
             }
         }
     }

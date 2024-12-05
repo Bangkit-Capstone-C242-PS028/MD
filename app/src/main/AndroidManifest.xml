@@ -45,6 +45,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ui.article.ArticleActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.articleDetail.ArticleDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.articleAdd.ArticleAddActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>

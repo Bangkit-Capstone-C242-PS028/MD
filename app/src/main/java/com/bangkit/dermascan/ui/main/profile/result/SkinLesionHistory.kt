@@ -155,8 +155,7 @@ fun SkinLesionItem(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Display processed image if available, otherwise original image
-        val imageUrl = skinLesion.processedImageUrl.takeIf { it.isNotEmpty() }
-            ?: skinLesion.originalImageUrl
+        val imageUrl = skinLesion.processedImageUrl
 
         // Image using Glide with AndroidView
         AsyncImage(

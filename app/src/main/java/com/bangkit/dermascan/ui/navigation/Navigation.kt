@@ -8,16 +8,22 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.bangkit.dermascan.ui.main.MainScreen
 import com.bangkit.dermascan.ui.onBoard.OnBoardScreen
 import com.bangkit.dermascan.ui.authentication.register.RegisterScreen
 import androidx.navigation.compose.composable
+import com.bangkit.dermascan.ui.authentication.AuthViewModel
 import com.bangkit.dermascan.ui.main.profile.editProfile.EditProfileScreen
 //import com.bangkit.dermascan.ui.home.ButtonWithCustomColor
 //import com.bangkit.dermascan.ui.home.HomeScreen
 import com.bangkit.dermascan.ui.authentication.login.LoginScreen
+import com.bangkit.dermascan.ui.main.feeds.ArticleAddScreen
+import com.bangkit.dermascan.ui.main.feeds.FeedsScreen
 import com.bangkit.dermascan.ui.main.profile.result.SkinLesionHistoryScreen
 import com.bangkit.dermascan.ui.main.scan.ScanScreen
 import com.bangkit.dermascan.ui.splashScreen.SplashScreen
@@ -27,7 +33,8 @@ import com.bangkit.dermascan.ui.main.scan.upload.UploadScreen
 @Composable
 fun AppNavHost(navController: NavHostController) {
     val sharedViewModel = SharedViewModel()
-
+    val viewModel : AuthViewModel = hiltViewModel()
+    val roles by viewModel.roles.observeAsState("PATIENT")
     NavHost(navController, startDestination = "splash") {
         composable(
             "splash",
@@ -156,6 +163,14 @@ fun AppNavHost(navController: NavHostController) {
 
         composable("skinLesionHistory") {
             SkinLesionHistoryScreen(navController)
+        }
+
+        composable("article") {
+            FeedsScreen(navController,roles = roles)
+        }
+
+        composable("articleAdd") {
+            ArticleAddScreen(navController)
         }
     }
 }

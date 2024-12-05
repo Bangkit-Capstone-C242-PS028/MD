@@ -1,11 +1,14 @@
+
 package com.bangkit.dermascan.ui.main
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -18,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
@@ -33,10 +37,14 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.platform.LocalContext
+
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.bangkit.dermascan.ui.article.ArticleActivity
 import com.bangkit.dermascan.ui.authentication.AuthViewModel
+
 import com.bangkit.dermascan.ui.navigation.AppNavHost
 //import com.bangkit.dermascan.ui.scan.PhotoActivity
 import com.bangkit.dermascan.ui.theme.*
@@ -75,7 +83,7 @@ fun MainScreen(context: Context, navController: NavHostController) {
     val authViewModel: AuthViewModel = hiltViewModel()
     val roles by authViewModel.roles.observeAsState("PATIENT")
 
-    Toast.makeText(context, "Welcome Back $roles", Toast.LENGTH_SHORT).show()
+//    Toast.makeText(context, "Welcome Back $roles", Toast.LENGTH_SHORT).show()
 
 
     val items = mutableListOf(
@@ -262,7 +270,15 @@ fun MainScreen(context: Context, navController: NavHostController) {
             if (roles != "DOCTOR") {
                 when (selectedItem) {
                     0 -> HomeScreen(navController)
-                    1 -> FeedsScreen()
+//                    1 -> {
+//                        // Navigasi ke ArticleActivity menggunakan Context
+//                        val context = LocalContext.current
+//                        LaunchedEffect(Unit) {
+//                            val intent = Intent(context, ArticleActivity::class.java)
+//                            context.startActivity(intent)
+//                        }
+//                    }
+                    1 ->      FeedsScreen(navController, roles)
                     2 -> ScanScreen(
                         viewModel = SharedViewModel(),
                         onBackClick = { navController.navigateUp() },
@@ -274,7 +290,15 @@ fun MainScreen(context: Context, navController: NavHostController) {
             }else{
                 when (selectedItem) {
 //                    0 -> HomeScreen(navController)
-                    0 -> FeedsScreen()
+                    0 -> FeedsScreen(navController, roles)
+//                    0 -> {
+//                        // Navigasi ke ArticleActivity menggunakan Context
+//                        val context = LocalContext.current
+//                        LaunchedEffect(Unit) {
+//                            val intent = Intent(context, ArticleActivity::class.java)
+//                            context.startActivity(intent)
+//                        }
+//                    }
                     1 -> ChatScreen()
                     2 -> ProfileScreen(navController)
                 }

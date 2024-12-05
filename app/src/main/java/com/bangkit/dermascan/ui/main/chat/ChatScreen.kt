@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -98,7 +99,8 @@ fun ChatScreen() {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 8.dp) // Padding vertikal untuk memberi jarak antara input dan tombol
+                .padding(vertical = 8.dp)
+                .imePadding()// Padding vertikal untuk memberi jarak antara input dan tombol
             ,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -109,7 +111,8 @@ fun ChatScreen() {
                 label = "Masukkan pesan",
                 modifier = Modifier
                     .weight(1f)
-                    .padding(end = 8.dp) // Memberikan jarak antara input dan tombol kirim
+                    .padding(end = 8.dp)
+//                    .imePadding()// Memberikan jarak antara input dan tombol kirim
             )
 
             // Tombol Kirim
