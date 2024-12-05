@@ -17,6 +17,7 @@ import com.bangkit.dermascan.data.model.response.ArticleDetailResponse
 import com.bangkit.dermascan.data.model.response.ArticleResponse
 import com.bangkit.dermascan.data.model.response.BaseResponse
 import com.bangkit.dermascan.data.model.response.ErrorResponse
+import com.bangkit.dermascan.data.model.response.FileUploadResponse
 import com.bangkit.dermascan.data.model.response.LoginRequest
 import com.bangkit.dermascan.data.model.response.LoginResponse
 import com.bangkit.dermascan.data.model.response.SkinLesionItem
@@ -264,7 +265,7 @@ class ApiRepository(private val apiService: ApiService) {
         title: RequestBody,
         content: RequestBody,
         image: MultipartBody.Part
-    ): ArticleResponse {
+    ): FileUploadResponse {
         return try {
             val response = apiService.createArticle(title, content, image)
             Log.d("ArticleAddRepository", "Success: $response")

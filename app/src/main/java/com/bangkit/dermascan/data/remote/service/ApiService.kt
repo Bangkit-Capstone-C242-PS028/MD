@@ -10,6 +10,7 @@ import com.bangkit.dermascan.data.model.response.ArticleDetailResponse
 import com.bangkit.dermascan.data.model.response.ArticleResponse
 //import com.bangkit.dermascan.data.model.response.ArticlesResponse
 import com.bangkit.dermascan.data.model.response.BaseResponse
+import com.bangkit.dermascan.data.model.response.FileUploadResponse
 //import com.bangkit.dermascan.data.model.response.DataArticles
 import com.bangkit.dermascan.data.model.response.ForumCreatedResponse
 import com.bangkit.dermascan.data.model.response.ForumData
@@ -118,7 +119,7 @@ interface ApiService {
         @Part("title") title: RequestBody,
         @Part("content") content: RequestBody,
         @Part image: MultipartBody.Part
-    ): ArticleResponse
+    ): FileUploadResponse
 
     //FORUMS
     @POST("forums")
