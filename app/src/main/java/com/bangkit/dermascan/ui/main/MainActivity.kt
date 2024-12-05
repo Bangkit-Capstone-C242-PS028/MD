@@ -270,15 +270,15 @@ fun MainScreen(context: Context, navController: NavHostController) {
             if (roles != "DOCTOR") {
                 when (selectedItem) {
                     0 -> HomeScreen(navController)
-                    1 -> {
-                        // Navigasi ke ArticleActivity menggunakan Context
-                        val context = LocalContext.current
-                        LaunchedEffect(Unit) {
-                            val intent = Intent(context, ArticleActivity::class.java)
-                            context.startActivity(intent)
-                        }
-                    }
-//                        FeedsScreen()
+//                    1 -> {
+//                        // Navigasi ke ArticleActivity menggunakan Context
+//                        val context = LocalContext.current
+//                        LaunchedEffect(Unit) {
+//                            val intent = Intent(context, ArticleActivity::class.java)
+//                            context.startActivity(intent)
+//                        }
+//                    }
+                    1 ->      FeedsScreen(navController, roles)
                     2 -> ScanScreen(
                         viewModel = SharedViewModel(),
                         onBackClick = { navController.navigateUp() },
@@ -290,15 +290,15 @@ fun MainScreen(context: Context, navController: NavHostController) {
             }else{
                 when (selectedItem) {
 //                    0 -> HomeScreen(navController)
-//                    0 -> FeedsScreen()
-                    0 -> {
-                        // Navigasi ke ArticleActivity menggunakan Context
-                        val context = LocalContext.current
-                        LaunchedEffect(Unit) {
-                            val intent = Intent(context, ArticleActivity::class.java)
-                            context.startActivity(intent)
-                        }
-                    }
+                    0 -> FeedsScreen(navController, roles)
+//                    0 -> {
+//                        // Navigasi ke ArticleActivity menggunakan Context
+//                        val context = LocalContext.current
+//                        LaunchedEffect(Unit) {
+//                            val intent = Intent(context, ArticleActivity::class.java)
+//                            context.startActivity(intent)
+//                        }
+//                    }
                     1 -> ChatScreen()
                     2 -> ProfileScreen(navController)
                 }
