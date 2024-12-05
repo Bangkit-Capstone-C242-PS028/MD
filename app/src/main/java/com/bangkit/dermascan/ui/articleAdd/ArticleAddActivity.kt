@@ -15,15 +15,21 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.ui.platform.ComposeView
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.bangkit.dermascan.R
 import com.bangkit.dermascan.databinding.ActivityArticleAddBinding
 import com.bangkit.dermascan.ui.ViewModelFactory
 import com.bangkit.dermascan.ui.article.ArticleActivity
 import com.bangkit.dermascan.ui.article.ArticleViewModel
+import com.bangkit.dermascan.ui.main.MainActivity
+import com.bangkit.dermascan.ui.navigation.AppNavHost
 import com.bangkit.dermascan.util.getImageUri
 import com.bangkit.dermascan.util.reduceFileImage
 import com.bangkit.dermascan.util.uriToFile
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
@@ -32,20 +38,19 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import java.time.Instant
 import java.time.format.DateTimeFormatter
 
+@AndroidEntryPoint
 class ArticleAddActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityArticleAddBinding
-    private val viewModel by viewModels<ArticleAddViewModel> {
-        ViewModelFactory.getInstance(this)
-    }
+    private lateinit var navController: NavHostController
+
+    private val viewModel: ArticleAddViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityArticleAddBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-//        setSupportActionBar(binding.toolbar)
-//        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         viewModel.currentImageUri.observe(this) { uri ->
             uri?.let {
@@ -57,9 +62,10 @@ class ArticleAddActivity : AppCompatActivity() {
             showLoading(false)
             if (isSuccess) {
                 showToast(getString(R.string.article_uploaded))
-                val intent = Intent(this, ArticleActivity::class.java)
+                val intent = Intent(this, MainActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                 startActivity(intent)
+//                navController.navigate("main")
             } else {
                 viewModel.errorMessage.value?.let { showToast(it) }
             }
@@ -99,7 +105,7 @@ class ArticleAddActivity : AppCompatActivity() {
         launcherGallery.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }
 
-    private val launcherGallery = registerForActivityResult(
+    val launcherGallery = registerForActivityResult(
         ActivityResultContracts.PickVisualMedia()
     ) { uri: Uri? ->
         if (uri != null) {
@@ -115,7 +121,7 @@ class ArticleAddActivity : AppCompatActivity() {
         launcherIntentCamera.launch(viewModel.currentImageUri.value!!)
     }
 
-    private val launcherIntentCamera = registerForActivityResult(
+    val launcherIntentCamera = registerForActivityResult(
         ActivityResultContracts.TakePicture()
     ) { isSuccess ->
         if (isSuccess) {
@@ -125,7 +131,7 @@ class ArticleAddActivity : AppCompatActivity() {
         }
     }
 
-    private suspend fun uploadArticle() {
+    suspend fun uploadArticle() {
         val imageFile = uriToFile(viewModel.currentImageUri.value!!, this).reduceFileImage()
         val title = binding.edAddTitle.editText?.text.toString()
         val content = binding.edAddContent.editText?.text.toString()

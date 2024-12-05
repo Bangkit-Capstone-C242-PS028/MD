@@ -1,17 +1,27 @@
 package com.bangkit.dermascan.ui.articleAdd
 
 import UserPreference
+import android.content.Context
 import android.net.Uri
+import android.util.Log
+import androidx.activity.ComponentActivity
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bangkit.dermascan.data.repository.ApiRepository
+import dagger.hilt.android.HiltAndroidApp
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import javax.inject.Inject
 
-class ArticleAddViewModel(
+@HiltViewModel
+class ArticleAddViewModel @Inject constructor(
     private val apiRepository: ApiRepository
 ) : ViewModel() {
 
@@ -50,5 +60,27 @@ class ArticleAddViewModel(
 
     fun setImageUri(uri: Uri?) {
         _currentImageUri.value = uri
+    }
+
+    fun handleImageSelection(context: Context): ActivityResultLauncher<PickVisualMediaRequest> {
+        return (context as? ComponentActivity)?.registerForActivityResult(
+            ActivityResultContracts.PickVisualMedia()
+        ) { uri: Uri? ->
+            if (uri != null) {
+                setImageUri(uri)
+            } else {
+                Log.d("ArticleAddViewModel", "Image uri is null")
+            }
+        } ?: throw IllegalStateException("Context must be an Activity")
+    }
+
+    fun handleCameraCapture(context: Context): ActivityResultLauncher<Uri> {
+        return (context as? ComponentActivity)?.registerForActivityResult(
+            ActivityResultContracts.TakePicture()
+        ) { isSuccess ->
+            if (!isSuccess) {
+                setImageUri(null)
+            }
+        } ?: throw IllegalStateException("Context must be an Activity")
     }
 }
