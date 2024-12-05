@@ -10,5 +10,4 @@ fun EditProfileScreen(){
     val editProfileViewModel : EditProfileViewModel = hiltViewModel()
 
 
-//    val user by authViewModel.user.observeAsState()
 }

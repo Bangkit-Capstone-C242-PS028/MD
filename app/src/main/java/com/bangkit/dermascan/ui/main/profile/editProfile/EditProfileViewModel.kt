@@ -10,10 +10,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EditProfileViewModel @Inject constructor(val api: ApiRepository) : ViewModel() {
-    fun updateProfile(userRequest: UserRequest) {
-        viewModelScope.launch {
-            api.updateUser(userRequest)
-
-        }
-    }
+//    fun updateProfile(userRequest: UserRequest) {
+//        viewModelScope.launch {
+//            api.updateUser(userRequest)
+//
+//        }
+//    }
 }
