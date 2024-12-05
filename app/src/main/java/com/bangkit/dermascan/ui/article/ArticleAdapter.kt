@@ -53,6 +53,7 @@ class ArticleAdapter : ListAdapter<ArticleItem, ArticleAdapter.ViewHolder>(DIFF_
                 )
 
             val context = holder.itemView.context
+
             val intent = Intent(context, ArticleDetailActivity::class.java)
             intent.putExtra(ArticleDetailActivity.EXTRA_ARTICLE_ID, article.id)
             startActivity(context, intent, optionsCompat.toBundle())
