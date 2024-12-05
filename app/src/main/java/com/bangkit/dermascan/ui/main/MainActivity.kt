@@ -270,15 +270,15 @@ fun MainScreen(context: Context, navController: NavHostController) {
             if (roles != "DOCTOR") {
                 when (selectedItem) {
                     0 -> HomeScreen(navController)
-//                    1 -> {
-//                        // Navigasi ke ArticleActivity menggunakan Context
-//                        val context = LocalContext.current
-//                        LaunchedEffect(Unit) {
-//                            val intent = Intent(context, ArticleActivity::class.java)
-//                            context.startActivity(intent)
-//                        }
-//                    }
-                    1 ->    FeedsScreen()
+                    1 -> {
+                        // Navigasi ke ArticleActivity menggunakan Context
+                        val context = LocalContext.current
+                        LaunchedEffect(Unit) {
+                            val intent = Intent(context, ArticleActivity::class.java)
+                            context.startActivity(intent)
+                        }
+                    }
+//                        FeedsScreen()
                     2 -> ScanScreen(
                         viewModel = SharedViewModel(),
                         onBackClick = { navController.navigateUp() },
