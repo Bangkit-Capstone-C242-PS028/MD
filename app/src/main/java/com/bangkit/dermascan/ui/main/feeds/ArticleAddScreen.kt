@@ -100,7 +100,7 @@ fun ArticleAdd(navController: NavController) {
         factory = { _ ->
             val binding = ActivityArticleAddBinding.inflate(LayoutInflater.from(context))
             val view = binding.root
-
+            binding.previewImageView.setImageResource(R.drawable.ic_place_holder)
 
 //            launcherGallery = viewModel.handleImageSelection(context)
 //            launcherIntentCamera = viewModel.handleCameraCapture(context)
@@ -131,8 +131,10 @@ fun ArticleAdd(navController: NavController) {
 
             // Observer untuk currentImageUri
             viewModel.currentImageUri.observe(context as LifecycleOwner) { uri ->
-                uri?.let {
-                    binding.previewImageView.setImageURI(it)
+                if (uri != null) {
+                    binding.previewImageView.setImageURI(uri)
+                } else {
+                    binding.previewImageView.setImageResource(R.drawable.ic_place_holder)
                 }
             }
 

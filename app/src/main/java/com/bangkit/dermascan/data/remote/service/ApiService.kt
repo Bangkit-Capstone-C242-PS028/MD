@@ -68,8 +68,16 @@ interface ApiService {
     @GET("users/me")
     suspend fun getUserDetail(): Response<UserResponse>
 
+//    @PATCH("users/me")
+//    suspend fun updateDataUser(@Body userRequest: UserRequest): Response<BaseResponse<UserData>>
+    @Multipart
     @PATCH("users/me")
-    suspend fun updateDataUser(@Body userRequest: UserRequest): Response<BaseResponse<UserData>>
+    suspend fun updateUser(
+        @Part("firstName") firstName: RequestBody?=null,
+        @Part("lastName") lastName: RequestBody?=null,
+        @Part("address") address: RequestBody?=null,
+        @Part image: MultipartBody.Part?=null // Gambar opsional
+    ): Response<UserResponse>
 
     @DELETE("users/me")
     suspend fun deleteUser(): UserResponse

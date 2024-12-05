@@ -26,6 +26,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        tools:layout_editor_absoluteX="0dp"
+        android:paddingBottom="14dp"
         tools:listitem="@layout/item_article_card" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -34,13 +36,13 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="24dp"
-        android:backgroundTint="@color/blue"
+        android:backgroundTint="@color/light_blue"
         android:contentDescription="@string/fab_addarticle_content_desc"
         android:src="@drawable/ic_add"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:rippleColor="@color/white"
-        app:tint="@color/white" />
+        app:rippleColor="@color/blue"
+        app:tint="@color/blue" />
 
     <ProgressBar
         android:id="@+id/progressBar"

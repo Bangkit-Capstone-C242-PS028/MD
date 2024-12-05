@@ -51,15 +51,16 @@
         <ImageView
             android:id="@+id/ivIcon"
             android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_height="27dp"
+
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
 
             android:contentDescription="@string/persondesc"
-            app:layout_constraintEnd_toStartOf="@+id/tvNamecard"
-
-            android:layout_marginTop="28dp"
             android:src="@drawable/person"
-            app:layout_constraintHorizontal_bias="0.842"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvTitlecard"
+            app:layout_constraintVertical_bias="0.0"
             card_view:layout_constraintStart_toStartOf="parent" />
 
         <TextView
@@ -67,21 +68,23 @@
             android:layout_width="164dp"
             android:layout_height="28dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="24dp"
             android:textColor="@android:color/white"
             android:textSize="18sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/tvTimecard"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/ivIcon"
             app:layout_constraintTop_toBottomOf="@+id/tvTitlecard"
+            app:layout_constraintVertical_bias="0.0"
+            tools:ignore="MissingConstraints"
             tools:text="nama" />
 
         <TextView
             android:id="@+id/tvTimecard"
             android:layout_width="135dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:gravity="end"
             android:layout_height="28dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="1dp"
+            android:gravity="end"
             android:textColor="@android:color/white"
             android:textSize="18sp"
             android:textStyle="bold"
