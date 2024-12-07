@@ -16,4 +16,33 @@ class EditProfileViewModel @Inject constructor(val api: ApiRepository) : ViewMod
 //
 //        }
 //    }
+    private val _updateUserResult = MutableLiveData<Result<UserResponse>>(Result.Idle)
+    val updateUserResult: LiveData<Result<UserResponse>> get() = _updateUserResult
+
+    fun updateUser(firstname: String?, lastname: String?, address: String?, imgFile: File?) {
+        viewModelScope.launch {
+            if (imgFile != null) {
+                // Proses dengan gambar
+                // Emit loading state
+                _updateUserResult.value = Result.Loading
+
+                // Call repository function
+                val result = api.updateUser(firstname, lastname, address, imgFile)
+
+                // Emit result
+                _updateUserResult.value = result
+            } else {
+                // Proses tanpa gambar
+                // Emit loading state
+                _updateUserResult.value = Result.Loading
+
+                // Call repository function
+                val result = api.updateUser(firstname = firstname, lastname = lastname, address = address)
+
+                // Emit result
+                _updateUserResult.value = result
+            }
+
+        }
+    }
 }

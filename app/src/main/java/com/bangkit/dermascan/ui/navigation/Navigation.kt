@@ -158,7 +158,6 @@ fun AppNavHost(navController: NavHostController) {
                 fadeOut(animationSpec = tween(300))
             }
         ) {
-            EditProfileScreen()
         }
 
         composable("skinLesionHistory") {

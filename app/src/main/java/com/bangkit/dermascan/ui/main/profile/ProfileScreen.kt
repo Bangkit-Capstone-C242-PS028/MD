@@ -13,16 +13,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.History
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Divider
@@ -110,15 +107,15 @@ fun ProfileScreen(navController: NavController) {
                 )
             }
 
-            item {
-                ProfileMenuItem(
-                    icon = Icons.Default.Lock,
-                    title = "Change Password",
-                    onClick = {
-                        navController.navigate("changePassword")
-                    }
-                )
-            }
+//            item {
+//                ProfileMenuItem(
+//                    icon = Icons.Default.Lock,
+//                    title = "Change Password",
+//                    onClick = {
+//                        navController.navigate("changePassword")
+//                    }
+//                )
+//            }
 
             item {
                 ProfileMenuItem(
@@ -146,8 +143,6 @@ fun ProfileHeader(viewModel: AuthViewModel) {
         var showFullImage by remember { mutableStateOf(false) }
         // Gantikan Icon dengan AsyncImage untuk memuat gambar profil
         val userSession by viewModel.getSession().observeAsState()
-        val profileImageUrl: String? = "https://c4.wallpaperflare.com/wallpaper/362/276/920/nature-4k-pc-full-hd-wallpaper-thumb.jpg"  // Ambil URL gambar profil dari session
-
         if (!profileImageUrl.isNullOrBlank()) {
             // Jika URL gambar valid (tidak null atau kosong), tampilkan gambar profil
             AsyncImage(
@@ -192,13 +187,14 @@ fun ProfileHeader(viewModel: AuthViewModel) {
         Spacer(modifier = Modifier.height(8.dp))
 
         if (userSession?.firstName != null && userSession?.lastName != null) {
+
+//            val point = userData?.point
             Text(
                 text = " ${userSession!!.firstName} ${userSession!!.lastName}",
                 style = Typography.bodyMedium,
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = userSession!!.email,
                 style = Typography.bodyMedium
             )
         }

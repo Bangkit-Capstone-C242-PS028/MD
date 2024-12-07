@@ -29,7 +29,6 @@ data class UserData(
     @SerializedName("points") val points: Int,
     @SerializedName("doctor") val doctor: DoctorData?=null,   // Bisa null jika role adalah PATIENT
     @SerializedName("patient") val patient: PatientData?=null,  // Bisa null jika role adalah DOCTOR
-    @SerializedName("point") val point: Int ?= 0
 )
 
 data class DoctorData(

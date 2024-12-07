@@ -79,6 +79,11 @@ interface ApiService {
         @Part image: MultipartBody.Part?=null // Gambar opsional
     ): Response<UserResponse>
 
+
+//    @PATCH("users/me")
+//    suspend fun updateDataUser(@Body userRequest: UserRequest): Response<BaseResponse<UserData>>
+
+
     @DELETE("users/me")
     suspend fun deleteUser(): UserResponse
 
