@@ -22,8 +22,8 @@ import com.bangkit.dermascan.ui.main.profile.editProfile.EditProfileScreen
 //import com.bangkit.dermascan.ui.home.ButtonWithCustomColor
 //import com.bangkit.dermascan.ui.home.HomeScreen
 import com.bangkit.dermascan.ui.authentication.login.LoginScreen
-import com.bangkit.dermascan.ui.main.feeds.ArticleAddScreen
-import com.bangkit.dermascan.ui.main.feeds.FeedsScreen
+//import com.bangkit.dermascan.ui.main.feeds.ArticleAddScreen
+//import com.bangkit.dermascan.ui.main.feeds.FeedsScreen
 import com.bangkit.dermascan.ui.main.profile.result.SkinLesionHistoryScreen
 import com.bangkit.dermascan.ui.main.scan.ScanScreen
 import com.bangkit.dermascan.ui.splashScreen.SplashScreen
@@ -165,13 +165,13 @@ fun AppNavHost(navController: NavHostController) {
             SkinLesionHistoryScreen(navController)
         }
 
-        composable("article") {
-            FeedsScreen(navController,roles = roles)
-        }
-
-        composable("articleAdd") {
-            ArticleAddScreen(navController)
-        }
+//        composable("article") {
+//            FeedsScreen(navController,roles = roles)
+//        }
+//
+//        composable("articleAdd") {
+//            ArticleAddScreen(navController)
+//        }
     }
 }
 

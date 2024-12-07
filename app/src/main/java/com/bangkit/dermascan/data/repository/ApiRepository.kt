@@ -10,14 +10,21 @@ import com.bangkit.dermascan.util.Result
 import com.bangkit.dermascan.util.*
 //import com.bangkit.dermascan.dataArticles.local.UserData
 import com.bangkit.dermascan.data.model.requestBody.AuthRequest
+import com.bangkit.dermascan.data.model.requestBody.CreateForumReplyRequest
 import com.bangkit.dermascan.data.model.requestBody.DoctorSignupRequest
+import com.bangkit.dermascan.data.model.requestBody.ForumRequest
 import com.bangkit.dermascan.data.model.requestBody.UserRequest
 
 import com.bangkit.dermascan.data.model.response.ArticleDetailResponse
 import com.bangkit.dermascan.data.model.response.ArticleResponse
 import com.bangkit.dermascan.data.model.response.BaseResponse
+import com.bangkit.dermascan.data.model.response.CreateForumReplyResponse
 import com.bangkit.dermascan.data.model.response.ErrorResponse
 import com.bangkit.dermascan.data.model.response.FileUploadResponse
+import com.bangkit.dermascan.data.model.response.ForumDetailResponse
+import com.bangkit.dermascan.data.model.response.ForumRepliesResponse
+import com.bangkit.dermascan.data.model.response.ForumResponse
+import com.bangkit.dermascan.data.model.response.ForumUploadResponse
 import com.bangkit.dermascan.data.model.response.LoginRequest
 import com.bangkit.dermascan.data.model.response.LoginResponse
 import com.bangkit.dermascan.data.model.response.SkinLesionItem
@@ -28,6 +35,7 @@ import com.bangkit.dermascan.data.model.response.UserData
 import com.bangkit.dermascan.data.model.response.UserResponse
 import com.bangkit.dermascan.data.remote.service.ApiService
 import com.google.gson.Gson
+import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -321,6 +329,101 @@ class ApiRepository(private val apiService: ApiService) {
             val jsonInString = e.response()?.errorBody()?.string()
             val errorBody = Gson().fromJson(jsonInString, ErrorResponse::class.java)
             Log.e("ArticleRepository", "Error: ${e.message}")
+            throw Exception(errorBody.message)
+        }
+    }
+
+    suspend fun createForum(forumRequest: ForumRequest): ForumUploadResponse {
+        return try {
+            // Log request details
+            Log.d("ForumAddRepository", "Sending forum creation request")
+            Log.d("ForumAddRepository", "Title: ${forumRequest.title}")
+            Log.d("ForumAddRepository", "Content: ${forumRequest.content}")
+
+            val response = apiService.createForum(forumRequest)
+
+            // Log full response details
+            Log.d("ForumAddRepository", "Response received")
+            Log.d("ForumAddRepository", "Status Code: ${response.statusCode}")
+            Log.d("ForumAddRepository", "Message: ${response.message}")
+            Log.d("ForumAddRepository", "Forum ID: ${response.data.forumId}")
+
+            response
+        } catch (e: HttpException) {
+            // Log HTTP exception details
+            Log.e("ForumAddRepository", "HTTP Exception: ${e.code()}")
+            val errorBody = e.response()?.errorBody()?.string()
+            Log.e("ForumAddRepository", "Error Body: $errorBody")
+
+            throw Exception(errorBody ?: e.message())
+        } catch (e: Exception) {
+            // Log any other exceptions
+            Log.e("ForumAddRepository", "General Exception", e)
+            throw e
+        }
+    }
+
+    suspend fun getForums(): ForumResponse {
+        return try {
+            val response = apiService.getForums()
+            Log.d("ForumRepository", "Success: $response")
+            response
+        } catch (e: HttpException) {
+            val jsonInString = e.response()?.errorBody()?.string()
+            val errorBody = Gson().fromJson(jsonInString, ErrorResponse::class.java)
+            Log.e("ForumRepository", "Error: ${e.message}")
+            throw Exception(errorBody.message)
+        }
+    }
+
+    suspend fun getMyForums(): ForumResponse {
+        return try {
+            val response = apiService.getMyForums()
+            Log.d("ForumRepository", "Success: $response")
+            response
+        } catch (e: HttpException) {
+            val jsonInString = e.response()?.errorBody()?.string()
+            val errorBody = Gson().fromJson(jsonInString, ErrorResponse::class.java)
+            Log.e("ForumRepository", "Error: ${e.message}")
+            throw Exception(errorBody.message)
+        }
+    }
+
+    suspend fun getForumDetail(id: String): ForumDetailResponse {
+        return try {
+            val response = apiService.getForumDetail(id)
+            Log.d("ForumRepository", "Success: $response")
+            response
+        } catch (e: HttpException) {
+            val jsonInString = e.response()?.errorBody()?.string()
+            val errorBody = Gson().fromJson(jsonInString, ErrorResponse::class.java)
+            Log.e("ForumRepository", "Error: ${e.message}")
+            throw Exception(errorBody.message)
+        }
+    }
+
+    suspend fun createForumReply(forumId: String, content: String): CreateForumReplyResponse {
+        return try {
+            val response = apiService.createForumReply(forumId, CreateForumReplyRequest(content))
+            Log.d("ForumRepository", "Reply created: $response")
+            response
+        } catch (e: HttpException) {
+            val jsonInString = e.response()?.errorBody()?.string()
+            val errorBody = Gson().fromJson(jsonInString, ErrorResponse::class.java)
+            Log.e("ForumRepository", "Error creating reply: ${e.message}")
+            throw Exception(errorBody.message)
+        }
+    }
+
+    suspend fun getForumReplies(forumId: String, page: Int = 1, limit: Int = 10): ForumRepliesResponse {
+        return try {
+            val response = apiService.getForumReplies(forumId, page, limit)
+            Log.d("ForumRepository", "Forum replies retrieved: $response")
+            response
+        } catch (e: HttpException) {
+            val jsonInString = e.response()?.errorBody()?.string()
+            val errorBody = Gson().fromJson(jsonInString, ErrorResponse::class.java)
+            Log.e("ForumRepository", "Error retrieving replies: ${e.message}")
             throw Exception(errorBody.message)
         }
     }

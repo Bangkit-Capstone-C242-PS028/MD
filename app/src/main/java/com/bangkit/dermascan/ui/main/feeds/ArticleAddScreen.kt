@@ -1,3 +1,4 @@
+
 package com.bangkit.dermascan.ui.main.feeds
 
 import android.annotation.SuppressLint
@@ -195,6 +196,5 @@ fun ActivityArticleAddBinding.showLoading(isLoading: Boolean) {
 fun Context.showToast(message: String) {
     Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 }
-
 
 
