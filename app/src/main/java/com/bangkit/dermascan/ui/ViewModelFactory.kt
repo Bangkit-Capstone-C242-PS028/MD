@@ -10,6 +10,9 @@ import com.bangkit.dermascan.di.Injection
 import com.bangkit.dermascan.ui.article.ArticleViewModel
 import com.bangkit.dermascan.ui.articleAdd.ArticleAddViewModel
 import com.bangkit.dermascan.ui.articleDetail.ArticleDetailViewModel
+import com.bangkit.dermascan.ui.forum.ForumViewModel
+import com.bangkit.dermascan.ui.forumAdd.ForumAddViewModel
+import com.bangkit.dermascan.ui.forumDetail.ForumDetailViewModel
 
 import com.bangkit.dermascan.ui.main.MainViewModel
 
@@ -44,6 +47,17 @@ class ViewModelFactory(private val repository: UserRepository, private val apiRe
 
             modelClass.isAssignableFrom(ArticleAddViewModel::class.java) -> {
                 ArticleAddViewModel(apiRepository) as T
+            }
+            modelClass.isAssignableFrom(ForumViewModel::class.java) -> {
+                ForumViewModel(apiRepository) as T
+            }
+
+            modelClass.isAssignableFrom(ForumDetailViewModel::class.java) -> {
+                ForumDetailViewModel(apiRepository) as T
+            }
+
+            modelClass.isAssignableFrom(ForumAddViewModel::class.java) -> {
+                ForumAddViewModel(apiRepository) as T
             }
 
             else -> throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)

@@ -55,6 +55,15 @@
         <activity
             android:name=".ui.articleAdd.ArticleAddActivity"
             android:exported="false" />
+        <activity
+            android:name=".ui.forum.ForumActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.forumAdd.ForumAddActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.forumDetail.ForumDetailActivity"
+            android:exported="false" />
 
     </application>
 

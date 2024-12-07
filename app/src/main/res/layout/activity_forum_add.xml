@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    tools:context=".ui.articleAdd.ArticleAddActivity">
+    tools:context=".ui.forumAdd.ForumAddActivity">
 
 
 
@@ -45,6 +45,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
+            android:visibility="gone"
             android:contentDescription="@string/uploaded_image_content_description"
             app:layout_constraintBottom_toTopOf="@+id/cameraButton"
             app:layout_constraintEnd_toEndOf="parent"
@@ -58,6 +59,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="16dp"
             android:text="@string/camera"
+            android:visibility="gone"
             android:textColor="@color/white"
             android:theme="@style/Button.Primary"
             app:layout_constraintBottom_toBottomOf="@id/galleryButton"
@@ -74,6 +76,7 @@
             android:scaleType="fitCenter"
             android:text="@string/gallery"
             android:textColor="@color/white"
+            android:visibility="gone"
             android:theme="@style/Button.Primary"
             app:layout_constraintBottom_toTopOf="@+id/ed_add_title"
             app:layout_constraintEnd_toStartOf="@+id/cameraButton"

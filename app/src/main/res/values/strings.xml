@@ -18,4 +18,6 @@
     <string name="minute_a_go">%1$s menit yang lalu</string>
     <string name="now">Sekarang</string>
     <string name="time_is_not_available">Waktu tidak tersedia</string>
+    <string name="forum_created">Forum berhasil dibuat</string>
+    <string name="error_empty_reply">reply kosong</string>
 </resources>

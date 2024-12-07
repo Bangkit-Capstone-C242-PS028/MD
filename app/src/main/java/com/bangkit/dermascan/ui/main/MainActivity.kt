@@ -27,7 +27,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import com.bangkit.dermascan.R
 import com.bangkit.dermascan.ui.main.chat.ChatScreen
-import com.bangkit.dermascan.ui.main.feeds.FeedsScreen
+//import com.bangkit.dermascan.ui.main.feeds.FeedsScreen
 import com.bangkit.dermascan.ui.main.home.HomeScreen
 import com.bangkit.dermascan.ui.main.profile.ProfileScreen
 import com.bangkit.dermascan.ui.main.scan.ScanScreen
@@ -44,6 +44,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.bangkit.dermascan.ui.article.ArticleActivity
 import com.bangkit.dermascan.ui.authentication.AuthViewModel
+import com.bangkit.dermascan.ui.forum.ForumActivity
 
 import com.bangkit.dermascan.ui.navigation.AppNavHost
 //import com.bangkit.dermascan.ui.scan.PhotoActivity
@@ -278,7 +279,15 @@ fun MainScreen(context: Context, navController: NavHostController) {
 //                            context.startActivity(intent)
 //                        }
 //                    }
-                    1 ->      FeedsScreen(navController, roles)
+//                    1 ->      FeedsScreen(navController, roles)
+                    1 -> {
+                        // Navigasi ke ArticleActivity menggunakan Context
+                        val context = LocalContext.current
+                        LaunchedEffect(Unit) {
+                            val intent = Intent(context, ForumActivity::class.java)
+                            context.startActivity(intent)
+                        }
+                    }
                     2 -> ScanScreen(
                         viewModel = SharedViewModel(),
                         onBackClick = { navController.navigateUp() },
@@ -290,15 +299,15 @@ fun MainScreen(context: Context, navController: NavHostController) {
             }else{
                 when (selectedItem) {
 //                    0 -> HomeScreen(navController)
-                    0 -> FeedsScreen(navController, roles)
-//                    0 -> {
-//                        // Navigasi ke ArticleActivity menggunakan Context
-//                        val context = LocalContext.current
-//                        LaunchedEffect(Unit) {
-//                            val intent = Intent(context, ArticleActivity::class.java)
-//                            context.startActivity(intent)
-//                        }
-//                    }
+//                    0 -> FeedsScreen(navController, roles)
+                    0 -> {
+                        // Navigasi ke ArticleActivity menggunakan Context
+                        val context = LocalContext.current
+                        LaunchedEffect(Unit) {
+                            val intent = Intent(context, ForumActivity::class.java)
+                            context.startActivity(intent)
+                        }
+                    }
                     1 -> ChatScreen()
                     2 -> ProfileScreen(navController)
                 }
