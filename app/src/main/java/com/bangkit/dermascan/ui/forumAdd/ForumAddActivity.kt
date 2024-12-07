@@ -29,48 +29,35 @@ class ForumAddActivity : AppCompatActivity() {
         binding = ActivityForumAddBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setupObservers()
+        setupButtonListener()
+    }
+
+    private fun setupObservers() {
         viewModel.uploadResult.observe(this) { isSuccess ->
             showLoading(false)
             if (isSuccess) {
                 showToast(getString(R.string.forum_created))
-                val intent = Intent(this, ForumActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                startActivity(intent)
+                navigateToForumList()
             } else {
                 viewModel.errorMessage.value?.let { showToast(it) }
             }
         }
+    }
 
+    private fun setupButtonListener() {
         binding.buttonAdd.setOnClickListener {
-            val title = binding.edAddTitle.editText?.text.toString().trim()
-            val content = binding.edAddContent.editText?.text.toString().trim()
+            val title = binding.edAddTitle.editText?.text.toString()
+            val content = binding.edAddContent.editText?.text.toString()
 
-            if (title.isNotEmpty() && content.isNotEmpty()) {
-                lifecycleScope.launch {
-                    uploadForum(title, content)
-                }
-            } else {
-                showToast("Please fill in all fields")
-            }
+            viewModel.createForum(title, content)
         }
     }
 
-    private suspend fun uploadForum(title: String, content: String) {
-        val titleRequestBody = title.toRequestBody("text/plain".toMediaTypeOrNull())
-        val contentRequestBody = content.toRequestBody("text/plain".toMediaTypeOrNull())
-        showLoading(true)
-
-        try {
-//            Log.d("ForumAddActivity", "Uploading forum")
-//            Log.d("ForumAddActivity", "Title length: ${title.length}")
-//            Log.d("ForumAddActivity", "Content length: ${content.length}")
-            Log.d("ForumAddActivity", "Uploading forum - Title: $title, Content: $content")
-            viewModel.createForum(titleRequestBody, contentRequestBody)
-        } catch (e: Exception) {
-            Log.e("ForumAddActivity", "Upload error", e)
-            showToast("Error: ${e.localizedMessage}")
-            showLoading(false)
-        }
+    private fun navigateToForumList() {
+        val intent = Intent(this, ForumActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(intent)
     }
 
     private fun showLoading(isLoading: Boolean) {

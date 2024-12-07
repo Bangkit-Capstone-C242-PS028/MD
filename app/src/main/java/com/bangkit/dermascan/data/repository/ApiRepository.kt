@@ -12,6 +12,7 @@ import com.bangkit.dermascan.util.*
 import com.bangkit.dermascan.data.model.requestBody.AuthRequest
 import com.bangkit.dermascan.data.model.requestBody.CreateForumReplyRequest
 import com.bangkit.dermascan.data.model.requestBody.DoctorSignupRequest
+import com.bangkit.dermascan.data.model.requestBody.ForumRequest
 import com.bangkit.dermascan.data.model.requestBody.UserRequest
 
 import com.bangkit.dermascan.data.model.response.ArticleDetailResponse
@@ -298,17 +299,14 @@ class ApiRepository(private val apiService: ApiService) {
         }
     }
 
-    suspend fun createForum(
-        title: RequestBody,
-        content: RequestBody
-    ): ForumUploadResponse {
+    suspend fun createForum(forumRequest: ForumRequest): ForumUploadResponse {
         return try {
             // Log request details
             Log.d("ForumAddRepository", "Sending forum creation request")
-            Log.d("ForumAddRepository", "Title: ${title.toString()}")
-            Log.d("ForumAddRepository", "Content: ${content.toString()}")
+            Log.d("ForumAddRepository", "Title: ${forumRequest.title}")
+            Log.d("ForumAddRepository", "Content: ${forumRequest.content}")
 
-            val response = apiService.createForum(title, content)
+            val response = apiService.createForum(forumRequest)
 
             // Log full response details
             Log.d("ForumAddRepository", "Response received")
@@ -316,15 +314,10 @@ class ApiRepository(private val apiService: ApiService) {
             Log.d("ForumAddRepository", "Message: ${response.message}")
             Log.d("ForumAddRepository", "Forum ID: ${response.data.forumId}")
 
-            // Validate response
-            if (response.statusCode == 201) {
-                response
-            } else {
-                throw Exception(response.message)
-            }
+            response
         } catch (e: HttpException) {
             // Log HTTP exception details
-            Log.e("ForumAddRepos6itory", "HTTP Exception: ${e.code()}")
+            Log.e("ForumAddRepository", "HTTP Exception: ${e.code()}")
             val errorBody = e.response()?.errorBody()?.string()
             Log.e("ForumAddRepository", "Error Body: $errorBody")
 

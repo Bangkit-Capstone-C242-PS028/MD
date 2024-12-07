@@ -155,11 +155,9 @@ interface ApiService {
 //        @Path("articleId") articleId: String
 //    ): Response<BaseResponse<ForumResponse>>
 
-    @Multipart
     @POST("forums")
     suspend fun createForum(
-        @Part("title") title: RequestBody,
-        @Part("content") content: RequestBody
+        @Body forumRequest: ForumRequest
     ): ForumUploadResponse
 
     @GET("forums")
