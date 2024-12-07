@@ -4,6 +4,7 @@ package com.bangkit.dermascan.ui.main
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -49,6 +50,7 @@ import com.bangkit.dermascan.ui.navigation.AppNavHost
 //import com.bangkit.dermascan.ui.scan.PhotoActivity
 import com.bangkit.dermascan.ui.theme.*
 import com.bangkit.dermascan.ui.main.scan.upload.SharedViewModel
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 
 //import androidx.compose.ui.Alignment
@@ -61,6 +63,15 @@ class MainActivity : ComponentActivity() {
 
         setTheme(R.style.Theme_DermaScan)
         enableEdgeToEdge()
+        FirebaseMessaging.getInstance().subscribeToTopic("articles")
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d("FCM", "Successfully subscribed to topic: articles")
+                } else {
+                    Log.e("FCM", "Failed to subscribe to topic", task.exception)
+                }
+            }
+
         setContent {
             DermaScanTheme {
                 val navController = rememberNavController()

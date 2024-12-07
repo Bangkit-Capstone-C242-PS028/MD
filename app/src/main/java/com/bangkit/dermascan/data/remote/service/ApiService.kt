@@ -64,12 +64,6 @@ interface ApiService {
         @Part document: MultipartBody.Part
     ): Response<SuccessMessage>
 
-    //USERS
-    @GET("users/me")
-    suspend fun getUserDetail(): Response<UserResponse>
-
-//    @PATCH("users/me")
-//    suspend fun updateDataUser(@Body userRequest: UserRequest): Response<BaseResponse<UserData>>
     @Multipart
     @PATCH("users/me")
     suspend fun updateUser(
@@ -78,6 +72,14 @@ interface ApiService {
         @Part("address") address: RequestBody?=null,
         @Part image: MultipartBody.Part?=null // Gambar opsional
     ): Response<UserResponse>
+
+    //USERS
+    @GET("users/me")
+    suspend fun getUserDetail(): Response<UserResponse>
+
+//    @PATCH("users/me")
+//    suspend fun updateDataUser(@Body userRequest: UserRequest): Response<BaseResponse<UserData>>
+
 
     @DELETE("users/me")
     suspend fun deleteUser(): UserResponse

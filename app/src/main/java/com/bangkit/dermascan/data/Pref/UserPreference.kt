@@ -4,11 +4,12 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 //import androidx.datastore.preferences.edit
 import androidx.datastore.preferences.preferencesDataStore
 //import com.bangkit.dermascan.dataArticles.local.UserData
-import com.bangkit.dermascan.data.Pref.UserModel
+import com.bangkit.dermascan.data.pref.UserModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -23,6 +24,17 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
         }
     }
 
+    suspend fun saverUpdate(user: UserModel){
+        dataStore.edit { preferences ->
+            preferences[FIRST_NAME_KEY] = user.firstName ?: ""
+            preferences[LAST_NAME_KEY] = user.lastName ?: ""
+            preferences[ADDRESS_KEY] = user.address ?: ""
+            preferences[IMAGE_URL_KEY] = user.profileImageUrl ?: ""
+
+        }
+        Log.d("DataStore", "data saved successfully: $user")
+    }
+
     // Save user data (personal info like name, dob, etc.)
     suspend fun saveUserData(user: UserModel) {
         dataStore.edit { preferences ->
@@ -34,6 +46,9 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
             preferences[SPECIALIZATION_KEY] = user.specialization ?: ""
             preferences[WORKPLACE_KEY] = user.workplace ?: ""
             preferences[EMAIL_KEY] = user.email ?: ""
+            preferences[POINT_KEY] = user.point ?: 0
+            preferences[IMAGE_URL_KEY] = user.profileImageUrl ?: ""
+            Log.d("DataStore", "data saved successfully: $user")
         }
     }
 
@@ -60,6 +75,12 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
         }
     }
 
+    fun getPoints(): Flow<Int> {
+        return dataStore.data.map { preferences ->
+            preferences[POINT_KEY] ?: 0
+        }
+    }
+
     // Get session (UserModel)
     fun getSession(): Flow<UserModel> {
         return dataStore.data.map { preferences ->
@@ -71,7 +92,9 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
                 preferences[DOB_KEY] ?: "",
                 preferences[ADDRESS_KEY] ?: "",
                 preferences[SPECIALIZATION_KEY] ?: "",
+                preferences[POINT_KEY] ?: 0,
                 preferences[EMAIL_KEY] ?: "",
+                preferences[IMAGE_URL_KEY] ?: "",
                 preferences[WORKPLACE_KEY] ?: "",
                 preferences[TOKEN_KEY] ?: "",
                 preferences[IS_LOGIN_KEY] ?: false,
@@ -84,6 +107,36 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
         dataStore.edit { preferences ->
             preferences.clear()
         }
+    }
+
+    // Save Data
+    suspend fun updateUserDetail(firstName: String, lastName: String, address: String, imageUrl: String) {
+        dataStore.edit { preferences ->
+            preferences[FIRST_NAME_KEY] = firstName
+            preferences[LAST_NAME_KEY] = lastName
+            preferences[ADDRESS_KEY] = address
+            preferences[IMAGE_URL_KEY] = imageUrl
+        }
+    }
+
+    // Get First Name
+    val firstName: Flow<String?> = dataStore.data.map { preferences ->
+        preferences[FIRST_NAME_KEY]
+    }
+
+    // Get Last Name
+    val lastName: Flow<String?> = dataStore.data.map { preferences ->
+        preferences[LAST_NAME_KEY]
+    }
+
+    // Get Address
+    val address: Flow<String?> = dataStore.data.map { preferences ->
+        preferences[ADDRESS_KEY]
+    }
+
+    // Get Image URL
+    val imageUrl: Flow<String?> = dataStore.data.map { preferences ->
+        preferences[IMAGE_URL_KEY]
     }
 
     // Singleton pattern for UserPreference
@@ -103,6 +156,9 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
         private val ADDRESS_KEY = stringPreferencesKey("address")
         private val SPECIALIZATION_KEY = stringPreferencesKey("specialization")
         private val WORKPLACE_KEY = stringPreferencesKey("workplace")
+        private val IMAGE_URL_KEY = stringPreferencesKey("imageUrl")
+        private val POINT_KEY = intPreferencesKey("points")
+
 
 //        private val USER_DATA_KEY = stringPreferencesKey("user_data")
 
