@@ -1,4 +1,4 @@
-package com.bangkit.dermascan.data.Pref
+package com.bangkit.dermascan.data.pref
 
 data class UserModel(
     val uid: String?= null,
@@ -8,7 +8,9 @@ data class UserModel(
     val dob: String?= null,
     val address: String?= null,
     val specialization: String?= null,
-    val email: String,
+    val point: Int ?= null,
+    val email: String?=null,
+    val profileImageUrl: String?= null,
     val workplace: String?= null,
     val token: String?= null  ,
     val isLogin: Boolean = false,

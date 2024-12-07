@@ -71,12 +71,22 @@ interface ApiService {
         @Part document: MultipartBody.Part
     ): Response<SuccessMessage>
 
+    @Multipart
+    @PATCH("users/me")
+    suspend fun updateUser(
+        @Part("firstName") firstName: RequestBody?=null,
+        @Part("lastName") lastName: RequestBody?=null,
+        @Part("address") address: RequestBody?=null,
+        @Part image: MultipartBody.Part?=null // Gambar opsional
+    ): Response<UserResponse>
+
     //USERS
     @GET("users/me")
     suspend fun getUserDetail(): Response<UserResponse>
 
-    @PATCH("users/me")
-    suspend fun updateDataUser(@Body userRequest: UserRequest): Response<BaseResponse<UserData>>
+//    @PATCH("users/me")
+//    suspend fun updateDataUser(@Body userRequest: UserRequest): Response<BaseResponse<UserData>>
+
 
     @DELETE("users/me")
     suspend fun deleteUser(): UserResponse
@@ -87,7 +97,7 @@ interface ApiService {
         @Query("size") size: Int ?= 10,
         @Query("role") role: String? = null,
 
-    ): Response<UserResponse>
+        ): Response<UserResponse>
 
 
     //ARTICLES

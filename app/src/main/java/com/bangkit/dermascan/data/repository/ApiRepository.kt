@@ -32,6 +32,7 @@ import com.bangkit.dermascan.data.model.response.SkinLesionItem
 import com.bangkit.dermascan.data.model.response.SkinLesionsData
 import com.bangkit.dermascan.data.model.response.SkinLesionsResponse
 import com.bangkit.dermascan.data.model.response.UserData
+import com.bangkit.dermascan.data.model.response.UserResponse
 import com.bangkit.dermascan.data.remote.service.ApiService
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
@@ -45,6 +46,7 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
 import retrofit2.HttpException
 import retrofit2.Response
@@ -108,11 +110,11 @@ class ApiRepository(private val apiService: ApiService) {
             "whatsappUrl" to request.whatsappUrl
         )
 
-        val bodyMap = map.mapValues { RequestBody.create("text/plain".toMediaTypeOrNull(), it.value) }
+        val bodyMap = map.mapValues { it.value.toRequestBody("text/plain".toMediaTypeOrNull()) }
         val documentPart = MultipartBody.Part.createFormData(
             "document",
             documentFile.name,
-            RequestBody.create("application/pdf".toMediaTypeOrNull(), documentFile)
+            documentFile.asRequestBody("application/pdf".toMediaTypeOrNull())
         )
 
         return apiService.doctorSignup(
@@ -131,7 +133,41 @@ class ApiRepository(private val apiService: ApiService) {
         )
     }
 
+    suspend fun updateUser(firstname: String?, lastname: String?, address: String?, imgFile: File?= null): Result<UserResponse> {
+        return try {
+            // Konversi setiap string menjadi RequestBody, hanya jika tidak null
+            val firstNamePart = firstname?.toRequestBody("text/plain".toMediaTypeOrNull())
+            val lastNamePart = lastname?.toRequestBody("text/plain".toMediaTypeOrNull())
+            val addressPart = address?.toRequestBody("text/plain".toMediaTypeOrNull())
 
+            // Persiapkan MultipartBody.Part untuk gambar (jika ada)
+            val imagePart = imgFile?.let {
+                val requestFile = it.asRequestBody("image/*".toMediaTypeOrNull())
+                MultipartBody.Part.createFormData("image", it.name, requestFile)
+            }
+
+            // Panggil API Service
+            val response = apiService.updateUser(
+                firstName = firstNamePart,
+                lastName = lastNamePart,
+                address = addressPart,
+                image = imagePart
+            )
+            Log.d("updateUser", "Success: ${response.body()}")
+            // Tangani response
+            if (response.isSuccessful) {
+                Result.Success(response.body()!!)
+
+            } else {
+                val errorBody = response.errorBody()?.string()
+                val parsedError = parseErrorMessage(errorBody)
+                Result.Error(parsedError)
+            }
+        } catch (e: Exception) {
+            Result.Error(e.message.toString())
+        }
+
+    }
 
     suspend fun getDetailUser(): Flow<Result<UserData>> = flow {
         try {
@@ -164,9 +200,7 @@ class ApiRepository(private val apiService: ApiService) {
         emit(Result.Error("Flow error: ${e.localizedMessage}"))
     }.flowOn(Dispatchers.IO)
 
-    suspend fun updateUser(userRequest: UserRequest): Response<BaseResponse<UserData>> {
-        return apiService.updateDataUser(userRequest)
-    }
+
 
     suspend fun uploadSkinImage(image: File): Result<String> {
         // Membuat RequestBody untuk gambar

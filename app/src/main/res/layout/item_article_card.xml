@@ -18,6 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="300dp">
 
+
         <ImageView
             android:id="@+id/ivPhotocard"
             android:layout_width="0dp"
@@ -50,13 +51,16 @@
         <ImageView
             android:id="@+id/ivIcon"
             android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_height="27dp"
+
+            android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
+
             android:contentDescription="@string/persondesc"
             android:src="@drawable/person"
-            app:layout_constraintEnd_toStartOf="@+id/tvNamecard"
-            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvTitlecard"
+            app:layout_constraintVertical_bias="0.0"
             card_view:layout_constraintStart_toStartOf="parent" />
 
         <TextView
@@ -64,26 +68,27 @@
             android:layout_width="164dp"
             android:layout_height="28dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="24dp"
             android:textColor="@android:color/white"
             android:textSize="18sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/tvTimecard"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/ivIcon"
             app:layout_constraintTop_toBottomOf="@+id/tvTitlecard"
+            app:layout_constraintVertical_bias="0.0"
+            tools:ignore="MissingConstraints"
             tools:text="nama" />
 
         <TextView
             android:id="@+id/tvTimecard"
             android:layout_width="135dp"
-            android:layout_height="19dp"
+            android:layout_height="28dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:gravity="end
-"
+            android:layout_marginEnd="1dp"
+            android:gravity="end"
             android:textColor="@android:color/white"
-            android:textSize="12sp"
+            android:textSize="18sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/tvTitlecard"
             app:layout_constraintTop_toBottomOf="@+id/tvTitlecard"
             tools:text="time" />
 

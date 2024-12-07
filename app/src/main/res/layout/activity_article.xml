@@ -25,9 +25,9 @@
         android:id="@+id/rv_articles"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:paddingBottom="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="0dp"
+        android:paddingBottom="14dp"
         tools:listitem="@layout/item_article_card" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -36,12 +36,16 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="24dp"
+
         android:backgroundTint="#CAD6FF"
+
         android:contentDescription="@string/fab_addarticle_content_desc"
         android:src="@drawable/ic_add_o"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+
         app:rippleColor="@color/white"
+
         app:tint="@color/blue" />
 
     <ProgressBar

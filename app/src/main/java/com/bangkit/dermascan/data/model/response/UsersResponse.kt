@@ -20,16 +20,16 @@ data class UserData(
     @SerializedName("uid") val uid: String,
     @SerializedName("role") val role: String,
     @SerializedName("email") val email: String,
-    @SerializedName("firstName") val firstName: String,
-    @SerializedName("lastName") val lastName: String,
+    @SerializedName("firstName") val firstName: String?=null,
+    @SerializedName("lastName") val lastName: String?=null,
     @SerializedName("dob") val dob: String,
-    @SerializedName("address") val address: String,
+    @SerializedName("address") val address: String?=null,
     @SerializedName("createdAt") val createdAt: String,
     @SerializedName("updatedAt") val updatedAt: String,
-    @SerializedName("points") val points: Int,
+    @SerializedName("photoUrl") val photoUrl: String?=null,
+    @SerializedName("points") val points: Int ?= 0,
     @SerializedName("doctor") val doctor: DoctorData?=null,   // Bisa null jika role adalah PATIENT
     @SerializedName("patient") val patient: PatientData?=null,  // Bisa null jika role adalah DOCTOR
-    @SerializedName("point") val point: Int ?= 0
 )
 
 data class DoctorData(

@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.bangkit.dermascan.R
-import com.bangkit.dermascan.data.Pref.UserModel
+import com.bangkit.dermascan.data.pref.UserModel
 import com.bangkit.dermascan.data.model.response.message.SuccessMessage
 import com.bangkit.dermascan.data.model.requestBody.AuthRequest
 import com.bangkit.dermascan.data.model.requestBody.DoctorSignupRequest
@@ -47,6 +47,7 @@ class AuthViewModel @Inject constructor(private val repository: UserRepository, 
 
     val roles: LiveData<String> = repository.getRoles().asLiveData(viewModelScope.coroutineContext)
 
+    val points: LiveData<Int> = repository.getPoints().asLiveData(viewModelScope.coroutineContext)
     fun login(email: String, password: String) {
         apiRepository.login(email, password).enqueue(object : Callback<LoginResponse> {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
@@ -69,7 +70,7 @@ class AuthViewModel @Inject constructor(private val repository: UserRepository, 
     }
 
     // Fungsi untuk mengambil detail user dan menyimpan ke DataStore
-    private fun fetchUserDetail(onResult: (Result<UserData>) -> Unit) {
+    fun fetchUserDetail(onResult: (Result<UserData>) -> Unit) {
         viewModelScope.launch {
             val result = apiRepository.getDetailUser().first() // Collect data sekali
             onResult(result) // Callback untuk mengembalikan hasil ke UI
@@ -81,6 +82,13 @@ class AuthViewModel @Inject constructor(private val repository: UserRepository, 
             repository.saveSession(user)
         }
     }
+
+    fun saveUpdateData(user: UserModel){
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.saverUpdate(user)
+        }
+    }
+
     private fun updateToken(newToken: String) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.updateToken(newToken)
@@ -162,6 +170,8 @@ class AuthViewModel @Inject constructor(private val repository: UserRepository, 
                                                         lastName = result.data.lastName ?: "",
                                                         role = result.data.role ?: "",
                                                         dob = result.data.dob ?: "",
+                                                        point = result.data.points,
+                                                        profileImageUrl = result.data.photoUrl,
                                                         address = result.data.address ?: "",
                                                         email = result.data.email ?: "",
                                                         specialization = result.data.doctor?.specialization ?: "Not Doctor",

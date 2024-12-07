@@ -266,6 +266,9 @@ fun formatTime(context: Context, createdAt: String?): String {
     }
 }
 
+fun Context.getMimeType(uri: Uri): String? {
+    return contentResolver.getType(uri)
+}
 /*using prepareFilePart():
 val imagePart = prepareFilePart(imageUri) // Mendapatkan file part dari URI gambar
 val response = apiService.uploadSkinImage(imagePart)*/

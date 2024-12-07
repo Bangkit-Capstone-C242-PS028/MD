@@ -1,5 +1,6 @@
 package com.bangkit.dermascan.ui.articleAdd
 
+
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
@@ -13,30 +14,42 @@ import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.ui.platform.ComposeView
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+
+import androidx.lifecycle.lifecycleScope
+
 import com.bangkit.dermascan.R
 import com.bangkit.dermascan.databinding.ActivityArticleAddBinding
 import com.bangkit.dermascan.ui.ViewModelFactory
 import com.bangkit.dermascan.ui.article.ArticleActivity
 import com.bangkit.dermascan.ui.article.ArticleViewModel
+
 import com.bangkit.dermascan.ui.main.MainActivity
 import com.bangkit.dermascan.ui.navigation.AppNavHost
 import com.bangkit.dermascan.util.getImageUri
 import com.bangkit.dermascan.util.reduceFileImage
 import com.bangkit.dermascan.util.uriToFile
 import dagger.hilt.android.AndroidEntryPoint
+
+import com.bangkit.dermascan.util.getImageUri
+import com.bangkit.dermascan.util.reduceFileImage
+import com.bangkit.dermascan.util.uriToFile
+
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+
 import java.time.Instant
 import java.time.format.DateTimeFormatter
+
 
 @AndroidEntryPoint
 class ArticleAddActivity : AppCompatActivity() {
