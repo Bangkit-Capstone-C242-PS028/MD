@@ -32,6 +32,9 @@ class UserRepository private constructor(
         return userPreference.getRoles()
     }
 
+    fun getVerifiedStatus(): Flow<Boolean> {
+        return userPreference.getVerifiedStatus()
+    }
     fun getPoints(): Flow<Int> {
         return userPreference.getPoints()
     }

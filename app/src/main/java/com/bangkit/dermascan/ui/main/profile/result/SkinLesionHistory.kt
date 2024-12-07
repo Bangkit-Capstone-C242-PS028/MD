@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -107,7 +108,7 @@ fun SkinLesionHistoryScreen(navController: NavController) {
                         .padding(16.dp)
                 ) {
                     items(lesions) { index ->
-                       SkinLesionItem(index)
+                       SkinLesionItem(navController, index)
                     }
                 }
             }
@@ -140,6 +141,7 @@ fun SkinLesionHistoryScreen(navController: NavController) {
 
 @Composable
 fun SkinLesionItem(
+    navController: NavController,
     skinLesion: SkinLesionItem,
     modifier: Modifier = Modifier
 ) {
@@ -165,19 +167,6 @@ fun SkinLesionItem(
                 .size(200.dp)
                 .clip(RoundedCornerShape(8.dp))
         )
-//        AndroidView(
-//            factory = { context ->
-//                ImageView(context).apply {
-//                    Glide.with(context)
-//                        .load(imageUrl)
-//                        .apply(RequestOptions().centerCrop())
-//                        .into(this)
-//                }
-//            },
-//            modifier = Modifier
-//                .size(200.dp)
-//                .clip(RoundedCornerShape(8.dp))
-//        )
 
         Spacer(modifier = Modifier.height(12.dp))
 
@@ -238,7 +227,24 @@ fun SkinLesionItem(
             color = Color.Gray,
             textAlign = TextAlign.Center
         )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Button for Consultation
+        Button(
+            onClick = {
+                // Handle consultation navigation or action here
+                // For example, navigate to a consultation screen
+                 navController.navigate("consultation")
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+        ) {
+            Text(text = "Consultation")
+        }
     }
 }
+
 
 

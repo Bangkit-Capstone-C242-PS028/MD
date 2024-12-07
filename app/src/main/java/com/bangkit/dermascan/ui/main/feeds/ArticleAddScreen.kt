@@ -3,37 +3,27 @@ package com.bangkit.dermascan.ui.main.feeds
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.bangkit.dermascan.R
 import com.bangkit.dermascan.databinding.ActivityArticleAddBinding
-import com.bangkit.dermascan.ui.articleAdd.ArticleAddActivity
 import com.bangkit.dermascan.ui.articleAdd.ArticleAddViewModel
-import com.bangkit.dermascan.ui.main.MainActivity
 import com.bangkit.dermascan.util.getImageUri
 import com.bangkit.dermascan.util.reduceFileImage
 import com.bangkit.dermascan.util.uriToFile
@@ -149,7 +139,9 @@ fun ArticleAdd(navController: NavController) {
 //                    context.startActivity(intent)
                     navController.navigate("main")
                 } else {
-                    viewModel.errorMessage.value?.let { context.showToast(it) }
+                    Log.d("ArticleAddActivity", viewModel.errorMessage.value.toString())
+//                    viewModel.errorMessage.value?.let { }
+                    context.showToast("Please fill all the fields")
                 }
             }
 

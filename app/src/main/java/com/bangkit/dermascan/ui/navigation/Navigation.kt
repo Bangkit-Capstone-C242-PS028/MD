@@ -22,6 +22,10 @@ import com.bangkit.dermascan.ui.main.profile.editProfile.EditProfileScreen
 //import com.bangkit.dermascan.ui.home.ButtonWithCustomColor
 //import com.bangkit.dermascan.ui.home.HomeScreen
 import com.bangkit.dermascan.ui.authentication.login.LoginScreen
+import com.bangkit.dermascan.ui.main.BlockedAccessScreen
+import com.bangkit.dermascan.ui.main.feeds.ArticleAddScreen
+import com.bangkit.dermascan.ui.main.feeds.FeedsScreen
+import com.bangkit.dermascan.ui.main.profile.result.ConsultationsScreen
 //import com.bangkit.dermascan.ui.main.feeds.ArticleAddScreen
 //import com.bangkit.dermascan.ui.main.feeds.FeedsScreen
 import com.bangkit.dermascan.ui.main.profile.result.SkinLesionHistoryScreen
@@ -106,7 +110,7 @@ fun AppNavHost(navController: NavHostController) {
                 slideOutVertically(targetOffsetY = { -1000 }) + fadeOut(animationSpec = tween(500))
             }
         ) {
-            MainScreen(context = navController.context, navController)
+            MainScreen( navController)
         }
 
         composable(
@@ -165,9 +169,21 @@ fun AppNavHost(navController: NavHostController) {
             SkinLesionHistoryScreen(navController)
         }
 
-//        composable("article") {
-//            FeedsScreen(navController,roles = roles)
-//        }
+        composable("article") {
+            FeedsScreen(navController,roles = roles)
+        }
+
+        composable("articleAdd") {
+            ArticleAddScreen(navController)
+        }
+
+        composable("consultation") {
+            ConsultationsScreen()
+        }
+
+        composable("block") {
+            BlockedAccessScreen()
+        }
 //
 //        composable("articleAdd") {
 //            ArticleAddScreen(navController)

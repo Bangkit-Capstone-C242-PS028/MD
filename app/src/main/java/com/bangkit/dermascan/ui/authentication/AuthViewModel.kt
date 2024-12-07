@@ -47,6 +47,7 @@ class AuthViewModel @Inject constructor(private val repository: UserRepository, 
 
     val roles: LiveData<String> = repository.getRoles().asLiveData(viewModelScope.coroutineContext)
 
+//    val isVerified: LiveData<Boolean> = repository.getVerifiedStatus().asLiveData(viewModelScope.coroutineContext)
     val points: LiveData<Int> = repository.getPoints().asLiveData(viewModelScope.coroutineContext)
     fun login(email: String, password: String) {
         apiRepository.login(email, password).enqueue(object : Callback<LoginResponse> {
@@ -76,6 +77,13 @@ class AuthViewModel @Inject constructor(private val repository: UserRepository, 
             onResult(result) // Callback untuk mengembalikan hasil ke UI
         }
     }
+
+//    fun getIsVerifiedDoctor(onResult: (Result<UserData>) -> Unit) {
+//        viewModelScope.launch {
+//            val result = apiRepository.getDetailUser().first() // Collect data sekali
+//            onResult(result) // Callback untuk mengembalikan hasil ke UI
+//        }
+//    }
 
     private fun saveSession(user: UserModel) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -175,8 +183,13 @@ class AuthViewModel @Inject constructor(private val repository: UserRepository, 
                                                         address = result.data.address ?: "",
                                                         email = result.data.email ?: "",
                                                         specialization = result.data.doctor?.specialization ?: "Not Doctor",
-                                                        workplace = result.data.doctor?.workplace ?: "Not Doctor"
+                                                        workplace = result.data.doctor?.workplace ?: "Not Doctor",
+                                                        isVerified = result.data.doctor?.isVerified,
+                                                        documentUrl = result.data.doctor?.documentUrl,
+                                                        whatsappUrl = result.data.doctor?.whatsappUrl
                                                     )
+
+                                                   Log.d("DoctorData", "Doctor Data: ${result.data.doctor?.isVerified}")
                                                     saveUserData(userData)
                                                     _signInStatus.value = Result.Success(true)  // Sign-in berhasil
                                                 }
@@ -304,6 +317,22 @@ class AuthViewModel @Inject constructor(private val repository: UserRepository, 
         }
     }
 
+    private val _isVerified = MutableLiveData<Result<Boolean>>(Result.Idle)
+    val isVerified: LiveData<Result<Boolean>> get() = _isVerified
+
+//    init {
+//        // Mengambil status verifikasi dokter saat ViewModel diinisialisasi
+//        getDoctorVerificationStatus()
+//    }
+
+    fun getDoctorVerificationStatus() {
+        viewModelScope.launch {
+            apiRepository.getDoctorVerificationStatus()
+                .collect { result ->
+                    _isVerified.value = result // Update status ke LiveData
+                }
+        }
+    }
 //
 //    fun signInWithCustomToken(customToken: String, callback: (String?) -> Unit) {
 //        firebaseAuth.signInWithCustomToken(customToken)
