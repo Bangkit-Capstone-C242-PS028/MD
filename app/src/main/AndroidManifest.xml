@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:name=".ui.MyApplication"
@@ -62,6 +63,15 @@
             android:exported="false" />
         <activity
             android:name=".ui.articleAdd.ArticleAddActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.forum.ForumActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.forumAdd.ForumAddActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.forumDetail.ForumDetailActivity"
             android:exported="false" />
 
     </application>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="@color/light_blue"/> <!-- Ganti dengan warna yang diinginkan -->
-    <corners android:radius="24dp"/> <!-- Ganti dengan radius yang diinginkan -->
+    <solid android:color="@color/blue"/> <!-- Ganti dengan warna yang diinginkan -->
+    <corners android:radius="50dp"/> <!-- Ganti dengan radius yang diinginkan -->
 </shape>

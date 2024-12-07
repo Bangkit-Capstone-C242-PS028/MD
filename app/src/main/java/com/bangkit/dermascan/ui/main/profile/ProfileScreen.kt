@@ -187,8 +187,9 @@ fun ProfileHeader(viewModel: AuthViewModel) {
         var showFullImage by remember { mutableStateOf(false) }
         // Gantikan Icon dengan AsyncImage untuk memuat gambar profil
         val userSession by viewModel.getSession().observeAsState()
-        val profileImageUrl: String? = imgUrl  // Ambil URL gambar profil dari session
-        val points by viewModel.points.observeAsState(2)
+        val profileImageUrl: String? =
+            userSession?.profileImageUrl  // Ambil URL gambar profil dari session
+        val points by viewModel.points.observeAsState(0)
         if (!profileImageUrl.isNullOrBlank()) {
             // Jika URL gambar valid (tidak null atau kosong), tampilkan gambar profil
             AsyncImage(

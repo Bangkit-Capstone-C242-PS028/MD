@@ -5,6 +5,8 @@ package com.bangkit.dermascan.ui.main.home
 //import androidx.compose.foundation.layout.FlowColumnScopeInstance.align
 import android.annotation.SuppressLint
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
 import android.widget.ImageView
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -19,12 +21,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -42,14 +46,23 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import coil3.compose.AsyncImage
 import com.bangkit.dermascan.data.model.response.SkinLesionItem
+import com.bangkit.dermascan.databinding.ActivityArticleBinding
+import com.bangkit.dermascan.ui.ViewModelFactory
+import com.bangkit.dermascan.ui.article.ArticleAdapter
+import com.bangkit.dermascan.ui.article.ArticleViewModel
+import com.bangkit.dermascan.ui.main.feeds.ComposeArticleScreen
+import com.bangkit.dermascan.ui.main.feeds.FeedsScreen
 import com.bangkit.dermascan.ui.theme.Blue
 import com.bangkit.dermascan.ui.theme.LightBlue
 import com.bangkit.dermascan.ui.theme.Typography
@@ -62,7 +75,8 @@ import com.bumptech.glide.request.RequestOptions
 
 //@Preview(showBackground = true)
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen(navController: NavController, roles: String?) {
+    val context = LocalContext.current
     val skinLesionViewModel: SkinLesionViewModel = hiltViewModel()
     val skinLesionsResult by skinLesionViewModel.skinLesions.collectAsState()
 
@@ -70,108 +84,263 @@ fun HomeScreen(navController: NavController) {
         skinLesionViewModel.fetchSkinLesions()
     }
 
-    when (val result = skinLesionsResult) {
-        is Result.Loading -> {
-            // Tampilkan shimmer loading untuk daftar skin lesion
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .align(Alignment.CenterHorizontally),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+    if(roles != "DOCTOR"){
+        when (val result = skinLesionsResult) {
+            is Result.Loading -> {
+                // Tampilkan shimmer loading untuk daftar skin lesion
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.padding(16.dp)
                 ) {
-                    Text(
-                        text = "History:",
-                        style = Typography.titleLarge
-                    )
-
-                    // Tetap tampilkan "See All" saat loading
-                    Text(
-                        text = "See All",
-                        style = Typography.bodyMedium.copy(color = Blue),
-                        modifier = Modifier.clickable {
-                            navController.navigate("skinLesionHistory")
-                        }
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                LazyRow(
-                    modifier = Modifier
-                        .fillMaxSize()
-//                        .padding(8.dp)
-                ) {
-                    // Tampilkan 3-5 item shimmer
-                    items(5) {
-                        SkinLesionItemWithShimmer(
-                            isLoading = true,
-                            modifier = Modifier.padding(end = 8.dp)
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .align(Alignment.CenterHorizontally),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = "History:",
+                            style = Typography.titleLarge
                         )
+
+                        // Tetap tampilkan "See All" saat loading
+                        Text(
+                            text = "See All",
+                            style = Typography.bodyMedium.copy(color = Blue),
+                            modifier = Modifier.clickable {
+                                navController.navigate("skinLesionHistory")
+                            }
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    LazyRow(
+                        modifier = Modifier
+                            .fillMaxSize()
+                    ) {
+                        // Tampilkan 3-5 item shimmer
+                        items(5) {
+                            SkinLesionItemWithShimmer(
+                                isLoading = true,
+                                modifier = Modifier.padding(end = 8.dp)
+                            )
+                        }
                     }
                 }
             }
-        }
-        is Result.Success -> {
-            val lesions = result.data
-            Column(
-                horizontalAlignment = Alignment.Start,
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+            is Result.Success -> {
+                val lesions = result.data
+                Column(
+                    horizontalAlignment = Alignment.Start,
+                    modifier = Modifier.padding(16.dp)
                 ) {
-                    Text(
-                        text = "History:",
-                        style = Typography.titleLarge
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = "History:",
+                            style = Typography.titleLarge
+                        )
 
-                    Text(
-                        text = "See All",
-                        style = Typography.bodyMedium.copy(color = Blue),
-                        modifier = Modifier.clickable {
-                            navController.navigate("skinLesionHistory")
-                        }
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                LazyRow(
-                    modifier = Modifier
-                        .fillMaxSize()
-                ) {
-                    items(lesions) { skinLesion ->
-                        SkinLesionItemWithShimmer(
-                            isLoading = false,
-                            skinLesion = skinLesion,
-                            modifier = Modifier.padding(end = 8.dp)
+                        Text(
+                            text = "See All",
+                            style = Typography.bodyMedium.copy(color = Blue),
+                            modifier = Modifier.clickable {
+                                navController.navigate("skinLesionHistory")
+                            }
                         )
                     }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    LazyRow(
+                        modifier = Modifier
+                            .wrapContentSize()
+                    ) {
+                        items(lesions) { skinLesion ->
+                            SkinLesionItemWithShimmer(
+                                isLoading = false,
+                                skinLesion = skinLesion,
+                                modifier = Modifier.padding(end = 8.dp)
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp)) // Memberikan jarak antara History dan Artikel
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = "Article:",
+                            style = Typography.titleLarge
+                        )
+                        Text(
+                            text = "See More",
+                            style = Typography.bodyMedium.copy(color = Blue),
+                            modifier = Modifier.clickable {
+                                navController.navigate("article")
+                            }
+                        )
+                    }
+                    Spacer(modifier = Modifier.height((-16).dp))
+                    val viewModel : ArticleViewModel = hiltViewModel()
+                    AndroidView(
+                        modifier = Modifier.fillMaxWidth(),
+                        factory = { _ ->
+                            // Inflate layout XML yang sudah ada
+                            val binding = ActivityArticleBinding.inflate(LayoutInflater.from(context))
+                            val view = binding.root
+
+                            // Configurasi ViewModel
+
+
+                            // Setup RecyclerView
+                            val adapter = ArticleAdapter()
+                            binding.rvArticles.adapter = adapter
+                            binding.rvArticles.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+
+
+                            // Observasi perubahan artikel
+                            viewModel.listArticle.observe(context as LifecycleOwner) { articleResponse ->
+                                adapter.submitList(articleResponse)
+                            }
+
+                            // Setup loading
+                            viewModel.isLoading.observe(context as LifecycleOwner) { isLoading ->
+                                binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.INVISIBLE
+                            }
+
+                            // Memuat artikel
+                            viewModel.showArticles()
+
+                            if (roles != "DOCTOR" || roles != "PAATIENT") {
+                                binding.fabAddarticle.visibility = View.GONE
+                            }
+                            // Setup FloatingActionButton
+                            binding.fabAddarticle.setOnClickListener {
+//                val intent = Intent(context, ArticleAddActivity::class.java)
+//                context.startActivity(intent)
+                                navController.navigate("articleAdd")
+                            }
+
+                            view
+                        },
+                        update = { _ ->
+                            // Misalnya, me-refresh data artikel
+                            viewModel.showArticles()
+
+                            // Atau melakukan operasi update lainnya sesuai kebutuhan
+                        }
+
+                    )
+
                 }
             }
+            is Result.Error -> {
+                Scaffold { paddingValues ->
+                    Log.e("SkinLesionHistoryScreen", "Error: ${result.message}")
+                    Text(
+                        text = result.message,
+                        modifier = Modifier
+                            .padding(paddingValues)
+                            .fillMaxSize()
+                    )
+                }
+            }
+
+            Result.Idle -> {}
+            else -> {}
         }
-        is Result.Error -> {
-            Scaffold { paddingValues ->
-                Log.e("SkinLesionHistoryScreen", "Error: ${result.message}")
+    }else{
+        Column(
+            verticalArrangement = Arrangement.Top, // Elemen menempel di bagian atas
+            horizontalAlignment = Alignment.Start, // Elemen mulai dari kiri
+            modifier = Modifier
+                .fillMaxWidth() // Column memenuhi lebar layar
+                .padding(16.dp) // Padding di sekeliling
+                .background(color = LightBlue) // Warna latar belakang
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp), // Memberikan jarak sedikit di bawah Row
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
                 Text(
-                    text = result.message,
-                    modifier = Modifier
-                        .padding(paddingValues)
-                        .fillMaxSize()
+                    text = "Article:",
+                    style = Typography.titleLarge
+                )
+                Text(
+                    text = "See More",
+                    style = Typography.bodyMedium.copy(color = Blue),
+                    modifier = Modifier.clickable {
+                        navController.navigate("article")
+                    }
                 )
             }
+
+            // RecyclerView via AndroidView
+            val viewModel: ArticleViewModel = hiltViewModel()
+            AndroidView(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp), // Memberikan jarak kecil di atas AndroidView
+                factory = { _ ->
+                    val binding = ActivityArticleBinding.inflate(LayoutInflater.from(context))
+                    val view = binding.root
+
+                    // Setup RecyclerView
+                    val adapter = ArticleAdapter()
+                    binding.rvArticles.adapter = adapter
+                    binding.rvArticles.layoutManager =
+                        LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+
+                    // Observasi ViewModel
+                    viewModel.listArticle.observe(context as LifecycleOwner) { articleResponse ->
+                        adapter.submitList(articleResponse)
+                    }
+
+                    viewModel.isLoading.observe(context as LifecycleOwner) { isLoading ->
+                        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.INVISIBLE
+                    }
+
+                    // Memuat artikel
+                    viewModel.showArticles()
+
+                    // Setup FloatingActionButton
+                    if (roles != "DOCTOR" || roles != "PATIENT") {
+                        binding.fabAddarticle.visibility = View.GONE
+                    }
+                    binding.fabAddarticle.setOnClickListener {
+                        navController.navigate("articleAdd")
+                    }
+
+                    view
+                },
+                update = { _ ->
+                    viewModel.showArticles()
+                }
+            )
         }
 
-        Result.Idle -> {}
+
+
+
     }
+
+
+
+    // Tambahkan FeedsScreen di bawah lazy column History
+  // Menampilkan artikel
 }
+
 @Composable
 fun SkinLesionItem(
     skinLesion: SkinLesionItem,

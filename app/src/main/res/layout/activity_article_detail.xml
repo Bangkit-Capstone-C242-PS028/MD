@@ -16,12 +16,12 @@
             android:id="@+id/toolbarr"
             android:layout_width="0dp"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="@color/blue"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:title="TaleNet"
+            app:title="Detail Artikel"
             app:titleTextColor="@color/white" />
 
         <ImageView

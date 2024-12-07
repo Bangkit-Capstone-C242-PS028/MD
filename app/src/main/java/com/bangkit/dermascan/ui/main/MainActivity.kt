@@ -3,6 +3,9 @@ package com.bangkit.dermascan.ui.main
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -14,6 +17,8 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Error
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -28,7 +33,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import com.bangkit.dermascan.R
 import com.bangkit.dermascan.ui.main.chat.ChatScreen
-import com.bangkit.dermascan.ui.main.feeds.FeedsScreen
+//import com.bangkit.dermascan.ui.main.feeds.FeedsScreen
 import com.bangkit.dermascan.ui.main.home.HomeScreen
 import com.bangkit.dermascan.ui.main.profile.ProfileScreen
 import com.bangkit.dermascan.ui.main.scan.ScanScreen
@@ -39,12 +44,18 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.bangkit.dermascan.ui.article.ArticleActivity
 import com.bangkit.dermascan.ui.authentication.AuthViewModel
+import com.bangkit.dermascan.ui.forum.ForumActivity
+import com.bangkit.dermascan.ui.main.feeds.FeedsScreen
+import com.bangkit.dermascan.ui.main.forum.ForumScreen
 
 import com.bangkit.dermascan.ui.navigation.AppNavHost
 //import com.bangkit.dermascan.ui.scan.PhotoActivity
@@ -52,7 +63,7 @@ import com.bangkit.dermascan.ui.theme.*
 import com.bangkit.dermascan.ui.main.scan.upload.SharedViewModel
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
-
+import com.bangkit.dermascan.util.Result
 //import androidx.compose.ui.Alignment
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -71,6 +82,19 @@ class MainActivity : ComponentActivity() {
                     Log.e("FCM", "Failed to subscribe to topic", task.exception)
                 }
             }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    android.Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
+                    NOTIFICATION_PERMISSION_REQUEST_CODE
+                )
+            }
+        }
 
         setContent {
             DermaScanTheme {
@@ -79,6 +103,10 @@ class MainActivity : ComponentActivity() {
 
             }
         }
+    }
+
+    companion object {
+        const val NOTIFICATION_PERMISSION_REQUEST_CODE = 1
     }
 }
 
@@ -90,22 +118,58 @@ data class BottomNavItem(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(context: Context, navController: NavHostController) {
+fun MainScreen( navController: NavHostController) {
+
     val authViewModel: AuthViewModel = hiltViewModel()
     val roles by authViewModel.roles.observeAsState("PATIENT")
+    val result = authViewModel.isVerified.observeAsState(Result.Idle)
+    // Panggil ViewModel untuk memuat status verifikasi saat pertama kali memuat
+    LaunchedEffect(Unit) {
+        authViewModel.getDoctorVerificationStatus()
+    }
+// Tangani status verifikasi
+    when (val status = result.value) {
+        is Result.Idle -> {
+            // Idle state, bisa menunjukkan loading atau lainnya
+        }
+        is Result.Loading -> {
+            // Menampilkan indikator loading
+        }
+        is Result.Success -> {
+            // Ambil nilai Boolean dari status.data
+            val isVerified = status.data
+            Log.d("DoctorVerification", "Is Verified: $isVerified")
 
-//    Toast.makeText(context, "Welcome Back $roles", Toast.LENGTH_SHORT).show()
+            LaunchedEffect(isVerified) {
+                // Pastikan navigasi hanya terjadi sekali
+                if (!isVerified) {
+                    navController.navigate("block") {
+                        // Hapus halaman sebelumnya agar pengguna tidak bisa kembali ke halaman verifikasi
+                        popUpTo("main") { inclusive = true }
+                    }
+                }
+            }
+        }
+        is Result.Error -> {
+            // Tangani error jika terjadi
+            Toast.makeText(LocalContext.current, status.message, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
+
 
 
     val items = mutableListOf(
 
+        BottomNavItem("Home", R.drawable.ic_home),
         BottomNavItem("Feeds", R.drawable.ic_feeds),
         BottomNavItem("Chat Bot", R.drawable.ic_chatt),
         BottomNavItem("Profile", R.drawable.ic_account)
     )
 
     if (roles != "DOCTOR") {
-        items.add(0, BottomNavItem("Home", R.drawable.ic_home))
+//        items.add(0, BottomNavItem("Home", R.drawable.ic_home))
         items.add(2, BottomNavItem("Scan", R.drawable.ic_camera))
     }
 
@@ -280,7 +344,7 @@ fun MainScreen(context: Context, navController: NavHostController) {
         ) {
             if (roles != "DOCTOR") {
                 when (selectedItem) {
-                    0 -> HomeScreen(navController)
+                    0 -> HomeScreen(navController, roles)
 //                    1 -> {
 //                        // Navigasi ke ArticleActivity menggunakan Context
 //                        val context = LocalContext.current
@@ -289,7 +353,15 @@ fun MainScreen(context: Context, navController: NavHostController) {
 //                            context.startActivity(intent)
 //                        }
 //                    }
-                    1 ->      FeedsScreen(navController, roles)
+                    1 -> ForumScreen(roles = roles)
+//                    1 -> {
+//                        // Navigasi ke ArticleActivity menggunakan Context
+//                        val context = LocalContext.current
+//                        LaunchedEffect(Unit) {
+//                            val intent = Intent(context, ForumActivity::class.java)
+//                            context.startActivity(intent)
+//                        }
+//                    }
                     2 -> ScanScreen(
                         viewModel = SharedViewModel(),
                         onBackClick = { navController.navigateUp() },
@@ -300,24 +372,102 @@ fun MainScreen(context: Context, navController: NavHostController) {
                 }
             }else{
                 when (selectedItem) {
-//                    0 -> HomeScreen(navController)
-                    0 -> FeedsScreen(navController, roles)
+                    0 -> HomeScreen(navController,roles)
+//                    0 -> FeedsScreen(navController, roles)
 //                    0 -> {
 //                        // Navigasi ke ArticleActivity menggunakan Context
 //                        val context = LocalContext.current
 //                        LaunchedEffect(Unit) {
-//                            val intent = Intent(context, ArticleActivity::class.java)
+//                            val intent = Intent(context, ForumActivity::class.java)
 //                            context.startActivity(intent)
 //                        }
 //                    }
-                    1 -> ChatScreen()
-                    2 -> ProfileScreen(navController)
+                    1 -> ForumScreen(roles = roles)
+                    2 -> ChatScreen()
+                    3 -> ProfileScreen(navController)
                 }
             }
 
         }
     }
 
+}
+
+@Composable
+fun BlockedAccessScreen() {
+    val context = LocalContext.current
+
+    // Tampilan untuk halaman yang membatasi akses
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        // Gambar atau ikon
+        Icon(
+            imageVector = Icons.Default.Error, // Ikon error atau ikon yang sesuai
+            contentDescription = "Blocked",
+            modifier = Modifier.size(80.dp),
+            tint = Color.Red
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Pesan Informasi
+        Text(
+            "Your account is not verified. You cannot access other features. Please wait, admin will verify your account. Close your app and reopen again for update status.",
+            style = MaterialTheme.typography.titleLarge,
+            textAlign = TextAlign.Center,
+            color = Blue
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Pesan tambahan jika diinginkan
+        Text(
+            "If you have any questions, please contact support.",
+            style = MaterialTheme.typography.bodyMedium,
+            textAlign = TextAlign.Center,
+            color = Blue.copy(alpha = 0.7f)
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Tombol untuk menghubungi support (jika ada)
+        Button(
+            onClick = { sendEmailToSupport(context  )},
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Blue,
+                contentColor = LightBlue
+            )
+        ) {
+            Text("Contact Support")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Indikator loading jika diperlukan
+//        CircularProgressIndicator(modifier = Modifier.padding(8.dp))
+    }
+}
+
+fun sendEmailToSupport(context: Context) {
+    val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
+        data = Uri.parse("mailto:khairunsyah8935@gmail.com") // Ganti dengan alamat email tujuan
+        putExtra(Intent.EXTRA_SUBJECT, "Account Verification Issue") // Subjek email
+        putExtra(Intent.EXTRA_TEXT, "Dear Support,\n\nI am facing an issue with account verification.\n\nRegards,") // Body email
+    }
+
+    // Cek apakah ada aplikasi email yang dapat menangani intent ini
+    try {
+        context.startActivity(Intent.createChooser(emailIntent, "Send Email"))
+    } catch (e: Exception) {
+        // Tangani error jika tidak ada aplikasi email yang tersedia
+        Toast.makeText(context, "No email client found", Toast.LENGTH_SHORT).show()
+    }
 }
 
 @Preview(showBackground = true)

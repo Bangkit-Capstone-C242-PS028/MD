@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- State saat tombol ditekan -->
+    <item android:state_pressed="true">
+        <shape>
+            <solid android:color="#0047AB"/> <!-- Warna biru tua -->
+            <corners android:radius="8dp"/> <!-- Sudut melengkung -->
+        </shape>
+    </item>
+
+    <!-- State default (tidak ditekan) -->
+    <item>
+        <shape>
+            <gradient
+                android:startColor="#007BFF"
+            android:endColor="#0056D2"
+            android:angle="90"/>
+            <corners android:radius="8dp"/> <!-- Sudut melengkung -->
+        </shape>
+    </item>
+</selector>
