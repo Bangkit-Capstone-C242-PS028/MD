@@ -87,7 +87,7 @@
             android:paddingEnd="8dp"
             android:paddingTop="4dp"
             android:paddingBottom="4dp"
-            android:textColor="@android:color/white"
+            android:textColor="@android:color/holo_blue_dark"
             android:textSize="12sp"
             android:background="@drawable/status_background"
             app:layout_constraintStart_toStartOf="parent"

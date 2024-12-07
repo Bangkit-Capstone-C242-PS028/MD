@@ -5,79 +5,116 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#CAD6FF"
     android:padding="16dp">
 
-    <!-- Konten Utama dengan ScrollView -->
+    <!-- ScrollView untuk Konten Utama -->
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:overScrollMode="never"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/replySection"
-        app:layout_constraintVertical_chainStyle="packed">
+        app:layout_constraintBottom_toTopOf="@id/replySection">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tvTitleDetail"
+            <!-- Forum Header -->
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="8dp"
-                tools:text="Forum Title" />
-
-            <TextView
-                android:id="@+id/tvContentDetail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
                 android:layout_marginBottom="16dp"
-                tools:text="Discussion content goes here..." />
+                app:cardElevation="4dp"
+                app:cardCornerRadius="8dp"
+                android:background="#FFFFFF">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/tvTitleDetail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:textColor="#2260FF"
+                        tools:text="Forum Title" />
+
+                    <TextView
+                        android:id="@+id/tvContentDetail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:layout_marginTop="8dp"
+                        android:textColor="#2260FF"
+                        tools:text="Discussion content goes here..." />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- RecyclerView untuk Balasan -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="Replies"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#2260FF" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvReplies"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:clipToPadding="false"
-                tools:listitem="@layout/item_replies_card"
-                android:paddingBottom="8dp" />
+                android:paddingBottom="8dp"
+                tools:listitem="@layout/item_replies_card" />
         </LinearLayout>
     </ScrollView>
 
     <!-- Bagian Balasan -->
-    <LinearLayout
+    <androidx.cardview.widget.CardView
         android:id="@+id/replySection"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:paddingTop="8dp">
+        android:layout_marginTop="8dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="6dp"
+        android:background="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-        <EditText
-            android:id="@+id/etReplyInput"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="Write a reply..."
-            android:inputType="textMultiLine"
-            android:maxLines="3"
-            android:padding="8dp"
-            android:background="@drawable/edittext_background"
-            android:layout_marginEnd="8dp" />
+            android:orientation="horizontal"
+            android:padding="12dp">
 
-        <Button
-            android:id="@+id/btnSendReply"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Send"
-            android:background="@drawable/button_background"
-            android:paddingHorizontal="16dp"
-            android:paddingVertical="8dp" />
-    </LinearLayout>
+            <EditText
+                android:id="@+id/etReplyInput"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Write a reply..."
+                android:inputType="textMultiLine"
+                android:padding="12dp"
+                android:textColor="#2260FF"
+                android:textColorHint="#CAD6FF"
+                android:background="@drawable/edittext_background"
+                android:layout_marginEnd="8dp" />
+
+            <ImageButton
+                android:id="@+id/btnSendReply"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_circle_button"
+                android:src="@drawable/ic_send"
+                app:tint="#2260FF" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
     <!-- ProgressBar -->
     <ProgressBar
