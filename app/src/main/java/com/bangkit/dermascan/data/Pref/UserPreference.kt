@@ -8,10 +8,17 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 //import androidx.datastore.preferences.edit
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.lifecycle.viewModelScope
 //import com.bangkit.dermascan.dataArticles.local.UserData
 import com.bangkit.dermascan.data.pref.UserModel
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "session")
 class UserPreference private constructor(private val dataStore: DataStore<Preferences>) {
@@ -48,6 +55,9 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
             preferences[EMAIL_KEY] = user.email ?: ""
             preferences[POINT_KEY] = user.point ?: 0
             preferences[IMAGE_URL_KEY] = user.profileImageUrl ?: ""
+            preferences[DOCUMENT_URL_KEY] = user.documentUrl ?: ""
+            preferences[IS_VERIFIED_KEY] = user.isVerified ?: false
+            preferences[WHATS_APP_URL_KEY] = user.whatsappUrl ?: ""
             Log.d("DataStore", "data saved successfully: $user")
         }
     }
@@ -66,6 +76,29 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
     fun getToken(): Flow<String> {
         return dataStore.data.map { preferences ->
             preferences[TOKEN_KEY] ?: ""
+        }
+    }
+
+    private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
+
+    // Fungsi suspend yang mengembalikan token
+    suspend fun refreshToken(): String {
+        return suspendCancellableCoroutine { continuation ->
+            firebaseAuth.currentUser?.getIdToken(true)?.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val idToken = task.result?.token
+                    if (idToken != null) {
+                        // Token berhasil didapatkan, kembalikan token ke coroutine
+                        continuation.resume(idToken)
+                    } else {
+                        // Token kosong, kembalikan exception
+                        continuation.resumeWithException(Exception("Token is null"))
+                    }
+                } else {
+                    // Jika gagal, kembalikan exception
+                    continuation.resumeWithException(Exception("Failed to refresh token: ${task.exception?.message}"))
+                }
+            }
         }
     }
 
@@ -98,6 +131,10 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
                 preferences[WORKPLACE_KEY] ?: "",
                 preferences[TOKEN_KEY] ?: "",
                 preferences[IS_LOGIN_KEY] ?: false,
+                preferences[DOCUMENT_URL_KEY] ?: "",
+                preferences[IS_VERIFIED_KEY] ?: false,
+                preferences[WHATS_APP_URL_KEY] ?: ""
+
             )
         }
     }
@@ -139,6 +176,12 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
         preferences[IMAGE_URL_KEY]
     }
 
+    fun getVerifiedStatus(): Flow<Boolean> {
+        return dataStore.data.map { preferences ->
+            preferences[IS_VERIFIED_KEY] ?: false
+        }
+    }
+
     // Singleton pattern for UserPreference
     companion object {
         @Volatile
@@ -158,6 +201,9 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
         private val WORKPLACE_KEY = stringPreferencesKey("workplace")
         private val IMAGE_URL_KEY = stringPreferencesKey("imageUrl")
         private val POINT_KEY = intPreferencesKey("points")
+        private val DOCUMENT_URL_KEY = stringPreferencesKey("documentUrl")
+        private val WHATS_APP_URL_KEY = stringPreferencesKey("whatsappUrl")
+        private val IS_VERIFIED_KEY = booleanPreferencesKey("isVerified")
 
 
 //        private val USER_DATA_KEY = stringPreferencesKey("user_data")
