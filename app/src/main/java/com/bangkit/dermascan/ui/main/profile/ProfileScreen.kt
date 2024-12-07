@@ -1,6 +1,6 @@
 package com.bangkit.dermascan.ui.main.profile
 
-import androidx.compose.foundation.background
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,8 +28,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -48,8 +50,10 @@ import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
+import com.bangkit.dermascan.data.pref.UserModel
 import com.bangkit.dermascan.ui.authentication.AuthViewModel
 import com.bangkit.dermascan.ui.theme.Typography
+import com.bangkit.dermascan.util.Result
 
 @Composable
 fun ProfileScreen(navController: NavController) {
@@ -136,6 +140,46 @@ fun ProfileScreen(navController: NavController) {
 
 @Composable
 fun ProfileHeader(viewModel: AuthViewModel) {
+//    var userData by remember { mutableStateOf<UserData?>(null) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+    var isLoading by remember { mutableStateOf(true) }
+    var userData by remember { mutableStateOf<UserModel?>(null) }
+    var points by remember { mutableIntStateOf(0) }
+    var imgUrl by remember { mutableStateOf<String?>(null) }
+//    val userData: UserData
+    LaunchedEffect(Unit) {
+        viewModel.fetchUserDetail { result ->
+            when (result) {
+                is Result.Success -> {
+                     userData= UserModel(
+                         uid = result.data.uid ?: "",
+                         firstName = result.data.firstName ?: "",
+                         lastName = result.data.lastName ?: "",
+                         role = result.data.role ?: "",
+                         dob = result.data.dob ?: "",
+                         point = result.data.points ?: 0,
+                         profileImageUrl = result.data.photoUrl,
+                         address = result.data.address ?: "",
+                         email = result.data.email ?: "",
+                         specialization = result.data.doctor?.specialization ?: "Not Doctor",
+                         workplace = result.data.doctor?.workplace ?: "Not Doctor"
+                    )
+//                    points = result.data.points!!
+                    imgUrl = result.data.photoUrl
+                    Log.e("FetchUserDetail", "Success user details: $result")
+//                    saveUserData(userData)
+//                    _signInStatus.value = Result.Success(true)  // Sign-in berhasil
+                }
+                is Result.Error -> {
+                    Log.e("FetchUserDetail", "Error fetching user details: ${result.message}")
+//                    _signInStatus.value = Result.Error("Error fetching user details")
+                }
+
+                Result.Idle -> {}
+                Result.Loading -> {}
+            }
+        }
+    }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth()
@@ -143,6 +187,8 @@ fun ProfileHeader(viewModel: AuthViewModel) {
         var showFullImage by remember { mutableStateOf(false) }
         // Gantikan Icon dengan AsyncImage untuk memuat gambar profil
         val userSession by viewModel.getSession().observeAsState()
+        val profileImageUrl: String? = imgUrl  // Ambil URL gambar profil dari session
+        val points by viewModel.points.observeAsState(2)
         if (!profileImageUrl.isNullOrBlank()) {
             // Jika URL gambar valid (tidak null atau kosong), tampilkan gambar profil
             AsyncImage(
@@ -194,7 +240,16 @@ fun ProfileHeader(viewModel: AuthViewModel) {
                 style = Typography.bodyMedium,
                 fontWeight = FontWeight.Bold
             )
+            Spacer(modifier = Modifier.height(4.dp))
+            userSession!!.email?.let {
+                Text(
+                    text = it,
+                    style = Typography.bodyMedium
+                )
+            }
+            Spacer(modifier = Modifier.height(4.dp))
             Text(
+                text = "Point : $points",
                 style = Typography.bodyMedium
             )
         }

@@ -1,6 +1,7 @@
 package com.bangkit.dermascan.data.repository
 
 import UserPreference
+import com.bangkit.dermascan.data.pref.UserModel
 //import com.bangkit.dermascan.dataArticles.local.UserPreference
 import kotlinx.coroutines.flow.Flow
 
@@ -12,6 +13,9 @@ class UserRepository private constructor(
         userPreference.saveSession(user)
     }
 
+    suspend fun saverUpdate(user: UserModel){
+        userPreference.saverUpdate(user)
+    }
     suspend fun saveUserData(userData: UserModel) {
         return userPreference.saveUserData(userData)
     }
@@ -28,6 +32,9 @@ class UserRepository private constructor(
         return userPreference.getRoles()
     }
 
+    fun getPoints(): Flow<Int> {
+        return userPreference.getPoints()
+    }
     fun getSession(): Flow<UserModel> {
         return userPreference.getSession()
     }
