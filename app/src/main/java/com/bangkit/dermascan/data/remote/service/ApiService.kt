@@ -8,6 +8,7 @@ import com.bangkit.dermascan.data.model.requestBody.AuthRequest
 import com.bangkit.dermascan.data.model.requestBody.CreateForumReplyRequest
 import com.bangkit.dermascan.data.model.requestBody.ForumRequest
 import com.bangkit.dermascan.data.model.requestBody.UserRequest
+import com.bangkit.dermascan.data.model.response.AddToFavoritesResponse
 import com.bangkit.dermascan.data.model.response.ArticleDetailResponse
 import com.bangkit.dermascan.data.model.response.ArticleResponse
 //import com.bangkit.dermascan.data.model.response.ArticlesResponse
@@ -24,6 +25,7 @@ import com.bangkit.dermascan.data.model.response.ForumUploadResponse
 import com.bangkit.dermascan.data.model.response.GetDoctorResponse
 import com.bangkit.dermascan.data.model.response.LoginRequest
 import com.bangkit.dermascan.data.model.response.LoginResponse
+import com.bangkit.dermascan.data.model.response.RemoveFromFavoritesResponse
 //import com.bangkit.dermascan.data.model.response.SkinLesion
 import com.bangkit.dermascan.data.model.response.SkinLesionItem
 import com.bangkit.dermascan.data.model.response.SkinLesionsResponse
@@ -138,6 +140,16 @@ interface ApiService {
         @Part("content") content: RequestBody,
         @Part image: MultipartBody.Part
     ): FileUploadResponse
+
+    @POST("articles/{articleId}/favorites")
+    suspend fun addToFavorites(
+        @Path("articleId") articleId: String
+    ): AddToFavoritesResponse
+
+    @DELETE("articles/{articleId}/favorites")
+    suspend fun removeFromFavorites(
+        @Path("articleId") articleId: String
+    ): RemoveFromFavoritesResponse
 
     //FORUMS
 //    @POST("forums")
