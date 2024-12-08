@@ -259,12 +259,12 @@ fun HomeScreen(navController: NavController, roles: String?) {
         }
     }else{
         Column(
-            verticalArrangement = Arrangement.Top, // Elemen menempel di bagian atas
-            horizontalAlignment = Alignment.Start, // Elemen mulai dari kiri
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.Start,
             modifier = Modifier
-                .fillMaxWidth() // Column memenuhi lebar layar
-                .padding(16.dp) // Padding di sekeliling
-                .background(color = LightBlue) // Warna latar belakang
+                .fillMaxWidth() // Untuk memenuhi lebar layar
+                .fillMaxHeight() // Untuk memenuhi tinggi layar
+                .padding(16.dp)
         ) {
             Row(
                 modifier = Modifier
