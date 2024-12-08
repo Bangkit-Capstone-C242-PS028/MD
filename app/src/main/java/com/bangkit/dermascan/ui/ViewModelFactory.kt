@@ -1,5 +1,6 @@
 package com.bangkit.dermascan.ui
 
+import android.app.Application
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -16,7 +17,11 @@ import com.bangkit.dermascan.ui.forumDetail.ForumDetailViewModel
 
 import com.bangkit.dermascan.ui.main.MainViewModel
 
-class ViewModelFactory(private val repository: UserRepository, private val apiRepository: ApiRepository):
+class ViewModelFactory(
+    private val repository: UserRepository,
+    private val apiRepository: ApiRepository,
+    private val application: Application
+):
     ViewModelProvider.NewInstanceFactory() {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -42,7 +47,7 @@ class ViewModelFactory(private val repository: UserRepository, private val apiRe
             }
 
             modelClass.isAssignableFrom(ArticleDetailViewModel::class.java) -> {
-                ArticleDetailViewModel(apiRepository) as T
+                ArticleDetailViewModel(apiRepository, application) as T
             }
 
             modelClass.isAssignableFrom(ArticleAddViewModel::class.java) -> {
@@ -71,7 +76,12 @@ class ViewModelFactory(private val repository: UserRepository, private val apiRe
         fun getInstance(context: Context): ViewModelFactory {
             if (INSTANCE == null) {
                 synchronized(ViewModelFactory::class.java) {
-                    INSTANCE = ViewModelFactory(Injection.provideUserRepository(context),Injection.provideApiRepository(context))
+                    val application = context.applicationContext as Application
+                    INSTANCE = ViewModelFactory(
+                        Injection.provideUserRepository(context),
+                        Injection.provideApiRepository(context),
+                        application
+                    )
 
                 }
             }

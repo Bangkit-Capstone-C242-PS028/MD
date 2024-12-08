@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <!-- Toolbar -->
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbarr"
             android:layout_width="0dp"
@@ -24,6 +25,7 @@
             app:title="Detail Artikel"
             app:titleTextColor="@color/white" />
 
+        <!-- Article Image -->
         <ImageView
             android:id="@+id/iv_detail_photo"
             android:layout_width="match_parent"
@@ -36,6 +38,7 @@
             app:layout_constraintTop_toBottomOf="@id/toolbarr"
             tools:src="@tools:sample/avatars" />
 
+        <!-- Article Title -->
         <TextView
             android:id="@+id/tvTitledetail"
             android:layout_width="0dp"
@@ -44,14 +47,16 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:textAlignment="center"
+            android:textColor="@color/black"
             android:textSize="20sp"
             android:textStyle="bold"
             android:transitionName="title"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/iv_detail_photo"
-            tools:text="judul" />
+            app:layout_constraintTop_toBottomOf="@id/iv_detail_photo"
+            tools:text="Judul Artikel" />
 
+        <!-- Article Content -->
         <TextView
             android:id="@+id/tvContextdetail"
             android:layout_width="0dp"
@@ -59,19 +64,46 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
+            android:textColor="@color/black"
+            android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvTitledetail"
-            tools:text="lorem ipsum sit dolor amet" />
+            tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum." />
+
+        <!-- Floating Action Button for Favorite -->
+
+        <!-- Progress Bar -->
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_favorite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:layout_marginTop="160dp"
+            android:layout_marginBottom="171dp"
+            android:backgroundTint="@color/blue"
+            android:contentDescription="@string/favorite_button"
+            android:src="@drawable/ic_favorite_unactive"
+            app:layout_constraintBottom_toBottomOf="@+id/tvTitledetail"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbarr"
+            app:layout_constraintVertical_bias="0.923"
+            app:rippleColor="@color/white"
+            app:tint="@color/white" />
 
         <ProgressBar
             android:id="@+id/progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:indeterminateTint="@color/blue"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
