@@ -64,6 +64,8 @@ import com.bangkit.dermascan.ui.main.scan.upload.SharedViewModel
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 import com.bangkit.dermascan.util.Result
+import com.google.firebase.auth.FirebaseAuth
+
 //import androidx.compose.ui.Alignment
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -124,38 +126,60 @@ fun MainScreen( navController: NavHostController) {
     val roles by authViewModel.roles.observeAsState("PATIENT")
     val result = authViewModel.isVerified.observeAsState(Result.Idle)
     // Panggil ViewModel untuk memuat status verifikasi saat pertama kali memuat
-    LaunchedEffect(Unit) {
-        authViewModel.getDoctorVerificationStatus()
-    }
-// Tangani status verifikasi
-    when (val status = result.value) {
-        is Result.Idle -> {
-            // Idle state, bisa menunjukkan loading atau lainnya
-        }
-        is Result.Loading -> {
-            // Menampilkan indikator loading
-        }
-        is Result.Success -> {
-            // Ambil nilai Boolean dari status.data
-            val isVerified = status.data
-            Log.d("DoctorVerification", "Is Verified: $isVerified")
 
-            LaunchedEffect(isVerified) {
-                // Pastikan navigasi hanya terjadi sekali
-                if (!isVerified) {
-                    navController.navigate("block") {
-                        // Hapus halaman sebelumnya agar pengguna tidak bisa kembali ke halaman verifikasi
-                        popUpTo("main") { inclusive = true }
+
+    if(roles == "DOCTOR"){
+        LaunchedEffect(Unit) {
+            authViewModel.getDoctorVerificationStatus()
+        }
+        // Tangani status verifikasi
+        when (val status = result.value) {
+            is Result.Idle -> {
+                // Idle state, bisa menunjukkan loading atau lainnya
+                val currentUser = FirebaseAuth.getInstance().currentUser
+                val uid = currentUser?.uid
+
+                if (uid != null) {
+                    // UID berhasil diambil
+                    FirebaseMessaging.getInstance().subscribeToTopic(uid)
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                Log.d("FCM", "Successfully subscribed to topic: $uid")
+                            } else {
+                                Log.e("FCM", "Failed to subscribe to topic", task.exception)
+                            }
+                        }
+                } else {
+                    // Tidak ada pengguna yang sedang login
+                    println("No user is logged in.")
+                }
+            }
+            is Result.Loading -> {
+                // Menampilkan indikator loading
+            }
+            is Result.Success -> {
+                // Ambil nilai Boolean dari status.data
+                val isVerified = status.data
+                Log.d("DoctorVerification", "Is Verified: $isVerified")
+
+                LaunchedEffect(isVerified) {
+                    // Pastikan navigasi hanya terjadi sekali
+                    if (!isVerified) {
+                        navController.navigate("block") {
+                            // Hapus halaman sebelumnya agar pengguna tidak bisa kembali ke halaman verifikasi
+                            popUpTo("main") { inclusive = true }
+                        }
                     }
                 }
             }
+            is Result.Error -> {
+                // Tangani error jika terjadi
+                Toast.makeText(LocalContext.current, status.message, Toast.LENGTH_SHORT).show()
+            }
         }
-        is Result.Error -> {
-            // Tangani error jika terjadi
-            Toast.makeText(LocalContext.current, status.message, Toast.LENGTH_SHORT).show()
-        }
-    }
 
+
+    }
 
 
 
