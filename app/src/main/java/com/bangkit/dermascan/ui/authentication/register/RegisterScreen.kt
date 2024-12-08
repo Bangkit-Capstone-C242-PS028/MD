@@ -297,7 +297,7 @@ fun RegisterScreen(onRegisterSuccess: () -> Unit) {
 
                 CustomTextField(
                     value = waUrl,
-                    label = "Whatsapp Url"
+                    label = "Whatsapp Url (wa.me/628****) "
                 )// Input tambahan untuk dokter
 
                 PdfFilePicker(

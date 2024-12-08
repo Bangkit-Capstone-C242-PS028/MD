@@ -21,6 +21,7 @@ import com.bangkit.dermascan.data.model.response.ForumDetailResponse
 import com.bangkit.dermascan.data.model.response.ForumRepliesResponse
 import com.bangkit.dermascan.data.model.response.ForumResponse
 import com.bangkit.dermascan.data.model.response.ForumUploadResponse
+import com.bangkit.dermascan.data.model.response.GetDoctorResponse
 import com.bangkit.dermascan.data.model.response.LoginRequest
 import com.bangkit.dermascan.data.model.response.LoginResponse
 //import com.bangkit.dermascan.data.model.response.SkinLesion
@@ -92,12 +93,12 @@ interface ApiService {
     suspend fun deleteUser(): UserResponse
 
     @GET("users")
-    suspend fun getAllUsers(
+    suspend fun getAllDoctor(
         @Query("page") page: Int ?= 1,
         @Query("size") size: Int ?= 10,
-        @Query("role") role: String? = null,
+        @Query("role") role: String? = "DOCTOR",
 
-        ): Response<UserResponse>
+        ): Response<GetDoctorResponse>
 
 
     //ARTICLES

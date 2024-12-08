@@ -180,6 +180,7 @@ fun LoginScreen(context: Context, onLoginSuccess: () -> Unit) {
     }
     LaunchedEffect(signInStatus) {
         if (signInStatus is Result.Success) {
+            delay(3000L)
             Toast.makeText(context, "Login berhasil", Toast.LENGTH_SHORT).show()
             onLoginSuccess() // Pindah halaman setelah login sukses
         }

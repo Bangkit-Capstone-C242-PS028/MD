@@ -7,8 +7,13 @@ import kotlinx.parcelize.Parcelize
 data class UserResponse(
     @SerializedName("statusCode") val statusCode: Int,
     @SerializedName("message") val message: String,
-//    @SerializedName("data") val data: UserDataList ?= null,
     @SerializedName("data") val data: UserData ?= null,
+)
+
+data class GetDoctorResponse(
+    @SerializedName("statusCode") val statusCode: Int,
+    @SerializedName("message") val message: String,
+    @SerializedName("data") val data: UserDataList ?= null,
 )
 
 data class UserDataList(
@@ -35,7 +40,10 @@ data class UserData(
 data class DoctorData(
     @SerializedName("uid") val uid: String,
     @SerializedName("specialization") val specialization: String, // Tidak ada dalam respons ini
-    @SerializedName("workplace") val workplace: String
+    @SerializedName("workplace") val workplace: String,
+    @SerializedName("documentUrl") val documentUrl: String,
+    @SerializedName("isVerified") val isVerified: Boolean,
+    @SerializedName("whatsappUrl") val whatsappUrl: String,
 )
 
 data class PatientData(

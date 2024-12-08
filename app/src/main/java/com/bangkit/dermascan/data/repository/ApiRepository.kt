@@ -25,6 +25,7 @@ import com.bangkit.dermascan.data.model.response.ForumDetailResponse
 import com.bangkit.dermascan.data.model.response.ForumRepliesResponse
 import com.bangkit.dermascan.data.model.response.ForumResponse
 import com.bangkit.dermascan.data.model.response.ForumUploadResponse
+import com.bangkit.dermascan.data.model.response.GetDoctorResponse
 import com.bangkit.dermascan.data.model.response.LoginRequest
 import com.bangkit.dermascan.data.model.response.LoginResponse
 import com.bangkit.dermascan.data.model.response.SkinLesionItem
@@ -200,7 +201,37 @@ class ApiRepository(private val apiService: ApiService) {
         emit(Result.Error("Flow error: ${e.localizedMessage}"))
     }.flowOn(Dispatchers.IO)
 
-
+    suspend fun getDoctorVerificationStatus(): Flow<Result<Boolean>> = flow {
+        try {
+            val response = apiService.getUserDetail()
+            if (response.isSuccessful) {
+                // Pastikan body tidak null sebelum emit
+                response.body()?.let { userResponse ->
+                    userResponse.data?.doctor?.let { doctorData ->
+                        // Emit status verifikasi dokter (isVerified)
+                        emit(Result.Success(doctorData.isVerified))
+                    } ?: emit(Result.Error("Doctor data is null"))
+                } ?: emit(Result.Error("Response body is null"))
+            } else {
+                // Mengambil pesan error dari errorBody
+                val errorBody = response.errorBody()?.string() ?: "Unknown error"
+                val errorMessage = parseErrorMessage(errorBody)
+                emit(Result.Error("Error: $errorMessage"))
+            }
+        } catch (e: IOException) {
+            // Menangani error koneksi
+            emit(Result.Error("Network error: ${e.localizedMessage}"))
+        } catch (e: HttpException) {
+            // Menangani error HTTP
+            emit(Result.Error("HTTP error: ${e.localizedMessage}"))
+        } catch (e: Exception) {
+            // Menangani error lainnya
+            emit(Result.Error("Unexpected error: ${e.localizedMessage}"))
+        }
+    }.catch { e ->
+        // Tambahan error handling di luar try-catch
+        emit(Result.Error("Flow error: ${e.localizedMessage}"))
+    }.flowOn(Dispatchers.IO)
 
     suspend fun uploadSkinImage(image: File): Result<String> {
         // Membuat RequestBody untuk gambar
@@ -270,6 +301,10 @@ class ApiRepository(private val apiService: ApiService) {
             emit(Result.Error(parseErrorMessage(errorMessage)))
         }
     }.flowOn(Dispatchers.IO)
+
+    suspend fun getDoctors(page: Int, size: Int): Response<GetDoctorResponse> {
+        return apiService.getAllDoctor(page, size, "DOCTOR")
+    }
 
     fun sendMessage(message: String, callback: (kotlin.Result<ChatData>) -> Unit) {
         val requestBody = ChatRequest(message)
