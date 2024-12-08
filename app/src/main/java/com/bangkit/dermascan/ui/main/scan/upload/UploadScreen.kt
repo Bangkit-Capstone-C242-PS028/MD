@@ -35,6 +35,8 @@ import com.bangkit.dermascan.util.byteArrayToUri
 import com.bangkit.dermascan.util.compressImageFromUri
 import com.bangkit.dermascan.util.reduceFileImage
 import com.bangkit.dermascan.util.uriToFile
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.messaging.FirebaseMessaging
 
 @Composable
 fun UploadScreen(
@@ -49,6 +51,24 @@ fun UploadScreen(
     val savedImageUri = rememberSaveable(imageUri) { imageUri!! }
     var compressedImageBytes by remember { mutableStateOf<ByteArray?>(null) }
     val uploadResult = skinLesionViewModel.uploadResult.value
+
+    val currentUser = FirebaseAuth.getInstance().currentUser
+    val uid = currentUser?.uid
+
+    if (uid != null) {
+        // UID berhasil diambil
+        FirebaseMessaging.getInstance().subscribeToTopic(uid)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d("FCM", "Successfully subscribed to topic: $uid")
+                } else {
+                    Log.e("FCM", "Failed to subscribe to topic", task.exception)
+                }
+            }
+    } else {
+        // Tidak ada pengguna yang sedang login
+        println("No user is logged in.")
+    }
 
 //    val compressedImageBytes = compressImageFromUri(context, savedImageUri, 5)
     LaunchedEffect(savedImageUri) {
