@@ -10,6 +10,7 @@ import com.bangkit.dermascan.data.database.FavoriteArticle
 import com.bangkit.dermascan.data.model.response.ArticleDetail
 import com.bangkit.dermascan.data.repository.ApiRepository
 import com.bangkit.dermascan.data.repository.FavoriteArticleRepository
+import com.bangkit.dermascan.util.Result
 import kotlinx.coroutines.launch
 
 class ArticleDetailViewModel(
@@ -30,6 +31,9 @@ class ArticleDetailViewModel(
 
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> = _errorMessage
+
+    private val _favoriteStatus = MutableLiveData<Result<String>>()
+    val favoriteStatus: LiveData<Result<String>> = _favoriteStatus
 
     fun showArticleDetail(id: String) {
         _isLoading.value = true
@@ -57,20 +61,44 @@ class ArticleDetailViewModel(
     }
 
     fun insertFavoriteArticle(articleDetail: ArticleDetail) {
-        val favoriteArticle = FavoriteArticle(
-            id = articleDetail.id ?: "",
-            title = articleDetail.title,
-            content = articleDetail.content,
-            imageUrl = articleDetail.imageUrl,
-            createdAt = articleDetail.createdAt,
-            updatedAt = articleDetail.updatedAt,
-            name = articleDetail.name,
-            avatar = articleDetail.avatar?.toString()
-        )
-        mFavoriteArticleRepository.insert(favoriteArticle)
+        viewModelScope.launch {
+            try {
+                // First, add to local database
+                val favoriteArticle = FavoriteArticle(
+                    id = articleDetail.id ?: "",
+                    title = articleDetail.title,
+                    content = articleDetail.content,
+                    imageUrl = articleDetail.imageUrl,
+                    createdAt = articleDetail.createdAt,
+                    updatedAt = articleDetail.updatedAt,
+                    name = articleDetail.name,
+                    avatar = articleDetail.avatar?.toString()
+                )
+                mFavoriteArticleRepository.insert(favoriteArticle)
+
+                // Then, add to remote server
+                val apiResult = apiRepository.addToFavorites(articleDetail.id ?: "")
+                _favoriteStatus.value = Result.Success(apiResult.message)
+            } catch (e: Exception) {
+                Log.e("ArticleDetailViewModel", "Error adding to favorites: ${e.message}", e)
+                _favoriteStatus.value = Result.Error(e.message ?: "Failed to add to favorites")
+            }
+        }
     }
 
     fun deleteFavoriteArticle(favoriteArticle: FavoriteArticle) {
-        mFavoriteArticleRepository.delete(favoriteArticle)
+        viewModelScope.launch {
+            try {
+                // First, remove from local database
+                mFavoriteArticleRepository.delete(favoriteArticle)
+
+                // Then, remove from remote server
+                val apiResult = apiRepository.removeFromFavorites(favoriteArticle.id)
+                _favoriteStatus.value = Result.Success(apiResult.message)
+            } catch (e: Exception) {
+                Log.e("ArticleDetailViewModel", "Error removing from favorites: ${e.message}", e)
+                _favoriteStatus.value = Result.Error(e.message ?: "Failed to remove from favorites")
+            }
+        }
     }
 }

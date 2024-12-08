@@ -14,6 +14,7 @@ import com.bangkit.dermascan.data.model.requestBody.CreateForumReplyRequest
 import com.bangkit.dermascan.data.model.requestBody.DoctorSignupRequest
 import com.bangkit.dermascan.data.model.requestBody.ForumRequest
 import com.bangkit.dermascan.data.model.requestBody.UserRequest
+import com.bangkit.dermascan.data.model.response.AddToFavoritesResponse
 
 import com.bangkit.dermascan.data.model.response.ArticleDetailResponse
 import com.bangkit.dermascan.data.model.response.ArticleResponse
@@ -28,6 +29,7 @@ import com.bangkit.dermascan.data.model.response.ForumUploadResponse
 import com.bangkit.dermascan.data.model.response.GetDoctorResponse
 import com.bangkit.dermascan.data.model.response.LoginRequest
 import com.bangkit.dermascan.data.model.response.LoginResponse
+import com.bangkit.dermascan.data.model.response.RemoveFromFavoritesResponse
 import com.bangkit.dermascan.data.model.response.SkinLesionItem
 //import com.bangkit.dermascan.data.model.response.SkinLesion
 import com.bangkit.dermascan.data.model.response.SkinLesionsData
@@ -462,6 +464,44 @@ class ApiRepository(private val apiService: ApiService) {
             throw Exception(errorBody.message)
         }
     }
+
+    suspend fun addToFavorites(articleId: String): AddToFavoritesResponse {
+        return try {
+            val response = apiService.addToFavorites(articleId)
+            Log.d("ArticleRepository", "Article added to favorites: $response")
+            if (response.statusCode == 201) {
+                response
+            } else {
+                Log.e("ArticleRepository", "Failed to add article to favorites: ${response.message}")
+                throw Exception("Failed to add article to favorites")
+            }
+        } catch (e: HttpException) {
+            val jsonInString = e.response()?.errorBody()?.string()
+            val errorBody = Gson().fromJson(jsonInString, ErrorResponse::class.java)
+            Log.e("ArticleRepository", "Error adding to favorites: ${e.message}")
+            throw Exception(errorBody.message)
+        }
+    }
+
+    suspend fun removeFromFavorites(articleId: String): RemoveFromFavoritesResponse {
+        return try {
+            val response = apiService.removeFromFavorites(articleId)
+            Log.d("ArticleRepository", "Article removed from favorites: $response")
+            if (response.statusCode == 200) {
+                response
+            } else {
+                Log.e("ArticleRepository", "Failed to remove article from favorites: ${response.message}")
+                throw Exception("Failed to remove article from favorites")
+            }
+        } catch (e: HttpException) {
+            val jsonInString = e.response()?.errorBody()?.string()
+            val errorBody = Gson().fromJson(jsonInString, ErrorResponse::class.java)
+            Log.e("ArticleRepository", "Error removing from favorites: ${e.message}")
+            throw Exception(errorBody.message)
+        }
+    }
+
+
 
 
 
