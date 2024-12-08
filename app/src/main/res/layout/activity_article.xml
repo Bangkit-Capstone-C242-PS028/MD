@@ -48,6 +48,20 @@
 
         app:tint="@color/blue" />
 
+<!--    <com.google.android.material.floatingactionbutton.FloatingActionButton-->
+<!--        android:id="@+id/fab_favarticle"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginEnd="24dp"-->
+<!--        android:layout_marginBottom="96dp"-->
+<!--        android:backgroundTint="#CAD6FF"-->
+<!--        android:contentDescription="@string/fab_addarticle_content_desc"-->
+<!--        android:src="@drawable/ic_favorite_active"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:rippleColor="@color/white"-->
+<!--        app:tint="@color/blue" />-->
+
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"
