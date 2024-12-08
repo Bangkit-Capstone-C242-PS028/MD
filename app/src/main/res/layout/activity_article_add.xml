@@ -54,12 +54,12 @@
 
         <Button
             android:id="@+id/cameraButton"
+            style="@style/Button.Primary"
             android:layout_width="188dp"
             android:layout_height="59dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="16dp"
             android:text="@string/camera"
-            style="@style/Button.Primary"
             android:textColor="@color/white"
             android:theme="@style/Button.Primary"
             app:layout_constraintBottom_toBottomOf="@id/galleryButton"
@@ -75,10 +75,8 @@
             android:layout_marginBottom="16dp"
             android:scaleType="fitCenter"
             android:text="@string/gallery"
-
             android:textColor="@color/white"
             android:theme="@style/Button.Primary"
-
             app:layout_constraintBottom_toTopOf="@+id/ed_add_title"
             app:layout_constraintEnd_toStartOf="@+id/cameraButton"
             app:layout_constraintHorizontal_bias="0.5"
