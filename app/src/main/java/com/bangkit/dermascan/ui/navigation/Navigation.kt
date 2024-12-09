@@ -3,6 +3,8 @@ package com.bangkit.dermascan.ui.navigation
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
@@ -40,27 +42,37 @@ import com.bangkit.dermascan.ui.main.scan.upload.UploadScreen
 @Composable
 fun AppNavHost(navController: NavHostController) {
     val sharedViewModel = SharedViewModel()
-    val viewModel : AuthViewModel = hiltViewModel()
+    val viewModel: AuthViewModel = hiltViewModel()
     val roles by viewModel.roles.observeAsState("PATIENT")
     val isOpen = rememberSaveable { mutableStateOf(false) }
+
     NavHost(navController, startDestination = "splash") {
         composable(
             "splash",
             enterTransition = {
-                slideInHorizontally(initialOffsetX = { 1000 }) + fadeIn(animationSpec = tween(500))
+                // Zoom In Effect
+                scaleIn(
+                    initialScale = 0.0f, // Mulai dari 20% dari ukuran aslinya
+                    animationSpec = tween(1000)
+                ) + fadeIn(animationSpec = tween(1000)) // Menambahkan fade-in
             },
             exitTransition = {
-                slideOutHorizontally(targetOffsetX = { -1000 }) + fadeOut(animationSpec = tween(500))
+                // Zoom Out Effect
+                scaleOut(
+                    targetScale = 2.2f, // Berakhir dengan ukuran 220% dari ukuran aslinya
+                    animationSpec = tween(1000)
+                ) + fadeOut(animationSpec = tween(1000)) // Menambahkan fade-out
             }
         ) {
-            SplashScreen(navController){
+            SplashScreen(navController) {
                 isOpen.value = true
                 navController.navigate("main") {
                     popUpTo("splash") { inclusive = true }
-//
                 }
             }
         }
+
+
 
         composable(
             "onBoard",
@@ -80,10 +92,10 @@ fun AppNavHost(navController: NavHostController) {
         composable(
             "login",
             enterTransition = {
-                fadeIn(animationSpec = tween(300))
+                fadeIn(animationSpec = tween(1000))
             },
             exitTransition = {
-                fadeOut(animationSpec = tween(300))
+                fadeOut(animationSpec = tween(1000))
             }
         ) {
             LoginScreen(context = navController.context, onLoginSuccess = {
@@ -120,7 +132,7 @@ fun AppNavHost(navController: NavHostController) {
                 slideOutVertically(targetOffsetY = { -1000 }) + fadeOut(animationSpec = tween(500))
             }
         ) {
-            MainScreen( navController)
+            MainScreen(navController)
         }
 
         composable(
@@ -146,10 +158,10 @@ fun AppNavHost(navController: NavHostController) {
         composable(
             "upload",
             enterTransition = {
-                fadeIn(animationSpec = tween(300))
+                fadeIn(animationSpec = tween(1000))
             },
             exitTransition = {
-                fadeOut(animationSpec = tween(300))
+                fadeOut(animationSpec = tween(1000))
             }
         ) {
             UploadScreen(
@@ -166,40 +178,83 @@ fun AppNavHost(navController: NavHostController) {
 
         composable("editProfile",
             enterTransition = {
+                slideInHorizontally(initialOffsetX = { 1000 }) + fadeIn(animationSpec = tween(500))
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -1000 }) + fadeOut(animationSpec = tween(500))
+            }
+        ) {
+            EditProfileScreen(navController)
+        }
+
+        composable("skinLesionHistory",
+            enterTransition = {
+                slideInVertically(initialOffsetY = { 1000 }) + fadeIn(animationSpec = tween(500))
+            },
+            exitTransition = {
+                slideOutVertically(targetOffsetY = { -1000 }) + fadeOut(animationSpec = tween(500))
+            }
+        ) {
+            SkinLesionHistoryScreen(navController)
+        }
+
+        composable("article",
+            enterTransition = {
+                fadeIn(animationSpec = tween(1000))
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(1000))
+            }
+        ) {
+            FeedsScreen(navController, roles = roles)
+        }
+
+        composable("articleAdd",
+            enterTransition = {
                 fadeIn(animationSpec = tween(300))
             },
             exitTransition = {
                 fadeOut(animationSpec = tween(300))
             }
         ) {
-            EditProfileScreen(navController)
-        }
-
-        composable("skinLesionHistory") {
-            SkinLesionHistoryScreen(navController)
-        }
-
-        composable("article") {
-            FeedsScreen(navController,roles = roles)
-        }
-
-        composable("articleAdd") {
             ArticleAddScreen(navController)
         }
 
-        composable("consultation") {
-            ConsultationsScreen()
+        composable("consultation",
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { 1000 }) + fadeIn(animationSpec = tween(500))
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { -1000 }) + fadeOut(animationSpec = tween(500))
+            }
+        ) {
+            ConsultationsScreen(navController)
         }
 
-        composable("block") {
+        composable("block",
+            enterTransition = {
+                fadeIn(animationSpec = tween(1000))
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(1000))
+            }
+        ) {
             BlockedAccessScreen()
         }
 
-        composable("favoriteArticle"){
-            FavoriteArticleScreen()
+        composable("favoriteArticle",
+            enterTransition = {
+                fadeIn(animationSpec = tween(1000))
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(1000))
+            }
+        ) {
+            FavoriteArticleScreen(navController)
         }
     }
 }
+
 
 
 

@@ -50,6 +50,7 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.bangkit.dermascan.R
 import com.bangkit.dermascan.data.model.response.SkinLesionItem
+import com.bangkit.dermascan.ui.main.feeds.AddTopBar
 import com.bangkit.dermascan.ui.main.home.SkinLesionItemWithShimmer
 import com.bangkit.dermascan.ui.theme.LightBlue
 import com.bangkit.dermascan.ui.main.scan.upload.SkinLesionViewModel
@@ -81,20 +82,7 @@ fun SkinLesionHistoryScreen(navController: NavController) {
 
             Scaffold(
                 topBar = {
-                    TopAppBar(
-                        title = { Text("Skin Lesion History") },
-                        navigationIcon = {
-                            IconButton(onClick = { navController.navigateUp() }) {
-                                Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                            }
-                        }
-                        , colors = TopAppBarDefaults.smallTopAppBarColors(
-                            containerColor = colorResource(id = R.color.blue),
-                            titleContentColor = Color.White,
-                            navigationIconContentColor = Color.White,
-                            actionIconContentColor = Color.White
-                        )
-                    )
+                    AddTopBar("Skin Lesion History",navController)
 
                 }
             ) { paddingValues ->
