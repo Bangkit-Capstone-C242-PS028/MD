@@ -183,13 +183,10 @@ fun MainScreen( navController: NavHostController) {
 
     }
 
-
-
-
     val items = mutableListOf(
 
         BottomNavItem("Home", R.drawable.ic_home),
-        BottomNavItem("Feeds", R.drawable.ic_feeds),
+        BottomNavItem("Forum", R.drawable.ic_feeds),
         BottomNavItem("Chat Bot", R.drawable.ic_chatt),
         BottomNavItem("Profile", R.drawable.ic_account)
     )

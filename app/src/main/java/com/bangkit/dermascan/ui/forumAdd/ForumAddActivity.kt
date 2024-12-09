@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -18,6 +19,7 @@ import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
+import androidx.appcompat.widget.Toolbar
 
 class ForumAddActivity : AppCompatActivity() {
 
@@ -31,8 +33,18 @@ class ForumAddActivity : AppCompatActivity() {
         binding = ActivityForumAddBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setupToolbar()
+
         setupObservers()
         setupButtonListener()
+    }
+
+    private fun setupToolbar(){
+        val toolbar: Toolbar = binding.toolbar
+        setSupportActionBar(toolbar)
+
+        // Menambahkan tombol kembali (optional)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     private fun setupObservers() {
@@ -64,5 +76,16 @@ class ForumAddActivity : AppCompatActivity() {
 
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressed() // Menangani aksi tombol kembali
+                finish()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 }

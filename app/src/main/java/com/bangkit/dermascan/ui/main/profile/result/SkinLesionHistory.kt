@@ -79,11 +79,9 @@ fun SkinLesionHistoryScreen(navController: NavController) {
     when (val result = skinLesionsResult) {
         is Result.Loading -> {
             // Tampilkan loading indicator jika data sedang dimuat
-
             Scaffold(
                 topBar = {
                     AddTopBar("Skin Lesion History",navController)
-
                 }
             ) { paddingValues ->
                 LazyColumn(
@@ -100,26 +98,14 @@ fun SkinLesionHistoryScreen(navController: NavController) {
                     }
                 }
             }
+
         }
         is Result.Success -> {
             val lesions = result.data
             // Jika data berhasil dimuat, tampilkan daftar SkinLesion
             Scaffold(
                 topBar = {
-                    TopAppBar(
-                        title = { Text("Skin Lesion History") },
-                        navigationIcon = {
-                            IconButton(onClick = { navController.navigateUp() }) {
-                                Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                            }
-                        },
-                         colors = TopAppBarDefaults.smallTopAppBarColors(
-                            containerColor = colorResource(id = R.color.blue),
-                            titleContentColor = Color.White,
-                            navigationIconContentColor = Color.White,
-                            actionIconContentColor = Color.White
-                        )
-                    )
+                    AddTopBar("Skin Lesion History",navController)
                 }
             ) { paddingValues ->
                 LazyColumn(
@@ -138,14 +124,7 @@ fun SkinLesionHistoryScreen(navController: NavController) {
             // Jika terjadi error, tampilkan pesan error
             Scaffold(
                 topBar = {
-                    TopAppBar(
-                        title = { Text("Skin Lesion History") },
-                        navigationIcon = {
-                            IconButton(onClick = { navController.navigateUp() }) {
-                                Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                            }
-                        }
-                    )
+                    AddTopBar("Skin Lesion History",navController)
                 }
             ) { paddingValues ->
                 Log.e("SkinLesionHistoryScreen", "Error: ${result.message}")
