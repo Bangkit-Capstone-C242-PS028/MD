@@ -186,9 +186,10 @@ fun EditProfileScreen(navController: NavController){
                             profileImageUrl = result.data.data?.photoUrl
                         )
                         authViewModel.saveUpdateData(updateData)
-                        navController.navigate("main") {
-                            popUpTo("editProfile") { inclusive = true }
-                        }
+//                        navController.navigate("main") {
+//                            popUpTo("editProfile") { inclusive = true }
+//                        }
+                        navController.navigateUp()
                     }
 
                     Result.Idle -> {}
