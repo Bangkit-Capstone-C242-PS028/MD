@@ -1,10 +1,12 @@
 package com.bangkit.dermascan.ui.forumAdd
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -38,7 +40,9 @@ class ForumAddActivity : AppCompatActivity() {
             showLoading(false)
             if (isSuccess) {
                 showToast(getString(R.string.forum_created))
-                navigateToForumList()
+                // Kirim hasil ke ForumActivity untuk update data
+                setResult(Activity.RESULT_OK)  // Menandakan bahwa forum berhasil dibuat
+                finish() // Menutup ForumAddActivity dan kembali ke ForumActivity
             } else {
                 viewModel.errorMessage.value?.let { showToast(it) }
             }
@@ -52,12 +56,6 @@ class ForumAddActivity : AppCompatActivity() {
 
             viewModel.createForum(title, content)
         }
-    }
-
-    private fun navigateToForumList() {
-        val intent = Intent(this, ForumActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-        startActivity(intent)
     }
 
     private fun showLoading(isLoading: Boolean) {

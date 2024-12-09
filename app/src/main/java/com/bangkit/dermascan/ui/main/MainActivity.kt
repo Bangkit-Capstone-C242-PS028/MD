@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Error
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -125,6 +126,7 @@ fun MainScreen( navController: NavHostController) {
     val authViewModel: AuthViewModel = hiltViewModel()
     val roles by authViewModel.roles.observeAsState("PATIENT")
     val result = authViewModel.isVerified.observeAsState(Result.Idle)
+    val context = LocalContext.current
     // Panggil ViewModel untuk memuat status verifikasi saat pertama kali memuat
 
 
@@ -210,9 +212,34 @@ fun MainScreen( navController: NavHostController) {
                     containerColor = Blue,
                     titleContentColor = LightBlue,
                     navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
-                )
+                ),
+                actions = {
+                    if(items[selectedItem].title == "Home"){
+                        FloatingActionButton(
+                            onClick = {
+                                // Tindakan ketika FAB ditekan
+                                Toast.makeText(context, "FAB Clicked", Toast.LENGTH_SHORT).show()
+                                navController.navigate("favoriteArticle")
+                            },
+                            containerColor = LightBlue,
+                            contentColor = Blue,
+                            shape = CircleShape,
+                            modifier = Modifier
+                                .size(40.dp) // Ukuran FAB lebih kecil agar sesuai di TopAppBar
+                                .offset(x = (-8).dp) // Jarak dari tepi kanan
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Favorite,
+                                contentDescription = "Add Icon"
+                            )
+                        }
+                    }
+                }
+
             )
-        },
+        }
+
+        ,
         bottomBar = {
 
                 // Tampilkan cekungan jika roles bukan "DOCTOR"

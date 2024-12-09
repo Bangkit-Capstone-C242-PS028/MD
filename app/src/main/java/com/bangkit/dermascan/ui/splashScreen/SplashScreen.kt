@@ -31,7 +31,7 @@ import com.bangkit.dermascan.ui.theme.White
 import kotlinx.coroutines.delay
 
 @Composable
-fun SplashScreen(navController: NavController) {
+fun SplashScreen(navController: NavController,onSplashFinished:() -> Unit) {
     val context = LocalContext.current
     val viewModel : AuthViewModel = hiltViewModel()
     val userSession by viewModel.getSession().observeAsState()
@@ -49,10 +49,8 @@ fun SplashScreen(navController: NavController) {
                 viewModel.refreshToken()
                 delay(2500)
 //            LaunchedEffect(Unit) {
-                navController.navigate("main") {
-                    popUpTo("splash") { inclusive = true }
-//
-                }
+                onSplashFinished()
+
 //            }
             }else{
                 delay(2500)

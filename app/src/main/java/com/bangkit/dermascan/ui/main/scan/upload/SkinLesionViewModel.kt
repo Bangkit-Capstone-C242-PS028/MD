@@ -41,9 +41,9 @@ class SkinLesionViewModel @Inject constructor(val repository: ApiRepository): Vi
     private val _skinLesions = MutableStateFlow<Result<List<SkinLesionItem>>>(Result.Loading)
     val skinLesions: StateFlow<Result<List<SkinLesionItem>>> get() = _skinLesions.asStateFlow()
 
-    fun fetchSkinLesions(page: Int = 1, limit: Int = 10) {
+    fun fetchSkinLesions() {
         viewModelScope.launch {
-            repository.getSkinLesions(page, limit)
+            repository.getSkinLesions()
                 .onStart { _skinLesions.value = Result.Loading }
                 .catch { e -> _skinLesions.value = Result.Error(e.message ?: "Error") }
                 .collect { result ->

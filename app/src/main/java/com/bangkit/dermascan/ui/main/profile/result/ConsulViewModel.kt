@@ -18,12 +18,12 @@ class ConsulViewModel @Inject constructor(private val userRepository: ApiReposit
     val doctors: LiveData<Result<List<UserData>>> get() = _doctors
 
     // Fungsi untuk mengambil daftar dokter
-    fun getDoctors(page: Int = 1, size: Int = 10) {
+    fun getDoctors() {
         _doctors.value = Result.Loading
 
         viewModelScope.launch {
             try {
-                val response = userRepository.getDoctors(page, size)
+                val response = userRepository.getDoctors()
                 if (response.isSuccessful && response.body() != null) {
                     _doctors.value = Result.Success(response.body()!!.data?.users ?: emptyList())
                 } else {

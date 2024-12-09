@@ -5,6 +5,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,6 +22,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -107,17 +109,42 @@ fun EditProfileScreen(navController: NavController){
 
                 val displayedImageUri = imageUri.value?.toString() ?: profileImageUrl
 
-                AsyncImage(
-                    model = displayedImageUri,
-                    contentDescription = "Profile Picture",
-                    modifier = Modifier
-                        .size(250.dp)
-                        .clip(CircleShape)
-                        .clickable {
-                            launcher.launch("image/*")
-                        },
-                    contentScale = ContentScale.Crop
-                )
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.size(250.dp) // Ukuran gambar
+                ) {
+                    // Gambar profil
+                    AsyncImage(
+                        model = displayedImageUri,
+                        contentDescription = "Profile Picture",
+                        modifier = Modifier
+                            .size(250.dp)
+                            .clip(CircleShape)
+                            .clickable {
+                                launcher.launch("image/*")
+                            },
+                        contentScale = ContentScale.Crop
+                    )
+
+                    // Ikon pensil di kanan bawah
+                    Icon(
+                        imageVector = Icons.Default.Edit, // Gunakan ikon bawaan atau tambahkan ikon khusus
+                        contentDescription = "Edit Profile Picture",
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd) // Posisi ikon di kanan bawah
+                            .size(42.dp) // Ukuran ikon
+                            .background(
+                                color = Color.White, // Latar belakang putih agar ikon terlihat
+                                shape = CircleShape
+                            )
+                            .clickable {
+                                launcher.launch("image/*")
+                            }
+                            .padding(4.dp), // Padding dalam ikon
+                        tint = Color.Gray // Warna ikon
+                    )
+                }
+
             } else {
                 // Jika URL gambar null atau kosong, tampilkan ikon default
                 Icon(
@@ -158,6 +185,9 @@ fun EditProfileScreen(navController: NavController){
                         profileImageUrl = result.data.data?.photoUrl
                     )
                     authViewModel.saveUpdateData(updateData)
+                    navController.navigate("main"){
+                        popUpTo("editProfile") { inclusive = true }
+                    }
                 }
 
                 Result.Idle -> {}
@@ -169,8 +199,10 @@ fun EditProfileScreen(navController: NavController){
                 Text(text = "Error: ${(updateResult as Result.Error).message}")
             }
             // Sign Up Button
+            var isButtonEnabled by remember { mutableStateOf(true) }
             Button(
                 onClick = {
+                    isButtonEnabled = false
                     val imageFile = imageUri.value?.let {
                         val mimeType = context.getMimeType(it)
                         if (mimeType?.startsWith("image/") == true) {
@@ -199,7 +231,8 @@ fun EditProfileScreen(navController: NavController){
                 ),
                 modifier = Modifier
                     .width(207.dp)  // Mengatur lebar tombol
-                    .height(45.dp)
+                    .height(45.dp),
+                enabled = isButtonEnabled
             ) {
                 Text("Update Profile", fontSize = 16.sp)
             }

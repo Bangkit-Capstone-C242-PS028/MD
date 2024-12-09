@@ -20,6 +20,6 @@ data class UserModel(
     val isLogin: Boolean = false,
     val documentUrl: String?= null,
     val isVerified: Boolean?= null,
-    val whatsappUrl: String?= null,
+    val phoneNumber: String?= null,
     )
 

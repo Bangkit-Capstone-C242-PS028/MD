@@ -43,7 +43,7 @@ data class DoctorData(
     @SerializedName("workplace") val workplace: String,
     @SerializedName("documentUrl") val documentUrl: String,
     @SerializedName("isVerified") val isVerified: Boolean,
-    @SerializedName("whatsappUrl") val whatsappUrl: String,
+    @SerializedName("phoneNumber") val phoneNumber: String,
 )
 
 data class PatientData(

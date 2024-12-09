@@ -3,20 +3,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:layout_width="400dp"
     android:layout_height="wrap_content"
-    android:layout_marginStart="16dp"
     android:layout_gravity="center"
-    android:layout_marginTop="16dp"
+    android:layout_marginTop="24dp"
+    android:layout_marginStart="8dp"
     android:layout_marginEnd="16dp"
     app:cardBackgroundColor="@color/blue"
     app:cardCornerRadius="24dp"
-    android:padding="20dp"
     app:cardElevation="4dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="300dp">
+        android:layout_height="300dp"
+        >
 
 
         <ImageView

@@ -10,6 +10,8 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -17,6 +19,7 @@ import com.bangkit.dermascan.ui.main.MainScreen
 import com.bangkit.dermascan.ui.onBoard.OnBoardScreen
 import com.bangkit.dermascan.ui.authentication.register.RegisterScreen
 import androidx.navigation.compose.composable
+import com.bangkit.dermascan.ui.articleFavorite.FavoriteArticleScreen
 import com.bangkit.dermascan.ui.authentication.AuthViewModel
 import com.bangkit.dermascan.ui.main.profile.editProfile.EditProfileScreen
 //import com.bangkit.dermascan.ui.home.ButtonWithCustomColor
@@ -39,6 +42,7 @@ fun AppNavHost(navController: NavHostController) {
     val sharedViewModel = SharedViewModel()
     val viewModel : AuthViewModel = hiltViewModel()
     val roles by viewModel.roles.observeAsState("PATIENT")
+    val isOpen = rememberSaveable { mutableStateOf(false) }
     NavHost(navController, startDestination = "splash") {
         composable(
             "splash",
@@ -49,7 +53,13 @@ fun AppNavHost(navController: NavHostController) {
                 slideOutHorizontally(targetOffsetX = { -1000 }) + fadeOut(animationSpec = tween(500))
             }
         ) {
-            SplashScreen(navController)
+            SplashScreen(navController){
+                isOpen.value = true
+                navController.navigate("main") {
+                    popUpTo("splash") { inclusive = true }
+//
+                }
+            }
         }
 
         composable(
@@ -184,10 +194,10 @@ fun AppNavHost(navController: NavHostController) {
         composable("block") {
             BlockedAccessScreen()
         }
-//
-//        composable("articleAdd") {
-//            ArticleAddScreen(navController)
-//        }
+
+        composable("favoriteArticle"){
+            FavoriteArticleScreen()
+        }
     }
 }
 
