@@ -24,9 +24,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -39,9 +41,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.bangkit.dermascan.R
 import com.bangkit.dermascan.data.model.response.UserData
+import com.bangkit.dermascan.ui.main.feeds.AddTopBar
 import com.bangkit.dermascan.ui.theme.Black
 import com.bangkit.dermascan.ui.theme.Blue
 import com.bangkit.dermascan.ui.theme.LightBlue
@@ -50,7 +54,7 @@ import com.bangkit.dermascan.util.Result
 import com.bangkit.dermascan.util.formatDate
 
 @Composable
-fun ConsultationsScreen() {
+fun ConsultationsScreen(navController: NavController) {
     val context = LocalContext.current
     val viewModel: ConsulViewModel = hiltViewModel()
     val doctorsResult by viewModel.doctors.observeAsState(Result.Idle)
@@ -60,29 +64,29 @@ fun ConsultationsScreen() {
         viewModel.getDoctors()
     }
 
-    Column(modifier = Modifier.fillMaxSize().padding(top = 42.dp, start = 16.dp, end = 16.dp    )) {
-//        Text(
-//            text = "Consultations",
-//            style = MaterialTheme.typography.,
-//            modifier = Modifier.padding(top = 16.dp)
-//        )
+    Column(modifier = Modifier.fillMaxSize()) {
+        // TopAppBar
+        AddTopBar("Consultations", navController)
 
-        when (doctorsResult) {
-            is Result.Loading -> {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
-            }
-            is Result.Error -> {
-                Text(text = (doctorsResult as Result.Error).message, color = Color.Red)
-            }
-            is Result.Success -> {
-                val doctors = (doctorsResult as Result.Success<List<UserData>>).data
-                LazyColumn {
-                    items(doctors) { doctor ->
-                        DoctorItem(context = context, doctor = doctor)
+        // Konten utama
+        Column(modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)) {
+            when (doctorsResult) {
+                is Result.Loading -> {
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+                }
+                is Result.Error -> {
+                    Text(text = (doctorsResult as Result.Error).message, color = Color.Red)
+                }
+                is Result.Success -> {
+                    val doctors = (doctorsResult as Result.Success<List<UserData>>).data
+                    LazyColumn {
+                        items(doctors) { doctor ->
+                            DoctorItem(context = context, doctor = doctor)
+                        }
                     }
                 }
+                else -> { /* Idle State, Nothing to display */ }
             }
-            else -> { /* Idle State, Nothing to display */ }
         }
     }
 }

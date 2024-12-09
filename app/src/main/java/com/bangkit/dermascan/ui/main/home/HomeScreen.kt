@@ -4,6 +4,7 @@ package com.bangkit.dermascan.ui.main.home
 //import com.bangkit.dermascan.dataArticles.signIn
 //import androidx.compose.foundation.layout.FlowColumnScopeInstance.align
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -61,8 +62,10 @@ import coil3.compose.AsyncImage
 import com.bangkit.dermascan.data.model.response.SkinLesionItem
 import com.bangkit.dermascan.databinding.ActivityArticleBinding
 import com.bangkit.dermascan.ui.ViewModelFactory
+import com.bangkit.dermascan.ui.article.ArticleActivity
 import com.bangkit.dermascan.ui.article.ArticleAdapter
 import com.bangkit.dermascan.ui.article.ArticleViewModel
+import com.bangkit.dermascan.ui.articleAdd.ArticleAddActivity
 import com.bangkit.dermascan.ui.main.feeds.ComposeArticleScreen
 import com.bangkit.dermascan.ui.main.feeds.FeedsScreen
 import com.bangkit.dermascan.ui.theme.Blue
@@ -88,6 +91,7 @@ fun HomeScreen(navController: NavController, roles: String?) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .fillMaxHeight()
             .verticalScroll(rememberScrollState())  // Menambahkan scroll vertikal
             .padding(16.dp)
     ) {
@@ -313,7 +317,7 @@ fun HomeScreen(navController: NavController, roles: String?) {
                 modifier = Modifier
                     .fillMaxWidth() // Untuk memenuhi lebar layar
                     .fillMaxHeight() // Untuk memenuhi tinggi layar
-                    .padding(16.dp)
+//                    .padding(16.dp)
             ) {
                 Row(
                     modifier = Modifier
@@ -331,7 +335,10 @@ fun HomeScreen(navController: NavController, roles: String?) {
                         style = Typography.bodyMedium.copy(color = Blue),
                         modifier = Modifier.clickable {
                             navController.navigate("article")
+//                            val intent = Intent(context, ArticleActivity::class.java)
+//                            context.startActivity(intent)
                         }
+
                     )
                 }
 
@@ -353,7 +360,7 @@ fun HomeScreen(navController: NavController, roles: String?) {
 
                         // Observasi ViewModel
                         viewModel.listArticle.observe(context as LifecycleOwner) { articleResponse ->
-                            adapter.submitList(articleResponse)
+                            adapter.submitList(articleResponse.take(3))
                         }
 
                         viewModel.isLoading.observe(context as LifecycleOwner) { isLoading ->

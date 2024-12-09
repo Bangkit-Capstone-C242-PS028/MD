@@ -52,21 +52,7 @@ import com.bangkit.dermascan.ui.theme.Typography
 fun FeedsScreen(navController: NavController, roles: String?) {
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Article") },
-                navigationIcon = {
-                    IconButton(onClick = { navController.navigateUp() }) {
-                        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                }
-                , colors = TopAppBarDefaults.smallTopAppBarColors(
-                    containerColor = colorResource(id = R.color.blue),
-                    titleContentColor = Color.White,
-                    navigationIconContentColor = Color.White,
-                    actionIconContentColor = Color.White
-                )
-            )
-
+            AddTopBar("Article",navController)
         },
         content = {
             Box(modifier = Modifier

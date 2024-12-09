@@ -218,7 +218,7 @@ fun MainScreen( navController: NavHostController) {
                         FloatingActionButton(
                             onClick = {
                                 // Tindakan ketika FAB ditekan
-                                Toast.makeText(context, "FAB Clicked", Toast.LENGTH_SHORT).show()
+//                                Toast.makeText(context, "FAB Clicked", Toast.LENGTH_SHORT).show()
                                 navController.navigate("favoriteArticle")
                             },
                             containerColor = LightBlue,

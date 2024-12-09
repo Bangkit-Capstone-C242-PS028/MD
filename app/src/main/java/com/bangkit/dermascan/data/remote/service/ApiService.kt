@@ -99,7 +99,10 @@ interface ApiService {
 
 
     @GET("articles")
-    suspend fun getArticles(): ArticleResponse
+    suspend fun getArticles(
+        @Query("page") page: Int = 1,
+        @Query("limit") limit: Int = 100
+    ): ArticleResponse
 
     @GET("articles/{articleId}")
     suspend fun getArticleDetail(

@@ -22,12 +22,16 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -50,6 +54,7 @@ import coil3.compose.AsyncImage
 import com.bangkit.dermascan.data.pref.UserModel
 import com.bangkit.dermascan.ui.authentication.AuthViewModel
 import com.bangkit.dermascan.ui.authentication.register.CustomTextField
+import com.bangkit.dermascan.ui.main.feeds.AddTopBar
 import com.bangkit.dermascan.ui.theme.Blue
 import com.bangkit.dermascan.ui.theme.White
 import com.bangkit.dermascan.util.uriToFile
@@ -57,6 +62,7 @@ import com.bangkit.dermascan.util.Result
 import com.bangkit.dermascan.util.getMimeType
 import com.bangkit.dermascan.util.reduceFileImage
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditProfileScreen(navController: NavController){
     val context = LocalContext.current
@@ -77,170 +83,157 @@ fun EditProfileScreen(navController: NavController){
         address.value = currentUser?.address ?: ""
     }
 
-
-//    val text = rememberSaveable { mutableStateOf("Default Value") }
-
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+    Column(
+        modifier = Modifier.fillMaxSize()
     ) {
-        Column(
-            modifier = Modifier
-                .verticalScroll(scrollState)
-                .padding(24.dp)  // Menambahkan padding di sekeliling kolom
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+        // TopAppBar
+        AddTopBar("Edit Profile",navController)
+
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
         ) {
-
-
-            //ambil link dari viewmodel / userPref
-            val userSession by authViewModel.getSession().observeAsState()
-            val profileImageUrl: String? = userSession?.profileImageUrl  // Ambil URL gambar profil dari session
-            val launcher = rememberLauncherForActivityResult(
-                contract = ActivityResultContracts.GetContent()
-            ) { uri: Uri? ->
-                uri?.let {
-                    imageUri.value = it
-//            onImageSelected(it) // Mengirim URI gambar yang dipilih ke pemanggil
-                }
-            }
-            if (!profileImageUrl.isNullOrBlank()) {
-
-                val displayedImageUri = imageUri.value?.toString() ?: profileImageUrl
-
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier.size(250.dp) // Ukuran gambar
-                ) {
-                    // Gambar profil
-                    AsyncImage(
-                        model = displayedImageUri,
-                        contentDescription = "Profile Picture",
-                        modifier = Modifier
-                            .size(250.dp)
-                            .clip(CircleShape)
-                            .clickable {
-                                launcher.launch("image/*")
-                            },
-                        contentScale = ContentScale.Crop
-                    )
-
-                    // Ikon pensil di kanan bawah
-                    Icon(
-                        imageVector = Icons.Default.Edit, // Gunakan ikon bawaan atau tambahkan ikon khusus
-                        contentDescription = "Edit Profile Picture",
-                        modifier = Modifier
-                            .align(Alignment.BottomEnd) // Posisi ikon di kanan bawah
-                            .size(42.dp) // Ukuran ikon
-                            .background(
-                                color = Color.White, // Latar belakang putih agar ikon terlihat
-                                shape = CircleShape
-                            )
-                            .clickable {
-                                launcher.launch("image/*")
-                            }
-                            .padding(4.dp), // Padding dalam ikon
-                        tint = Color.Gray // Warna ikon
-                    )
-                }
-
-            } else {
-                // Jika URL gambar null atau kosong, tampilkan ikon default
-                Icon(
-                    imageVector = Icons.Default.AccountCircle,
-                    contentDescription = "Profile Picture",
-                    modifier = Modifier.size(250.dp).clickable {
-                        launcher.launch("image/*")
-                    },
-                    tint = Color.Gray
-                )
-            }
-            Spacer(modifier = Modifier.height(34.dp))
-//            Spacer(modifier = Modifier.height(16.dp))
-
-            CustomTextField(value = firstName , label = "First Name")
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            CustomTextField(value = lastName, label = "Last Name")
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            CustomTextField(value = address, label = "Address")
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            when (val result = updateResult) {
-                is Result.Loading -> {
-                    CircularProgressIndicator()
-                }
-                is Result.Success -> {
-                    Toast.makeText(context, result.data.message, Toast.LENGTH_SHORT).show()
-//            Text(text = "Update berhasil: ${result.data.message}")
-                    val updateData = UserModel(
-                        firstName = result.data.data?.firstName,
-                        lastName = result.data.data?.lastName,
-                        address = result.data.data?.address,
-                        profileImageUrl = result.data.data?.photoUrl
-                    )
-                    authViewModel.saveUpdateData(updateData)
-                    navController.navigate("main"){
-                        popUpTo("editProfile") { inclusive = true }
+            Column(
+                modifier = Modifier
+                    .verticalScroll(scrollState)
+                    .padding(24.dp)  // Menambahkan padding di sekeliling kolom
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                //ambil link dari viewmodel / userPref
+                val userSession by authViewModel.getSession().observeAsState()
+                val profileImageUrl: String? = userSession?.profileImageUrl  // Ambil URL gambar profil dari session
+                val launcher = rememberLauncherForActivityResult(
+                    contract = ActivityResultContracts.GetContent()
+                ) { uri: Uri? ->
+                    uri?.let {
+                        imageUri.value = it
                     }
                 }
+                if (!profileImageUrl.isNullOrBlank()) {
+                    val displayedImageUri = imageUri.value?.toString() ?: profileImageUrl
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.size(250.dp) // Ukuran gambar
+                    ) {
+                        // Gambar profil
+                        AsyncImage(
+                            model = displayedImageUri,
+                            contentDescription = "Profile Picture",
+                            modifier = Modifier
+                                .size(250.dp)
+                                .clip(CircleShape)
+                                .clickable {
+                                    launcher.launch("image/*")
+                                },
+                            contentScale = ContentScale.Crop
+                        )
 
-                Result.Idle -> {}
-                else -> {
-//            Text(text = "Tidak ada data")
+                        // Ikon pensil di kanan bawah
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "Edit Profile Picture",
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                                .size(42.dp)
+                                .background(
+                                    color = Color.White,
+                                    shape = CircleShape
+                                )
+                                .clickable {
+                                    launcher.launch("image/*")
+                                }
+                                .padding(4.dp),
+                            tint = Color.Gray
+                        )
+                    }
+                } else {
+                    // Jika URL gambar null atau kosong, tampilkan ikon default
+                    Icon(
+                        imageVector = Icons.Default.AccountCircle,
+                        contentDescription = "Profile Picture",
+                        modifier = Modifier.size(250.dp).clickable {
+                            launcher.launch("image/*")
+                        },
+                        tint = Color.Gray
+                    )
                 }
-            }
-            if(updateResult is Result.Error){
-                Text(text = "Error: ${(updateResult as Result.Error).message}")
-            }
-            // Sign Up Button
-            var isButtonEnabled by remember { mutableStateOf(true) }
-            Button(
-                onClick = {
-                    isButtonEnabled = false
-                    val imageFile = imageUri.value?.let {
-                        val mimeType = context.getMimeType(it)
-                        if (mimeType?.startsWith("image/") == true) {
-                            // File valid, konversi URI ke file
-                            uriToFile(it, context).reduceFileImage()
-                        } else {
-                            // Invalid file type
-                            Toast.makeText(context, "Please select a valid image file", Toast.LENGTH_SHORT).show()
-                            return@Button
+                Spacer(modifier = Modifier.height(34.dp))
+
+                CustomTextField(value = firstName , label = "First Name")
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                CustomTextField(value = lastName, label = "Last Name")
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                CustomTextField(value = address, label = "Address")
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                when (val result = updateResult) {
+                    is Result.Loading -> {
+                        CircularProgressIndicator()
+                    }
+                    is Result.Success -> {
+                        Toast.makeText(context, result.data.message, Toast.LENGTH_SHORT).show()
+                        val updateData = UserModel(
+                            firstName = result.data.data?.firstName,
+                            lastName = result.data.data?.lastName,
+                            address = result.data.data?.address,
+                            profileImageUrl = result.data.data?.photoUrl
+                        )
+                        authViewModel.saveUpdateData(updateData)
+                        navController.navigate("main") {
+                            popUpTo("editProfile") { inclusive = true }
                         }
                     }
 
-                    Log.d("File Check", "File path: ${imageFile?.path}, Exists: ${imageFile?.exists()}")
+                    Result.Idle -> {}
+                    else -> {}
+                }
+                if(updateResult is Result.Error){
+                    Text(text = "Error: ${(updateResult as Result.Error).message}")
+                }
 
-                    // Handle update logic
-                    editProfileViewModel.updateUser(
-                        firstname = firstName.value,
-                        lastname = lastName.value,
-                        address = address.value,
-                        imgFile = imageFile // Bisa null jika tidak ada gambar
-                    )
-                },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Blue,
-                    contentColor = White
-                ),
-                modifier = Modifier
-                    .width(207.dp)  // Mengatur lebar tombol
-                    .height(45.dp),
-                enabled = isButtonEnabled
-            ) {
-                Text("Update Profile", fontSize = 16.sp)
+                var isButtonEnabled by remember { mutableStateOf(true) }
+                Button(
+                    onClick = {
+                        isButtonEnabled = false
+                        val imageFile = imageUri.value?.let {
+                            val mimeType = context.getMimeType(it)
+                            if (mimeType?.startsWith("image/") == true) {
+                                uriToFile(it, context).reduceFileImage()
+                            } else {
+                                Toast.makeText(context, "Please select a valid image file", Toast.LENGTH_SHORT).show()
+                                return@Button
+                            }
+                        }
+
+                        Log.d("File Check", "File path: ${imageFile?.path}, Exists: ${imageFile?.exists()}")
+
+                        // Handle update logic
+                        editProfileViewModel.updateUser(
+                            firstname = firstName.value,
+                            lastname = lastName.value,
+                            address = address.value,
+                            imgFile = imageFile // Bisa null jika tidak ada gambar
+                        )
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Blue,
+                        contentColor = White
+                    ),
+                    modifier = Modifier
+                        .width(207.dp)
+                        .height(45.dp),
+                    enabled = isButtonEnabled
+                ) {
+                    Text("Update Profile", fontSize = 16.sp)
+                }
             }
-
         }
-
-
     }
-
-
 }
