@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -33,9 +35,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -46,8 +50,12 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.bangkit.dermascan.R
 import com.bangkit.dermascan.data.model.response.SkinLesionItem
+import com.bangkit.dermascan.ui.main.home.SkinLesionItemWithShimmer
 import com.bangkit.dermascan.ui.theme.LightBlue
 import com.bangkit.dermascan.ui.main.scan.upload.SkinLesionViewModel
+import com.bangkit.dermascan.ui.theme.Blue
+import com.bangkit.dermascan.ui.theme.Typography
+import com.bangkit.dermascan.ui.theme.White
 import com.bangkit.dermascan.util.Result
 import com.bangkit.dermascan.util.formatTimestamp
 import com.bumptech.glide.Glide
@@ -70,20 +78,39 @@ fun SkinLesionHistoryScreen(navController: NavController) {
     when (val result = skinLesionsResult) {
         is Result.Loading -> {
             // Tampilkan loading indicator jika data sedang dimuat
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.7f)) // Latar belakang gelap transparan
-                    .clickable(enabled = false) { } // Mengabaikan klik di background
-            ) {
-                val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.animation_1732712667451))
-                LottieAnimation(
-                    composition = composition,
-                    iterations = LottieConstants.IterateForever,
+
+            Scaffold(
+                topBar = {
+                    TopAppBar(
+                        title = { Text("Skin Lesion History") },
+                        navigationIcon = {
+                            IconButton(onClick = { navController.navigateUp() }) {
+                                Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                            }
+                        }
+                        , colors = TopAppBarDefaults.smallTopAppBarColors(
+                            containerColor = colorResource(id = R.color.blue),
+                            titleContentColor = Color.White,
+                            navigationIconContentColor = Color.White,
+                            actionIconContentColor = Color.White
+                        )
+                    )
+
+                }
+            ) { paddingValues ->
+                LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .align(Alignment.Center) // Posisi animasi di tengah
-                )
+                        .padding(paddingValues)
+                        .padding(16.dp)
+                ) {
+                    items(5) {
+                        SkinLesionItemWithShimmer(
+                            isLoading = true,
+                            modifier = Modifier.padding(end = 8.dp)
+                        )
+                    }
+                }
             }
         }
         is Result.Success -> {
@@ -97,7 +124,13 @@ fun SkinLesionHistoryScreen(navController: NavController) {
                             IconButton(onClick = { navController.navigateUp() }) {
                                 Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                             }
-                        }
+                        },
+                         colors = TopAppBarDefaults.smallTopAppBarColors(
+                            containerColor = colorResource(id = R.color.blue),
+                            titleContentColor = Color.White,
+                            navigationIconContentColor = Color.White,
+                            actionIconContentColor = Color.White
+                        )
                     )
                 }
             ) { paddingValues ->
@@ -157,7 +190,9 @@ fun SkinLesionItem(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Display processed image if available, otherwise original image
-        val imageUrl = skinLesion.processedImageUrl
+
+        val imageUrl = skinLesion.processedImageUrl ?: skinLesion.originalImageUrl
+
 
         // Image using Glide with AndroidView
         AsyncImage(
@@ -172,15 +207,16 @@ fun SkinLesionItem(
 
         // Classification and Status
         Text(
-            text = "Classification: ${skinLesion.classification}",
+            text = "Classification: ${skinLesion?.classification.let { it ?: "Loading..." }}",
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .background(
-                    color = Color.Blue.copy(alpha = 0.1f),
+                    color = Blue,
                     shape = RoundedCornerShape(12.dp)
                 )
-                .padding(horizontal = 12.dp, vertical = 6.dp)
+                .padding(horizontal = 12.dp, vertical = 6.dp),
+            color = White
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -190,10 +226,11 @@ fun SkinLesionItem(
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier
                 .background(
-                    color = Color.Blue.copy(alpha = 0.2f),
+                    color = White,
                     shape = RoundedCornerShape(8.dp)
                 )
-                .padding(horizontal = 12.dp, vertical = 6.dp)
+                .padding(horizontal = 12.dp, vertical = 6.dp),
+            color = Blue
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -206,27 +243,37 @@ fun SkinLesionItem(
             Text(
                 text = "Created At: ${formatTimestamp(skinLesion.createdAt)}",
                 style = MaterialTheme.typography.bodySmall,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                modifier = Modifier.background(
+                    color = Blue,
+                    shape = RoundedCornerShape(8.dp)
+                ).padding(horizontal = 12.dp, vertical = 6.dp),
+                color = White
             )
 
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Processed At: ${formatTimestamp(skinLesion.processedAt)}",
-                style = MaterialTheme.typography.bodySmall,
-                textAlign = TextAlign.Center
+                text = "Processed At: ${skinLesion?.processedAt?.let { formatTimestamp(it) } ?: "Loading..."}",
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.background(
+                    color = White,
+                    shape = RoundedCornerShape(8.dp)
+                ).padding(horizontal = 12.dp, vertical = 6.dp),
+                color = Blue
             )
         }
+//
+//        Spacer(modifier = Modifier.height(8.dp))
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Additional Information
-        Text(
-            text = "Patient ID: ${skinLesion.patientUid}",
-            style = MaterialTheme.typography.bodySmall,
-            color = Color.Gray,
-            textAlign = TextAlign.Center
-        )
+//        // Additional Information
+//        Text(
+//            text = "Patient ID: ${skinLesion.patientUid}",
+//            style = MaterialTheme.typography.bodySmall,
+//            color = Color.Gray,
+//            textAlign = TextAlign.Center
+//        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -239,9 +286,16 @@ fun SkinLesionItem(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = 16.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Blue,
+                contentColor = LightBlue
+            )
         ) {
-            Text(text = "Consultation")
+            Text(text = "Consultation",
+                style = Typography.labelLarge,
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp)
         }
     }
 }

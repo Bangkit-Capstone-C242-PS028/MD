@@ -131,7 +131,7 @@ class ApiRepository(private val apiService: ApiService) {
             address = bodyMap["address"]!!,
             workplace = bodyMap["workplace"]!!,
             specialization = bodyMap["specialization"]!!,
-            whatsappUrl = bodyMap["whatsappUrl"]!!,
+            phoneNumber = bodyMap["phoneNumber"]!!,
             document = documentPart
         )
     }
@@ -262,7 +262,7 @@ class ApiRepository(private val apiService: ApiService) {
 
     suspend fun getSkinLesions(
         page: Int = 1,
-        limit: Int = 10
+        limit: Int = 100
     ): Flow<Result<List<SkinLesionItem>>?> = flow {
         try {
             val response = apiService.getSkinLesions(page = page, limit = limit)
@@ -304,8 +304,8 @@ class ApiRepository(private val apiService: ApiService) {
         }
     }.flowOn(Dispatchers.IO)
 
-    suspend fun getDoctors(page: Int, size: Int): Response<GetDoctorResponse> {
-        return apiService.getAllDoctor(page, size, "DOCTOR")
+    suspend fun getDoctors(): Response<GetDoctorResponse> {
+        return apiService.getAllDoctor()
     }
 
     fun sendMessage(message: String, callback: (kotlin.Result<ChatData>) -> Unit) {
@@ -452,7 +452,7 @@ class ApiRepository(private val apiService: ApiService) {
         }
     }
 
-    suspend fun getForumReplies(forumId: String, page: Int = 1, limit: Int = 10): ForumRepliesResponse {
+    suspend fun getForumReplies(forumId: String, page: Int = 1, limit: Int = 100): ForumRepliesResponse {
         return try {
             val response = apiService.getForumReplies(forumId, page, limit)
             Log.d("ForumRepository", "Forum replies retrieved: $response")

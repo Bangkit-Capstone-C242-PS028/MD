@@ -1,4 +1,4 @@
-package com.bangkit.dermascan.ui.favorite
+package com.bangkit.dermascan.ui.articleFavorite
 
 import android.app.Application
 import androidx.lifecycle.LiveData

@@ -1,4 +1,4 @@
-package com.bangkit.dermascan.ui.favorite
+package com.bangkit.dermascan.ui.articleFavorite
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bangkit.dermascan.data.model.response.ArticleItem
 import com.bangkit.dermascan.databinding.FragmentFavoriteBinding
 import com.bangkit.dermascan.ui.article.ArticleAdapter
+import com.bangkit.dermascan.ui.favorite.FavoriteArticleViewModelFactory
 
 class FavoriteArticleFragment : Fragment() {
 

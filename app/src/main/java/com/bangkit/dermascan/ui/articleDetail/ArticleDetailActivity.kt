@@ -65,7 +65,7 @@ class ArticleDetailActivity : AppCompatActivity() {
                     viewModel.deleteFavoriteArticle(favoriteArticle)
                     Toast.makeText(
                         this,
-                        getString(R.string.favorite_deleted),
+                        " ${favoriteArticle.title} ${getString(R.string.favorite_deleted)}",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -77,7 +77,7 @@ class ArticleDetailActivity : AppCompatActivity() {
                         viewModel.insertFavoriteArticle(articleDetail)
                         Toast.makeText(
                             this,
-                            getString(R.string.favorite_added),
+                            "${articleDetail.title} ${getString(R.string.favorite_added)}",
                             Toast.LENGTH_SHORT
                         ).show()
                     }

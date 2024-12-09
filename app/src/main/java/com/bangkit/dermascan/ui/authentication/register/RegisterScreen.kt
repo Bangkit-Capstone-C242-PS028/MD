@@ -1,20 +1,5 @@
 package com.bangkit.dermascan.ui.authentication.register
 
-//=======
-//>>>>>>> master
-//<<<<<<< HEAD
-//=======
-//import androidx.compose.runtime.Composable
-//import androidx.compose.runtime.MutableState
-//>>>>>>> master
-//<<<<<<< HEAD
-//import androidx.compose.ui.text.input.KeyboardType
-//import androidx.compose.ui.text.input.PasswordVisualTransformation
-//import java.text.SimpleDateFormat
-//=======
-//import androidx.compose.ui.text.font.FontWeight
-//import androidx.compose.ui.text.input.VisualTransformation
-//>>>>>>> master
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.net.Uri
@@ -109,15 +94,15 @@ import com.bangkit.dermascan.ui.theme.White
 import com.bangkit.dermascan.ui.theme.docInp
 import com.bangkit.dermascan.util.Result
 import com.bangkit.dermascan.util.uriToFile
+import com.bangkit.dermascan.util.validatePhoneNumber
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
 
-//@OptIn(ExperimentalMaterial3Api::class)
+
 //@Preview(showSystemUi = true)
-@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("DefaultLocale")
 @Composable
 fun RegisterScreen(onRegisterSuccess: () -> Unit) {
@@ -296,8 +281,8 @@ fun RegisterScreen(onRegisterSuccess: () -> Unit) {
                 )
 
                 CustomTextField(
-                    value = waUrl,
-                    label = "Whatsapp Url (wa.me/628****) "
+                    value = mobileNumber,
+                    label = "Mobile Number (Format : 62812*****)"
                 )// Input tambahan untuk dokter
 
                 PdfFilePicker(
@@ -521,7 +506,6 @@ fun RoleSpinner(
                 supportingText = {
                     roleError?.let {
                         Text(it, color = MaterialTheme.colorScheme.error)
-                        Text(it, color = MaterialTheme.colorScheme.error)
                     }
                 },
                 colors = TextFieldDefaults.colors(
@@ -586,18 +570,23 @@ fun CustomTextField(
 ) {
 //    val passTemp = remember { mutableStateOf("") }
     when (label) {
-        "Mobile Number" -> {
+        "Mobile Number (Format : 62812*****)" -> {
+            val isValid = remember { mutableStateOf(true) }
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
                 shape = MaterialTheme.shapes.medium,
-                color = Blue,
+                color = TextInp,
                 shadowElevation = 1.dp
             ) {
                 TextField(
                     value = value.value,
-                    onValueChange = { value.value = it },
+                    onValueChange =
+                    {
+                        value.value = it
+                        isValid.value = validatePhoneNumber(it)
+                    },
                     label = {
                         Text(label,
                             style = Typography.labelLarge,
@@ -619,8 +608,19 @@ fun CustomTextField(
                     textStyle = Typography.bodyMedium.copy(
                         color = Black,
                         fontWeight = FontWeight.Medium
-                    )
+                    ),
+                    supportingText = {
+                        if (!isValid.value) {
+                            Text(
+                                text = "Invalid phone number. Format must start with 628 and min 9 characters.",
+                                color = Color.Red,
+                                style = Typography.bodySmall,
+                                modifier = Modifier.padding(start = 8.dp, top = 4.dp)
+                            )
+                        }
+                    }
                 )
+
             }
         }
         "Email" -> {

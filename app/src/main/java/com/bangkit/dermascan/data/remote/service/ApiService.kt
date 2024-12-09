@@ -55,7 +55,6 @@ interface ApiService {
     @POST("auth/signup")
     suspend fun signup(@Body signupRequest: AuthRequest): Response<SuccessMessage>
 
-
     //doctor
     @Multipart
     @POST("auth/signup")
@@ -70,7 +69,7 @@ interface ApiService {
         @Part("address") address: RequestBody,
         @Part("workplace") workplace: RequestBody,
         @Part("specialization") specialization: RequestBody,
-        @Part("whatsappUrl") whatsappUrl: RequestBody,
+        @Part("phoneNumber") phoneNumber: RequestBody,
         @Part document: MultipartBody.Part
     ): Response<SuccessMessage>
 
@@ -87,42 +86,16 @@ interface ApiService {
     @GET("users/me")
     suspend fun getUserDetail(): Response<UserResponse>
 
-//    @PATCH("users/me")
-//    suspend fun updateDataUser(@Body userRequest: UserRequest): Response<BaseResponse<UserData>>
-
-
     @DELETE("users/me")
     suspend fun deleteUser(): UserResponse
 
     @GET("users")
     suspend fun getAllDoctor(
         @Query("page") page: Int ?= 1,
-        @Query("size") size: Int ?= 10,
+        @Query("limit") size: Int ?= 100,
         @Query("role") role: String? = "DOCTOR",
 
         ): Response<GetDoctorResponse>
-
-
-    //ARTICLES
-//    @POST("articles")
-//    suspend fun createArticle(@Body forumRequest: ForumRequest): Response<BaseResponse<ForumCreatedResponse>>
-//
-//    @GET("articles")
-//    suspend fun getAllArticles(
-//        @Query("page") page: Int ?= 1,
-//        @Query("size") size: Int ?= 10,
-//        @Query("role") role: String? = null
-//    ): Response<ArticlesResponse>
-//
-//    @GET("articles/{articleId}")
-//    suspend fun getArticleDetail(
-//        @Path("articleId") articleId: String
-//    ): Response<BaseResponse<DataArticles>>
-//
-//    @DELETE("articles/{articleId}")
-//    suspend fun deleteArticle(
-//        @Path("articleId") articleId: String
-//    ): Response<BaseResponse<ArticlesResponse>>
 
 
     @GET("articles")
@@ -186,7 +159,7 @@ interface ApiService {
     @GET("forums")
     suspend fun getForums(
         @Query("page") page: Int = 1,
-        @Query("limit") limit: Int = 10
+        @Query("limit") limit: Int = 100
     ): ForumResponse
 
     @GET("forums/my")
@@ -207,14 +180,8 @@ interface ApiService {
     suspend fun getForumReplies(
         @Path("forumId") forumId: String,
         @Query("page") page: Int = 1,
-        @Query("limit") limit: Int = 10
+        @Query("limit") limit: Int = 100
     ): ForumRepliesResponse
-
-
-
-
-    //
-
 
     //uploadSkinLesionImg
     @Multipart
@@ -226,7 +193,7 @@ interface ApiService {
     @GET("skin-lesions/my")
     suspend fun getSkinLesions(
         @Query("page") page: Int = 1,
-        @Query("limit") limit: Int = 10
+        @Query("limit") limit: Int = 100
     ): Response<SkinLesionsResponse>
 
     @GET("skin-lesions/{id}")

@@ -3,6 +3,7 @@ package com.bangkit.dermascan.ui.favorite
 import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.bangkit.dermascan.ui.articleFavorite.FavoriteArticleViewModel
 
 class FavoriteArticleViewModelFactory(
     private val application: Application

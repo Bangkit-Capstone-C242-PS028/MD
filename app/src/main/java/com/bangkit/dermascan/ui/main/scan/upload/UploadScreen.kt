@@ -16,6 +16,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -82,7 +83,7 @@ fun UploadScreen(
             onSuccessClick() // Callback untuk pindah halaman setelah upload sukses
         }
     }
-    Box(modifier = Modifier.fillMaxSize()){
+    Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -96,8 +97,7 @@ fun UploadScreen(
                     .fillMaxWidth()
                     .height(360.dp)
                     .clip(RoundedCornerShape(16.dp))
-                    .border(1.dp, Blue)
-                    ,
+                    .border(1.dp, Blue),
                 contentAlignment = Alignment.Center
             ) {
                 AsyncImage(
@@ -120,24 +120,33 @@ fun UploadScreen(
                         val imageFile = uriToFile(uri!!, context).reduceFileImage()
                         skinLesionViewModel.uploadImage(imageFile)
                     }
-//                onSuccessClick()
                 },
-                modifier = Modifier.wrapContentSize(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp), // Menambahkan padding horizontal untuk tombol
                 colors = ButtonDefaults.buttonColors(Blue),
                 enabled = compressedImageBytes != null
             ) {
-                Text("Unggah Gambar")
+                Text("Upload Image",
+                    color = MaterialTheme.colorScheme.onPrimary
+                    )
             }
 
+            Spacer(modifier = Modifier.height(16.dp)) // Memberikan jarak sebelum pesan atau status
+
+            // Status upload result
             when (uploadResult) {
                 is Result.Idle -> {
-                    Text("Silahkan Pencet Tombol Unggah, untuk mengunggah gambar 😁")
+                    Text("Silahkan Tekan Tombol Upload, untuk mengunggah gambar 😁",
+                        color = MaterialTheme.colorScheme.onBackground,
+                        textAlign = TextAlign.Center,
+                        fontSize = Typography.bodyMedium.fontSize)
                 }
 
                 is Result.Error -> {
                     Toast.makeText(context, "${uploadResult.message}, Please re Sign In!!", Toast.LENGTH_SHORT).show()
-//                Text("Error: ${uploadResult.message}", color = Color.Red)
-                    if(uploadResult.message == "Token has expired"){
+                    // Menangani error dengan logika keluar pengguna jika token kadaluarsa
+                    if (uploadResult.message == "Token has expired") {
                         viewModelAuth.signOut(context)
                         viewModelAuth.getSession().observe(context as MainActivity) { user ->
                             if (!user.isLogin) {
@@ -148,10 +157,13 @@ fun UploadScreen(
                         }
                     }
                 }
-                else -> { /* Idle state, tidak ada tindakan */ }
+                else -> {
+                    /* Idle state, tidak ada tindakan */
+                }
             }
         }
 
+        // Loading state
         if (uploadResult is Result.Loading) {
             Box(
                 modifier = Modifier

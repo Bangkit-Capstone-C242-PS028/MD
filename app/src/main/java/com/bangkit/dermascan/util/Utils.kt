@@ -206,6 +206,17 @@ fun byteArrayToUri(context: Context, byteArray: ByteArray, fileName: String): Ur
     }
 }
 
+fun formatDate(input: String): String {
+    // Parsing input string ke ZonedDateTime
+    val zonedDateTime = ZonedDateTime.parse(input)
+
+    // Mengubah format sesuai kebutuhan
+    val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+
+    // Mengonversi dan mengembalikan hasil
+    return zonedDateTime.format(dateFormatter)
+}
+
 fun formatTimestamp(input: String): String {
     // Parsing input string ke ZonedDateTime
     val zonedDateTime = ZonedDateTime.parse(input)
@@ -215,6 +226,10 @@ fun formatTimestamp(input: String): String {
 
     // Mengonversi dan mengembalikan hasil
     return zonedDateTime.format(dateFormatter)
+}
+
+fun validatePhoneNumber(input: String): Boolean {
+    return input.matches(Regex("^628\\d{6,}\$"))
 }
 
 fun getImageUri(context: Context): Uri {

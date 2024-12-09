@@ -19,7 +19,7 @@ val myFontFamily = FontFamily(
 val Typography = Typography(
     bodyLarge = TextStyle(
         fontFamily = myFontFamily,  // Menggunakan myFontFamily untuk bodyLarge
-        fontWeight = FontWeight.Light, // Bisa diubah sesuai kebutuhan
+        fontWeight = FontWeight.Medium, // Bisa diubah sesuai kebutuhan
         fontSize = 32.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
@@ -28,6 +28,13 @@ val Typography = Typography(
         fontFamily = myFontFamily,  // Menggunakan myFontFamily untuk bodyLarge
         fontWeight = FontWeight.Medium, // Bisa diubah sesuai kebutuhan
         fontSize = 16.sp,
+        lineHeight = 24.sp,
+        letterSpacing = 0.5.sp
+    ),
+    bodySmall = TextStyle(
+        fontFamily = myFontFamily,  // Menggunakan myFontFamily untuk bodyLarge
+        fontWeight = FontWeight.Medium, // Bisa diubah sesuai kebutuhan
+        fontSize = 12.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
     ),

@@ -24,7 +24,7 @@
     <string name="enter_forum_title">Judul forum</string>
     <string name="enter_forum_description">Masukan detail pertanyaan</string>
     <string name="favorite_button">favorite button\n</string>
-    <string name="favorite_deleted">Berhasil dihapus dari daftar favorit</string>
+    <string name="favorite_deleted">berhasil dihapus dari daftar favorit</string>
     <string name="favorite_added">Berhasil ditambahkan ke daftar favorit</string>
     <string name="favorite_kosong">No favorite articles</string>
 </resources>

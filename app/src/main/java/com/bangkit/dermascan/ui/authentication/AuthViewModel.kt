@@ -186,7 +186,7 @@ class AuthViewModel @Inject constructor(private val repository: UserRepository, 
                                                         workplace = result.data.doctor?.workplace ?: "Not Doctor",
                                                         isVerified = result.data.doctor?.isVerified,
                                                         documentUrl = result.data.doctor?.documentUrl,
-                                                        whatsappUrl = result.data.doctor?.whatsappUrl
+                                                        phoneNumber = result.data.doctor?.phoneNumber
                                                     )
 
                                                    Log.d("DoctorData", "Doctor Data: ${result.data.doctor?.isVerified}")

@@ -57,7 +57,7 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
             preferences[IMAGE_URL_KEY] = user.profileImageUrl ?: ""
             preferences[DOCUMENT_URL_KEY] = user.documentUrl ?: ""
             preferences[IS_VERIFIED_KEY] = user.isVerified ?: false
-            preferences[WHATS_APP_URL_KEY] = user.whatsappUrl ?: ""
+            preferences[WHATS_APP_NUMB_KEY] = user.phoneNumber ?: ""
             Log.d("DataStore", "data saved successfully: $user")
         }
     }
@@ -133,7 +133,7 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
                 preferences[IS_LOGIN_KEY] ?: false,
                 preferences[DOCUMENT_URL_KEY] ?: "",
                 preferences[IS_VERIFIED_KEY] ?: false,
-                preferences[WHATS_APP_URL_KEY] ?: ""
+                preferences[WHATS_APP_NUMB_KEY] ?: ""
 
             )
         }
@@ -202,7 +202,7 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
         private val IMAGE_URL_KEY = stringPreferencesKey("imageUrl")
         private val POINT_KEY = intPreferencesKey("points")
         private val DOCUMENT_URL_KEY = stringPreferencesKey("documentUrl")
-        private val WHATS_APP_URL_KEY = stringPreferencesKey("whatsappUrl")
+        private val WHATS_APP_NUMB_KEY = stringPreferencesKey("whatsappUrl")
         private val IS_VERIFIED_KEY = booleanPreferencesKey("isVerified")
 
 

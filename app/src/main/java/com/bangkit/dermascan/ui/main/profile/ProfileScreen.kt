@@ -1,6 +1,7 @@
 package com.bangkit.dermascan.ui.main.profile
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -106,7 +107,8 @@ fun ProfileScreen(navController: NavController) {
                     icon = Icons.Default.Settings,
                     title = "Account Settings",
                     onClick = {
-                        navController.navigate("accountSettings")
+//                        navController.navigate("accountSettings")
+                        Toast.makeText(context, "Settings Feature is Coming Soon", Toast.LENGTH_SHORT).show()
                     }
                 )
             }
@@ -250,7 +252,7 @@ fun ProfileHeader(viewModel: AuthViewModel) {
             }
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "Point : $points",
+                text = "Point : ${userData?.point}",
                 style = Typography.bodyMedium
             )
         }
