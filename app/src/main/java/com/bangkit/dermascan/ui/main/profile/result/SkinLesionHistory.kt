@@ -102,7 +102,7 @@ fun SkinLesionHistoryScreen(navController: NavController) {
                         navController = navController,
                         skinLesion = lesion
                     )
-                    Toast.makeText(context, "INI PAKE PAGING", Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(context, "INI PAKE PAGING", Toast.LENGTH_SHORT).show()
 //                    LesionHistoryCard(
 //                        lesion = lesion,
 //                        onClick = {
