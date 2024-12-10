@@ -105,10 +105,10 @@ fun ProfileScreen(navController: NavController) {
             item {
                 ProfileMenuItem(
                     icon = Icons.Default.Settings,
-                    title = "Account Settings",
+                    title = "Settings",
                     onClick = {
-//                        navController.navigate("accountSettings")
-                        Toast.makeText(context, "Settings Feature is Coming Soon", Toast.LENGTH_SHORT).show()
+                        navController.navigate("settings")
+//                        Toast.makeText(context, "Settings Feature is Coming Soon", Toast.LENGTH_SHORT).show()
                     }
                 )
             }

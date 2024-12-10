@@ -2,6 +2,7 @@ package com.bangkit.dermascan.ui.onBoard
 
 import android.content.ContentValues.TAG
 import android.util.Log
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -83,7 +84,7 @@ fun OnBoardScreen(navController: NavController, onLoginSuccess: () -> Unit) {
             Text(
                 text = "Scan your skin health with ease.",  // Deskripsi aplikasi
                 style = Typography.bodyMedium,  // Gaya teks untuk deskripsi
-                color = Black,
+                color = if (isSystemInDarkTheme()) White else Black,
                 modifier = Modifier.padding(bottom = 32.dp)  // Padding bawah agar ada jarak antara deskripsi dan tombol
             )
 

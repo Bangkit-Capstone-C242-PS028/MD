@@ -19,6 +19,7 @@ data class SkinLesionItem(
     @SerializedName("originalImageUrl") val originalImageUrl: String,
     @SerializedName("processedImageUrl") val processedImageUrl: String,
     @SerializedName("classification") val classification: String,
+    @SerializedName("description") val description: String?=null,
     @SerializedName("status") val status: String,
     @SerializedName("createdAt") val createdAt: String,
     @SerializedName("processedAt") val processedAt: String

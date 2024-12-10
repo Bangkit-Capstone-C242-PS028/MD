@@ -46,6 +46,6 @@ data class DoctorSignupRequest(
 	val address: String,
 	val workplace: String,
 	val specialization: String,
-	val whatsappUrl: String
+	val phoneNumb: String
 )
 

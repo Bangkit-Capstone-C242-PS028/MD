@@ -31,6 +31,7 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.bangkit.dermascan.R
 import com.bangkit.dermascan.ui.main.MainActivity
 import com.bangkit.dermascan.ui.authentication.AuthViewModel
+import com.bangkit.dermascan.ui.main.profile.settings.SettingsViewModel
 import com.bangkit.dermascan.ui.theme.*
 import com.bangkit.dermascan.util.byteArrayToUri
 import com.bangkit.dermascan.util.compressImageFromUri
@@ -52,7 +53,9 @@ fun UploadScreen(
     val savedImageUri = rememberSaveable(imageUri) { imageUri!! }
     var compressedImageBytes by remember { mutableStateOf<ByteArray?>(null) }
     val uploadResult = skinLesionViewModel.uploadResult.value
-
+    val settingsViewModel: SettingsViewModel = hiltViewModel()
+    // Observe dark mode state
+    val isDarkMode by settingsViewModel.isDarkTheme.collectAsState(initial = false)
     val currentUser = FirebaseAuth.getInstance().currentUser
     val uid = currentUser?.uid
 
@@ -83,105 +86,114 @@ fun UploadScreen(
             onSuccessClick() // Callback untuk pindah halaman setelah upload sukses
         }
     }
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            // Tampilan Gambar
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(360.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .border(1.dp, Blue),
-                contentAlignment = Alignment.Center
-            ) {
-                AsyncImage(
-                    model = compressedImageBytes,
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
-                )
-                Log.d("UploadScreen.kt", "onCreate called uri : $compressedImageBytes")
-            }
 
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // Tombol Upload
-            Button(
-                onClick = {
-                    // Logika upload gambar
-                    if (compressedImageBytes != null) {
-                        val uri = byteArrayToUri(context, compressedImageBytes!!, "compressed_image.jpg")
-                        val imageFile = uriToFile(uri!!, context).reduceFileImage()
-                        skinLesionViewModel.uploadImage(imageFile)
-                    }
-                },
+    Surface(
+        color = if (isDarkMode) MaterialTheme.colorScheme.background
+        else MaterialTheme.colorScheme.surface,
+        contentColor = if (isDarkMode) MaterialTheme.colorScheme.onBackground
+        else MaterialTheme.colorScheme.onSurface
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp), // Menambahkan padding horizontal untuk tombol
-                colors = ButtonDefaults.buttonColors(Blue),
-                enabled = compressedImageBytes != null
+                    .fillMaxSize()
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
-                Text("Upload Image",
-                    color = MaterialTheme.colorScheme.onPrimary
+                // Tampilan Gambar
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(360.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .border(1.dp, Blue),
+                    contentAlignment = Alignment.Center
+                ) {
+                    AsyncImage(
+                        model = compressedImageBytes,
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
                     )
-            }
-
-            Spacer(modifier = Modifier.height(16.dp)) // Memberikan jarak sebelum pesan atau status
-
-            // Status upload result
-            when (uploadResult) {
-                is Result.Idle -> {
-                    Text("Silahkan Tekan Tombol Upload, untuk mengunggah gambar 😁",
-                        color = MaterialTheme.colorScheme.onBackground,
-                        textAlign = TextAlign.Center,
-                        fontSize = Typography.bodyMedium.fontSize)
+                    Log.d("UploadScreen.kt", "onCreate called uri : $compressedImageBytes")
                 }
 
-                is Result.Error -> {
-                    Toast.makeText(context, "${uploadResult.message}, Please re Sign In!!", Toast.LENGTH_SHORT).show()
-                    // Menangani error dengan logika keluar pengguna jika token kadaluarsa
-                    if (uploadResult.message == "Token has expired") {
-                        viewModelAuth.signOut(context)
-                        viewModelAuth.getSession().observe(context as MainActivity) { user ->
-                            if (!user.isLogin) {
-                                navController.navigate("onBoard") {
-                                    popUpTo("scan_full") { inclusive = true }
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // Tombol Upload
+                Button(
+                    onClick = {
+                        // Logika upload gambar
+                        if (compressedImageBytes != null) {
+                            val uri = byteArrayToUri(context, compressedImageBytes!!, "compressed_image.jpg")
+                            val imageFile = uriToFile(uri!!, context).reduceFileImage()
+                            skinLesionViewModel.uploadImage(imageFile)
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp), // Menambahkan padding horizontal untuk tombol
+                    colors = ButtonDefaults.buttonColors(Blue),
+                    enabled = compressedImageBytes != null
+                ) {
+                    Text("Upload Image",
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp)) // Memberikan jarak sebelum pesan atau status
+
+                // Status upload result
+                when (uploadResult) {
+                    is Result.Idle -> {
+                        Text("Silahkan Tekan Tombol Upload, untuk mengunggah gambar 😁",
+                            color = MaterialTheme.colorScheme.onBackground,
+                            textAlign = TextAlign.Center,
+                            fontSize = Typography.bodyMedium.fontSize)
+                    }
+
+                    is Result.Error -> {
+                        Toast.makeText(context, "${uploadResult.message}, Please re Sign In!!", Toast.LENGTH_SHORT).show()
+                        // Menangani error dengan logika keluar pengguna jika token kadaluarsa
+                        if (uploadResult.message == "Token has expired") {
+                            viewModelAuth.signOut(context)
+                            viewModelAuth.getSession().observe(context as MainActivity) { user ->
+                                if (!user.isLogin) {
+                                    navController.navigate("onBoard") {
+                                        popUpTo("scan_full") { inclusive = true }
+                                    }
                                 }
                             }
                         }
                     }
-                }
-                else -> {
-                    /* Idle state, tidak ada tindakan */
+                    else -> {
+                        /* Idle state, tidak ada tindakan */
+                    }
                 }
             }
-        }
 
-        // Loading state
-        if (uploadResult is Result.Loading) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.7f)) // Latar belakang gelap transparan
-                    .clickable(enabled = false) { } // Mengabaikan klik di background
-            ) {
-                val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.animation_1732712667451))
-                LottieAnimation(
-                    composition = composition,
-                    iterations = LottieConstants.IterateForever,
+            // Loading state
+            if (uploadResult is Result.Loading) {
+                Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .align(Alignment.Center) // Posisi animasi di tengah
-                )
+                        .background(Color.Black.copy(alpha = 0.7f)) // Latar belakang gelap transparan
+                        .clickable(enabled = false) { } // Mengabaikan klik di background
+                ) {
+                    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.animation_1732712667451))
+                    LottieAnimation(
+                        composition = composition,
+                        iterations = LottieConstants.IterateForever,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .align(Alignment.Center) // Posisi animasi di tengah
+                    )
+                }
             }
         }
     }
+
 
 }
 

@@ -74,7 +74,8 @@ import com.bangkit.dermascan.ui.theme.Typography
 import com.bangkit.dermascan.ui.theme.White
 import com.bangkit.dermascan.ui.main.scan.upload.SkinLesionViewModel
 import com.bangkit.dermascan.util.Result
-import com.bangkit.dermascan.util.formatTimestamp
+import com.bangkit.dermascan.util.formatTimestampToGMT
+//import com.bangkit.dermascan.util.formatTimestampToGMT
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 
@@ -394,98 +395,6 @@ fun HomeScreen(navController: NavController, roles: String?) {
 }
 
 @Composable
-fun SkinLesionItem(
-    skinLesion: SkinLesionItem,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier
-            .width(400.dp)  // Tetapkan lebar jika diperlukan
-            // .height(250.dp)  // Hapus baris ini agar tinggi menyesuaikan konten
-            .padding(16.dp)
-            .background(
-                color = LightBlue,
-                shape = RoundedCornerShape(12.dp)
-            ).padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically // Tetap memusatkan konten secara vertikal
-    ){
-        // Display processed image if available, otherwise original image
-        val imageUrl = skinLesion.processedImageUrl.takeIf { it.isNotEmpty() }
-            ?: skinLesion.originalImageUrl
-
-        // Image using Glide with AndroidView
-        AsyncImage(
-            model = imageUrl,
-            contentDescription = null,
-            modifier = Modifier
-                .size(100.dp)
-                .clip(RoundedCornerShape(8.dp))
-        )
-
-        Spacer(modifier = Modifier.width(16.dp)) // Spacer horizontal
-
-        // Informasi Skin Lesion
-        Column(
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier.weight(1f) // Mengisi sisa ruang horizontal
-        ) {
-            // Classification and Status
-            Text(
-                text = "Classification: ${skinLesion.classification}",
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .background(
-                        color = Color.Blue.copy(alpha = 0.1f),
-                        shape = RoundedCornerShape(12.dp)
-                    )
-                    .padding(horizontal = 12.dp, vertical = 6.dp)
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = "Status: ${skinLesion.status}",
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier
-                    .background(
-                        color = Color.Blue.copy(alpha = 0.2f),
-                        shape = RoundedCornerShape(8.dp)
-                    )
-                    .padding(horizontal = 12.dp, vertical = 6.dp)
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Dates
-            Text(
-                text = "Created At: ${formatTimestamp(skinLesion.createdAt)}",
-                style = MaterialTheme.typography.bodySmall,
-                textAlign = TextAlign.Start
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = "Processed At: ${formatTimestamp(skinLesion.processedAt)}",
-                style = MaterialTheme.typography.bodySmall,
-                textAlign = TextAlign.Start
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Additional Information
-            Text(
-                text = "Patient ID: ${skinLesion.patientUid}",
-                style = MaterialTheme.typography.bodySmall,
-                color = Color.Gray,
-                textAlign = TextAlign.Start
-            )
-        }
-    }
-}
-
-@Composable
 @SuppressLint("ModifierParameter")
 fun SkinLesionItemWithShimmer(
     isLoading: Boolean,
@@ -591,18 +500,12 @@ fun SkinLesionItemWithShimmer(
                 val imageUrl = skinLesion?.processedImageUrl.takeIf { it?.isNotEmpty() ?: false }
                     ?: skinLesion?.originalImageUrl
 
-                AndroidView(
-                    factory = { context ->
-                        ImageView(context).apply {
-                            Glide.with(context)
-                                .load(imageUrl)
-                                .apply(RequestOptions().centerCrop())
-                                .into(this)
-                        }
-                    },
+                AsyncImage(
+                    model = imageUrl,
+                    contentDescription = "Skin Lesion Image",
                     modifier = Modifier
                         .size(200.dp)
-                        .clip(RoundedCornerShape(8.dp)).align(Alignment.Top)
+                        .clip(RoundedCornerShape(8.dp)).align(Alignment.CenterVertically)
                 )
 
                 Spacer(modifier = Modifier.width(16.dp))
@@ -618,15 +521,29 @@ fun SkinLesionItemWithShimmer(
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier
                             .background(
+                                color = White,
+                                shape = RoundedCornerShape(18.dp),
+                            ).padding(8.dp),
+                        color = Blue,
+                        fontWeight = FontWeight.Bold,
+                        )
+
+                    Spacer(modifier = Modifier.height(18.dp))
+
+                    Text(
+                        textAlign = TextAlign.Center,
+                        text = "Description: ${skinLesion?.description ?: "No Description"}",
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier
+                            .background(
                                 color = Blue,
                                 shape = RoundedCornerShape(18.dp),
                             ).padding(8.dp),
                         color = White,
                         fontWeight = FontWeight.Bold,
+                    )
 
-                        )
-
-                    Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(18.dp))
 
                     Text(
                         textAlign = TextAlign.Center,
@@ -654,7 +571,7 @@ fun SkinLesionItemWithShimmer(
             ){
                 Text(
                     textAlign = TextAlign.Center,
-                    text = "Created At: \n${skinLesion?.createdAt?.let { formatTimestamp(it) } ?: "Loading..."}",
+                    text = "Created At: \n${skinLesion?.createdAt?.let { formatTimestampToGMT(it) } ?: "Loading..."}",
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier
                         .background(
@@ -669,7 +586,7 @@ fun SkinLesionItemWithShimmer(
 
                 Text(
                     textAlign = TextAlign.Center,
-                    text = "Processed At: \n${skinLesion?.processedAt?.let { formatTimestamp(it) } ?: "Loading..."}",
+                    text = "Processed At: \n${skinLesion?.processedAt?.let { formatTimestampToGMT(it) } ?: "Loading..."}",
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier
                         .background(
@@ -683,6 +600,100 @@ fun SkinLesionItemWithShimmer(
 
     }
 }
+
+@Composable
+fun SkinLesionItem(
+    skinLesion: SkinLesionItem,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .width(400.dp)  // Tetapkan lebar jika diperlukan
+            // .height(250.dp)  // Hapus baris ini agar tinggi menyesuaikan konten
+            .padding(16.dp)
+            .background(
+                color = LightBlue,
+                shape = RoundedCornerShape(12.dp)
+            ).padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically // Tetap memusatkan konten secara vertikal
+    ){
+        // Display processed image if available, otherwise original image
+        val imageUrl = skinLesion.processedImageUrl.takeIf { it.isNotEmpty() }
+            ?: skinLesion.originalImageUrl
+
+        // Image using Glide with AndroidView
+        AsyncImage(
+            model = imageUrl,
+            contentDescription = null,
+            modifier = Modifier
+                .size(100.dp)
+                .clip(RoundedCornerShape(8.dp))
+        )
+
+        Spacer(modifier = Modifier.width(16.dp)) // Spacer horizontal
+
+        // Informasi Skin Lesion
+        Column(
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.weight(1f) // Mengisi sisa ruang horizontal
+        ) {
+            // Classification and Status
+            Text(
+                text = "Classification: ${skinLesion?.classification ?: "Loading..."}",
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .background(
+                        color = Color.Blue.copy(alpha = 0.1f),
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                    .padding(horizontal = 12.dp, vertical = 6.dp)
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = "Status: ${skinLesion.status}",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier
+                    .background(
+                        color = Color.Blue.copy(alpha = 0.2f),
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .padding(horizontal = 12.dp, vertical = 6.dp)
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Dates
+            Text(
+                text = "Created At: ${formatTimestampToGMT(skinLesion.createdAt)}",
+                style = MaterialTheme.typography.bodySmall,
+                textAlign = TextAlign.Start
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = "Processed At: ${formatTimestampToGMT(skinLesion.processedAt)}",
+                style = MaterialTheme.typography.bodySmall,
+                textAlign = TextAlign.Start
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Additional Information
+            Text(
+                text = "Patient ID: ${skinLesion.patientUid}",
+                style = MaterialTheme.typography.bodySmall,
+                color = Color.Gray,
+                textAlign = TextAlign.Start
+            )
+        }
+    }
+}
+
+
 
 @Composable
 fun ShimmerEffect(

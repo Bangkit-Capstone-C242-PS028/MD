@@ -115,10 +115,12 @@ fun RegisterScreen(onRegisterSuccess: () -> Unit) {
     val password = rememberSaveable { mutableStateOf("") }
     val confirmPassword = rememberSaveable { mutableStateOf("") }
     val mobileNumber = rememberSaveable { mutableStateOf("") }
+
     val address = rememberSaveable { mutableStateOf("") }
     val workPlace = rememberSaveable { mutableStateOf("") }
     val birthday = rememberSaveable { mutableStateOf("") }
     val waUrl = rememberSaveable { mutableStateOf("") }
+    var mobileNumberError by rememberSaveable { mutableStateOf("") }
     var passwordError by rememberSaveable { mutableStateOf("") }
     var emailError by rememberSaveable { mutableStateOf("") }
     var passwordVisibility by rememberSaveable { mutableStateOf(false) }
@@ -160,6 +162,18 @@ fun RegisterScreen(onRegisterSuccess: () -> Unit) {
     }
 
 
+    fun validatePhoneNumber(input: String) {
+        mobileNumber.value = input
+        mobileNumberError = if (input.matches(Regex("^628\\d{6,}\$"))) {
+            ""
+        }else if(input.isBlank()){
+            "Input can't be empty"
+        }else {
+            "Invalid phone number. Format must start with 628 and min 9 characters."
+        }
+
+
+    }
 
     fun validateInputs(): Boolean {
 
@@ -172,6 +186,7 @@ fun RegisterScreen(onRegisterSuccess: () -> Unit) {
             Toast.makeText(context, "Passwords do not match", Toast.LENGTH_SHORT).show()
             return false
         }
+
 
         if (!isValidePassword(password.value)) {
             Toast.makeText(context, "Password must be at least 8 characters long and contain a mix of upper and lower case letters, numbers, and special characters", Toast.LENGTH_LONG).show()
@@ -282,7 +297,10 @@ fun RegisterScreen(onRegisterSuccess: () -> Unit) {
 
                 CustomTextField(
                     value = mobileNumber,
-                    label = "Mobile Number (Format : 62812*****)"
+                    label = "Mobile Number (Format : 62812*****)",
+                    mobileError = mobileNumberError,
+                    onValueChange = { validatePhoneNumber(it) }
+
                 )// Input tambahan untuk dokter
 
                 PdfFilePicker(
@@ -353,7 +371,7 @@ fun RegisterScreen(onRegisterSuccess: () -> Unit) {
                                 address = address.value,
                                 workplace = workPlace.value,
                                 specialization = specializations.value,
-                                whatsappUrl = waUrl.value,
+                                phoneNumb = mobileNumber.value,
                             )
                             val documentFile = selectedFileUri?.let { uriToFile(selectedFileUri!!,context) }
 //                            val documentFile = File(context.filesDir, "document.pdf")
@@ -560,6 +578,7 @@ fun CustomTextField(
     trailingIcon: @Composable (() -> Unit)? = null,
     emailError: String = "",
     passwordError: String = "",
+    mobileError: String = "",
     passwordValue: String = "",
     passwordVisibility: Boolean = false,
     onPasswordVisibilityToggle: () -> Unit = {},
@@ -585,7 +604,8 @@ fun CustomTextField(
                     onValueChange =
                     {
                         value.value = it
-                        isValid.value = validatePhoneNumber(it)
+//                        isValid.value = validatePhoneNumber(it)
+                        onValueChange(it)
                     },
                     label = {
                         Text(label,
@@ -609,10 +629,11 @@ fun CustomTextField(
                         color = Black,
                         fontWeight = FontWeight.Medium
                     ),
+                    isError = mobileError.isNotEmpty(),
                     supportingText = {
-                        if (!isValid.value) {
+                        if (mobileError.isNotEmpty()) {
                             Text(
-                                text = "Invalid phone number. Format must start with 628 and min 9 characters.",
+                                text = mobileError,
                                 color = Color.Red,
                                 style = Typography.bodySmall,
                                 modifier = Modifier.padding(start = 8.dp, top = 4.dp)

@@ -1,3 +1,5 @@
+package com.bangkit.dermascan.data.pref
+
 import android.content.Context
 import android.util.Log
 import androidx.datastore.core.DataStore
@@ -8,18 +10,16 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 //import androidx.datastore.preferences.edit
 import androidx.datastore.preferences.preferencesDataStore
-import androidx.lifecycle.viewModelScope
 //import com.bangkit.dermascan.dataArticles.local.UserData
-import com.bangkit.dermascan.data.pref.UserModel
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
+import javax.inject.Singleton
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
+@Singleton
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "session")
 class UserPreference private constructor(private val dataStore: DataStore<Preferences>) {
 
@@ -182,7 +182,7 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
         }
     }
 
-    // Singleton pattern for UserPreference
+    // Singleton pattern for com.bangkit.dermascan.data.pref.UserPreference
     companion object {
         @Volatile
         private var INSTANCE: UserPreference? = null
@@ -208,7 +208,7 @@ class UserPreference private constructor(private val dataStore: DataStore<Prefer
 
 //        private val USER_DATA_KEY = stringPreferencesKey("user_data")
 
-        // Get an instance of UserPreference
+        // Get an instance of com.bangkit.dermascan.data.pref.UserPreference
         fun getInstance(dataStore: DataStore<Preferences>): UserPreference {
             return INSTANCE ?: synchronized(this) {
                 val instance = UserPreference(dataStore)

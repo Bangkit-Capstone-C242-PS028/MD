@@ -195,8 +195,8 @@ interface ApiService {
 
     @GET("skin-lesions/my")
     suspend fun getSkinLesions(
-        @Query("page") page: Int = 1,
-        @Query("limit") limit: Int = 100
+        @Query("page") page: Int,
+        @Query("limit") limit: Int
     ): Response<SkinLesionsResponse>
 
     @GET("skin-lesions/{id}")

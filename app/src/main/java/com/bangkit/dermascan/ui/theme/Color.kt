@@ -12,7 +12,7 @@ val Blue = Color(0xFF2260FF)
 val LightBlue = Color(0xFFCAD6FF)
 val Black = Color(0xFF000000)
 val TextInp = Color(0xFFECF1FF)
-
+val GreenWA = Color(0xFF40C351)
 val docInp = Color(0xFFECF1FF)
 
 val Purple40 = Color(0xFF6650a4)

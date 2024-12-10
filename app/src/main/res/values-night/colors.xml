@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Warna untuk mode gelap -->
+    <color name="background">#121212</color>
+    <color name="text">#FFFFFF</color>
+</resources>

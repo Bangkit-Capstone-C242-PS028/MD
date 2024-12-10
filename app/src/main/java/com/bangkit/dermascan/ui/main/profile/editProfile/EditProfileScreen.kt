@@ -30,10 +30,13 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -55,6 +58,7 @@ import com.bangkit.dermascan.data.pref.UserModel
 import com.bangkit.dermascan.ui.authentication.AuthViewModel
 import com.bangkit.dermascan.ui.authentication.register.CustomTextField
 import com.bangkit.dermascan.ui.main.feeds.AddTopBar
+import com.bangkit.dermascan.ui.main.profile.settings.SettingsViewModel
 import com.bangkit.dermascan.ui.theme.Blue
 import com.bangkit.dermascan.ui.theme.White
 import com.bangkit.dermascan.util.uriToFile
@@ -75,7 +79,10 @@ fun EditProfileScreen(navController: NavController){
     val address = rememberSaveable { mutableStateOf("") }
     val imageUri = rememberSaveable{ mutableStateOf<Uri?>(null) }
     var compressedImageBytes by remember { mutableStateOf<ByteArray?>(null) }
+    val settingsViewModel: SettingsViewModel = hiltViewModel()
 
+    // Observe dark mode state
+    val isDarkMode by settingsViewModel.isDarkTheme.collectAsState(initial = false)
     val updateResult by editProfileViewModel.updateUserResult.observeAsState()
     LaunchedEffect(currentUser) {
         firstName.value = currentUser?.firstName ?: ""
@@ -83,156 +90,163 @@ fun EditProfileScreen(navController: NavController){
         address.value = currentUser?.address ?: ""
     }
 
-    Column(
-        modifier = Modifier.fillMaxSize()
+    Surface(
+        color = if (isDarkMode) MaterialTheme.colorScheme.background
+        else MaterialTheme.colorScheme.surface,
+        contentColor = if (isDarkMode) MaterialTheme.colorScheme.onBackground
+        else MaterialTheme.colorScheme.onSurface
     ) {
-        // TopAppBar
-        AddTopBar("Edit Profile",navController)
-
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
+        Column(
+            modifier = Modifier.fillMaxSize()
         ) {
-            Column(
-                modifier = Modifier
-                    .verticalScroll(scrollState)
-                    .padding(24.dp)  // Menambahkan padding di sekeliling kolom
-                    .fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                //ambil link dari viewmodel / userPref
-                val userSession by authViewModel.getSession().observeAsState()
-                val profileImageUrl: String? = userSession?.profileImageUrl  // Ambil URL gambar profil dari session
-                val launcher = rememberLauncherForActivityResult(
-                    contract = ActivityResultContracts.GetContent()
-                ) { uri: Uri? ->
-                    uri?.let {
-                        imageUri.value = it
-                    }
-                }
-                if (!profileImageUrl.isNullOrBlank()) {
-                    val displayedImageUri = imageUri.value?.toString() ?: profileImageUrl
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier.size(250.dp) // Ukuran gambar
-                    ) {
-                        // Gambar profil
-                        AsyncImage(
-                            model = displayedImageUri,
-                            contentDescription = "Profile Picture",
-                            modifier = Modifier
-                                .size(250.dp)
-                                .clip(CircleShape)
-                                .clickable {
-                                    launcher.launch("image/*")
-                                },
-                            contentScale = ContentScale.Crop
-                        )
+            // TopAppBar
+            AddTopBar("Edit Profile",navController)
 
-                        // Ikon pensil di kanan bawah
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    modifier = Modifier
+                        .verticalScroll(scrollState)
+                        .padding(24.dp)  // Menambahkan padding di sekeliling kolom
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    //ambil link dari viewmodel / userPref
+                    val userSession by authViewModel.getSession().observeAsState()
+                    val profileImageUrl: String? = userSession?.profileImageUrl  // Ambil URL gambar profil dari session
+                    val launcher = rememberLauncherForActivityResult(
+                        contract = ActivityResultContracts.GetContent()
+                    ) { uri: Uri? ->
+                        uri?.let {
+                            imageUri.value = it
+                        }
+                    }
+                    if (!profileImageUrl.isNullOrBlank()) {
+                        val displayedImageUri = imageUri.value?.toString() ?: profileImageUrl
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier.size(250.dp) // Ukuran gambar
+                        ) {
+                            // Gambar profil
+                            AsyncImage(
+                                model = displayedImageUri,
+                                contentDescription = "Profile Picture",
+                                modifier = Modifier
+                                    .size(250.dp)
+                                    .clip(CircleShape)
+                                    .clickable {
+                                        launcher.launch("image/*")
+                                    },
+                                contentScale = ContentScale.Crop
+                            )
+
+                            // Ikon pensil di kanan bawah
+                            Icon(
+                                imageVector = Icons.Default.Edit,
+                                contentDescription = "Edit Profile Picture",
+                                modifier = Modifier
+                                    .align(Alignment.BottomEnd)
+                                    .size(42.dp)
+                                    .background(
+                                        color = Color.White,
+                                        shape = CircleShape
+                                    )
+                                    .clickable {
+                                        launcher.launch("image/*")
+                                    }
+                                    .padding(4.dp),
+                                tint = Color.Gray
+                            )
+                        }
+                    } else {
+                        // Jika URL gambar null atau kosong, tampilkan ikon default
                         Icon(
-                            imageVector = Icons.Default.Edit,
-                            contentDescription = "Edit Profile Picture",
-                            modifier = Modifier
-                                .align(Alignment.BottomEnd)
-                                .size(42.dp)
-                                .background(
-                                    color = Color.White,
-                                    shape = CircleShape
-                                )
-                                .clickable {
-                                    launcher.launch("image/*")
-                                }
-                                .padding(4.dp),
+                            imageVector = Icons.Default.AccountCircle,
+                            contentDescription = "Profile Picture",
+                            modifier = Modifier.size(250.dp).clickable {
+                                launcher.launch("image/*")
+                            },
                             tint = Color.Gray
                         )
                     }
-                } else {
-                    // Jika URL gambar null atau kosong, tampilkan ikon default
-                    Icon(
-                        imageVector = Icons.Default.AccountCircle,
-                        contentDescription = "Profile Picture",
-                        modifier = Modifier.size(250.dp).clickable {
-                            launcher.launch("image/*")
-                        },
-                        tint = Color.Gray
-                    )
-                }
-                Spacer(modifier = Modifier.height(34.dp))
+                    Spacer(modifier = Modifier.height(34.dp))
 
-                CustomTextField(value = firstName , label = "First Name")
+                    CustomTextField(value = firstName , label = "First Name")
 
-                Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                CustomTextField(value = lastName, label = "Last Name")
+                    CustomTextField(value = lastName, label = "Last Name")
 
-                Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                CustomTextField(value = address, label = "Address")
+                    CustomTextField(value = address, label = "Address")
 
-                Spacer(modifier = Modifier.height(32.dp))
+                    Spacer(modifier = Modifier.height(32.dp))
 
-                when (val result = updateResult) {
-                    is Result.Loading -> {
-                        CircularProgressIndicator()
-                    }
-                    is Result.Success -> {
-                        Toast.makeText(context, result.data.message, Toast.LENGTH_SHORT).show()
-                        val updateData = UserModel(
-                            firstName = result.data.data?.firstName,
-                            lastName = result.data.data?.lastName,
-                            address = result.data.data?.address,
-                            profileImageUrl = result.data.data?.photoUrl
-                        )
-                        authViewModel.saveUpdateData(updateData)
+                    when (val result = updateResult) {
+                        is Result.Loading -> {
+                            CircularProgressIndicator()
+                        }
+                        is Result.Success -> {
+                            Toast.makeText(context, result.data.message, Toast.LENGTH_SHORT).show()
+                            val updateData = UserModel(
+                                firstName = result.data.data?.firstName,
+                                lastName = result.data.data?.lastName,
+                                address = result.data.data?.address,
+                                profileImageUrl = result.data.data?.photoUrl
+                            )
+                            authViewModel.saveUpdateData(updateData)
 //                        navController.navigate("main") {
 //                            popUpTo("editProfile") { inclusive = true }
 //                        }
-                        navController.navigateUp()
-                    }
-
-                    Result.Idle -> {}
-                    else -> {}
-                }
-                if(updateResult is Result.Error){
-                    Text(text = "Error: ${(updateResult as Result.Error).message}")
-                }
-
-                var isButtonEnabled by remember { mutableStateOf(true) }
-                Button(
-                    onClick = {
-                        isButtonEnabled = false
-                        val imageFile = imageUri.value?.let {
-                            val mimeType = context.getMimeType(it)
-                            if (mimeType?.startsWith("image/") == true) {
-                                uriToFile(it, context).reduceFileImage()
-                            } else {
-                                Toast.makeText(context, "Please select a valid image file", Toast.LENGTH_SHORT).show()
-                                return@Button
-                            }
+                            navController.navigateUp()
                         }
 
-                        Log.d("File Check", "File path: ${imageFile?.path}, Exists: ${imageFile?.exists()}")
+                        Result.Idle -> {}
+                        else -> {}
+                    }
+                    if(updateResult is Result.Error){
+                        Text(text = "Error: ${(updateResult as Result.Error).message}")
+                    }
 
-                        // Handle update logic
-                        editProfileViewModel.updateUser(
-                            firstname = firstName.value,
-                            lastname = lastName.value,
-                            address = address.value,
-                            imgFile = imageFile // Bisa null jika tidak ada gambar
-                        )
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Blue,
-                        contentColor = White
-                    ),
-                    modifier = Modifier
-                        .width(207.dp)
-                        .height(45.dp),
-                    enabled = isButtonEnabled
-                ) {
-                    Text("Update Profile", fontSize = 16.sp)
+                    var isButtonEnabled by remember { mutableStateOf(true) }
+                    Button(
+                        onClick = {
+                            isButtonEnabled = false
+                            val imageFile = imageUri.value?.let {
+                                val mimeType = context.getMimeType(it)
+                                if (mimeType?.startsWith("image/") == true) {
+                                    uriToFile(it, context).reduceFileImage()
+                                } else {
+                                    Toast.makeText(context, "Please select a valid image file", Toast.LENGTH_SHORT).show()
+                                    return@Button
+                                }
+                            }
+
+                            Log.d("File Check", "File path: ${imageFile?.path}, Exists: ${imageFile?.exists()}")
+
+                            // Handle update logic
+                            editProfileViewModel.updateUser(
+                                firstname = firstName.value,
+                                lastname = lastName.value,
+                                address = address.value,
+                                imgFile = imageFile // Bisa null jika tidak ada gambar
+                            )
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Blue,
+                            contentColor = White
+                        ),
+                        modifier = Modifier
+                            .width(207.dp)
+                            .height(45.dp),
+                        enabled = isButtonEnabled
+                    ) {
+                        Text("Update Profile", fontSize = 16.sp)
+                    }
                 }
             }
         }

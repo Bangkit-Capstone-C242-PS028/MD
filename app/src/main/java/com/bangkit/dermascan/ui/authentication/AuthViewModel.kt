@@ -197,9 +197,7 @@ class AuthViewModel @Inject constructor(private val repository: UserRepository, 
                                                     Log.e("FetchUserDetail", "Error fetching user details: ${result.message}")
                                                     _signInStatus.value = Result.Error("Error fetching user details")
                                                 }
-
-                                                Result.Idle -> {}
-                                                Result.Loading -> {}
+                                                else -> {}
                                             }
                                         }
                                     }

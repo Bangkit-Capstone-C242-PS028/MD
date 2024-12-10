@@ -1,8 +1,8 @@
 package com.bangkit.dermascan.data.repository
 
-import UserPreference
+import com.bangkit.dermascan.data.pref.UserPreference
 import com.bangkit.dermascan.data.pref.UserModel
-//import com.bangkit.dermascan.dataArticles.local.UserPreference
+//import com.bangkit.dermascan.dataArticles.local.com.bangkit.dermascan.data.pref.UserPreference
 import kotlinx.coroutines.flow.Flow
 
 class UserRepository private constructor(

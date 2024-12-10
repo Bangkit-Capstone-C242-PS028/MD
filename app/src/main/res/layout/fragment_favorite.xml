@@ -22,7 +22,7 @@
         android:id="@+id/tvEmptyState"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/favorite_kosong"
+        android:text="@string/favorite_empty"
         android:paddingEnd="24dp"
         android:paddingStart="24dp"
         android:textSize="18sp"

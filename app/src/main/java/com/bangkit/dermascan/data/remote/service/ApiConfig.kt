@@ -1,14 +1,13 @@
 package com.bangkit.dermascan.data.remote.service
 
-import UserPreference
+import com.bangkit.dermascan.data.pref.UserPreference
 import android.annotation.SuppressLint
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.os.Build
 import android.util.Log
 import com.bangkit.dermascan.BuildConfig
-//import com.bangkit.dermascan.dataArticles.local.UserPreference
+//import com.bangkit.dermascan.dataArticles.local.com.bangkit.dermascan.data.pref.UserPreference
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.Cache

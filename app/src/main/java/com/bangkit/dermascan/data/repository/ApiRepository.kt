@@ -1,6 +1,8 @@
 package com.bangkit.dermascan.data.repository
 
 import android.util.Log
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
 import coil3.Uri
 import com.bangkit.dermascan.data.model.response.message.SuccessMessage
 import com.bangkit.dermascan.data.model.response.message.chat.ChatData
@@ -36,6 +38,7 @@ import com.bangkit.dermascan.data.model.response.SkinLesionsData
 import com.bangkit.dermascan.data.model.response.SkinLesionsResponse
 import com.bangkit.dermascan.data.model.response.UserData
 import com.bangkit.dermascan.data.model.response.UserResponse
+import com.bangkit.dermascan.data.remote.pagination.SkinLesionsPagingSource
 import com.bangkit.dermascan.data.remote.service.ApiService
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
@@ -110,7 +113,7 @@ class ApiRepository(private val apiService: ApiService) {
             "address" to request.address,
             "workplace" to request.workplace,
             "specialization" to request.specialization,
-            "whatsappUrl" to request.whatsappUrl
+            "phoneNumber" to request.phoneNumb
         )
 
         val bodyMap = map.mapValues { it.value.toRequestBody("text/plain".toMediaTypeOrNull()) }
@@ -258,7 +261,15 @@ class ApiRepository(private val apiService: ApiService) {
         }
     }
 
-
+    fun getSkinLesionsPager(): Pager<Int, SkinLesionItem> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = 5, // Ukuran halaman
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = { SkinLesionsPagingSource(apiService) }
+        )
+    }
 
     suspend fun getSkinLesions(
         page: Int = 1,

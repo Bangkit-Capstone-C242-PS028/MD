@@ -34,6 +34,7 @@ import com.bangkit.dermascan.ui.main.profile.result.ConsultationsScreen
 //import com.bangkit.dermascan.ui.main.feeds.ArticleAddScreen
 //import com.bangkit.dermascan.ui.main.feeds.FeedsScreen
 import com.bangkit.dermascan.ui.main.profile.result.SkinLesionHistoryScreen
+import com.bangkit.dermascan.ui.main.profile.settings.SettingsScreen
 import com.bangkit.dermascan.ui.main.scan.ScanScreen
 import com.bangkit.dermascan.ui.splashScreen.SplashScreen
 import com.bangkit.dermascan.ui.main.scan.upload.SharedViewModel
@@ -251,6 +252,16 @@ fun AppNavHost(navController: NavHostController) {
             }
         ) {
             FavoriteArticleScreen(navController)
+        }
+        composable("settings",
+            enterTransition = {
+                fadeIn(animationSpec = tween(1000))
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(1000))
+            }
+        ) {
+            SettingsScreen(navController)
         }
     }
 }

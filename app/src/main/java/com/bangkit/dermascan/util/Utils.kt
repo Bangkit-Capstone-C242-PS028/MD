@@ -29,6 +29,8 @@ import java.io.IOException
 import java.io.InputStream
 import java.text.SimpleDateFormat
 import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
@@ -217,16 +219,20 @@ fun formatDate(input: String): String {
     return zonedDateTime.format(dateFormatter)
 }
 
-fun formatTimestamp(input: String): String {
-    // Parsing input string ke ZonedDateTime
-    val zonedDateTime = ZonedDateTime.parse(input)
+fun formatTimestampToGMT(input: String): String {
+    // Parsing input string ke ZonedDateTime dengan zona waktu UTC
+    val utcDateTime = ZonedDateTime.parse(input)
+
+    // Mengubah zona waktu ke WIB (Waktu Indonesia Barat)
+    val wibDateTime = utcDateTime.withZoneSameInstant(ZoneId.of("Asia/Jakarta"))
 
     // Mengubah format sesuai kebutuhan
-    val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd, HH.mm")
+    val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd, HH:mm")
 
     // Mengonversi dan mengembalikan hasil
-    return zonedDateTime.format(dateFormatter)
+    return wibDateTime.format(dateFormatter)
 }
+
 
 fun validatePhoneNumber(input: String): Boolean {
     return input.matches(Regex("^628\\d{6,}\$"))

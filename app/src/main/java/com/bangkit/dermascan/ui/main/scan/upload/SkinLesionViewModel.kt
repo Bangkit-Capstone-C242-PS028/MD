@@ -13,6 +13,8 @@ import java.io.File
 import com.bangkit.dermascan.util.Result
 import javax.inject.Inject
 import androidx.compose.runtime.State
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.bangkit.dermascan.data.model.response.SkinLesionItem
 //import com.bangkit.dermascan.data.model.response.SkinLesion
 import com.bangkit.dermascan.data.model.response.SkinLesionsData
@@ -27,6 +29,9 @@ import kotlinx.coroutines.flow.onStart
 //import com.bangkit.dermascan.util.Result
 @HiltViewModel
 class SkinLesionViewModel @Inject constructor(val repository: ApiRepository): ViewModel() {
+    val skinLesion: Flow<PagingData<SkinLesionItem>> = repository.getSkinLesionsPager()
+        .flow
+        .cachedIn(viewModelScope)
     private val _uploadResult = mutableStateOf<Result<String>>(Result.Idle) // Inisialisasi dengan Loading
     val uploadResult: State<Result<String>> = _uploadResult
     fun uploadImage(image: File){

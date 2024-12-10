@@ -1,6 +1,6 @@
 //package com.bangkit.dermascan.data.repository
 //
-//import UserPreference
+//import com.bangkit.dermascan.data.pref.UserPreference
 //
 //import android.util.Log
 //import com.bangkit.dermascan.data.model.response.ArticleResponse
@@ -17,7 +17,7 @@
 //
 //class ArticleRepository(
 //    private val apiService: ApiService,
-//    private val userPreference: UserPreference
+//    private val userPreference: com.bangkit.dermascan.data.pref.UserPreference
 //) {
 //    suspend fun getArticles(): ArticleResponse {
 //        return try {
@@ -57,7 +57,7 @@
 //        @Volatile
 //        private var instance: ArticleRepository? = null
 //
-//        fun getInstance(apiService: ApiService, userPreference: UserPreference): ArticleRepository {
+//        fun getInstance(apiService: ApiService, userPreference: com.bangkit.dermascan.data.pref.UserPreference): ArticleRepository {
 //            return instance ?: synchronized(this) {
 //                instance ?: ArticleRepository(apiService, userPreference).also { instance = it }
 //            }
