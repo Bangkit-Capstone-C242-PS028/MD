@@ -9,7 +9,7 @@ class ConsultationPagingSource(
     private val apiService: ApiService
 ): PagingSource<Int, UserData>() {
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, UserData> {
-//        TODO("Not yet implemented")
+
         val page = params.key ?: 1
         return try {
             val response = apiService.getAllDoctor(page = page, size = params.loadSize)
