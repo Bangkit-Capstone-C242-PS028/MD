@@ -52,17 +52,17 @@ DermaScan leverages state-of-the-art AI technology, including **Grad-CAM visuali
 To install and use the app:
 
 1. **Download the APK file**:
-  - Navigate to the [Releases](https://github.com/Bangkit-Capstone-C242-PS028/MD/releases) page of this repository.
-  - Download the latest APK file (e.g., `DermaScan v1.1.apk`). 📥
+   - Navigate to the [Releases](https://github.com/Bangkit-Capstone-C242-PS028/MD/releases) page of this repository.
+   - Download the latest APK file (e.g., `DermaScan v1.1.apk`). 📥
 
 2. **Install the APK on your Android device**:
-  - Transfer the APK file to your device if downloaded on a PC. 💻📱
-  - Open the APK file on your device and follow the installation prompts. 🚀
-  - You may need to enable **"Install from Unknown Sources"** in your device settings. ⚙️
+   - Transfer the APK file to your device if downloaded on a PC. 💻📱
+   - Open the APK file on your device and follow the installation prompts. 🚀
+   - You may need to enable **"Install from Unknown Sources"** in your device settings. ⚙️
 
 3. **Run the app**:
-  - Locate the app on your device and launch it. 🎉
-  - Enjoy using **DermaScan**! 🥳
+   - Locate the app on your device and launch it. 🎉
+   - Enjoy using **DermaScan**! 🥳
 
 ---
 
