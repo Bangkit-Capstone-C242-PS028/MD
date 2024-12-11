@@ -41,7 +41,7 @@ DermaScan leverages state-of-the-art AI technology, including **Grad-CAM visuali
 - **State Management**: LiveData and Flow 📊
 - **Dependency Injection**: Hilt 🔋
 - **Image Loading**: Coil, Glide 🖼️
-- **Beautiful Animations**: [Lottie](https://lottiefiles.com) 🔥
+- **Beautiful Animations**: [LottieFiles](https://lottiefiles.com) 🔥
 - **Pagination**: Paging 3 🏃‍♀️
 
 ---
