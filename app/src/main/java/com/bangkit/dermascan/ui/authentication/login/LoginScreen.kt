@@ -1,9 +1,12 @@
+@file:Suppress("DEPRECATION")
+
 package com.bangkit.dermascan.ui.authentication.login
 
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -35,6 +39,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.bangkit.dermascan.R
 import com.bangkit.dermascan.ui.authentication.AuthViewModel
@@ -123,6 +128,19 @@ fun LoginScreen(context: Context, onLoginSuccess: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally, // Elemen rata tengah secara horizontal
         verticalArrangement = Arrangement.Center // Mengatur jarak antar elemen
     ) {
+        Box(
+            modifier = Modifier
+                .size(200.dp)// Mengabaikan klik di background
+        ) {
+            val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.login_animation))
+            LottieAnimation(
+                composition = composition,
+                iterations = LottieConstants.IterateForever,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.Center) // Posisi animasi di tengah
+            )
+        }
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -178,17 +196,44 @@ fun LoginScreen(context: Context, onLoginSuccess: () -> Unit) {
 
         }
     }
-    LaunchedEffect(signInStatus) {
-        if (signInStatus is Result.Success) {
-            delay(3000L)
-            Toast.makeText(context, "Login berhasil", Toast.LENGTH_SHORT).show()
-            onLoginSuccess() // Pindah halaman setelah login sukses
-        }
 
-        if (signInStatus is Result.Error) {
-            Toast.makeText(context, (signInStatus as Result.Error).message, Toast.LENGTH_SHORT).show()
+    if (signInStatus is Result.Success) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(if (isSystemInDarkTheme()) Color.Black else Color.White) // Latar belakang gelap transparan
+                .clickable(enabled = false) { }
+        ) {
+            val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.welcome))
+            val animationState = animateLottieCompositionAsState(
+                composition = composition,
+                speed = 0.5f,
+                iterations = 1 // Animasi diputar sekali
+            )
+
+            LottieAnimation(
+                composition = composition,
+                progress = animationState.progress, // Mengontrol progress animasi
+                modifier = Modifier
+                    .size(5000.dp)
+                    .align(Alignment.Center) // Posisi animasi di tengah
+            )
+
+            // Pantau status animasi untuk memindahkan halaman setelah selesai
+            LaunchedEffect(animationState.isAtEnd) {
+                delay(1000) // Jeda sebelum memindahkan halaman
+                if (animationState.isAtEnd) {
+                    onLoginSuccess() // Pindah halaman setelah animasi selesai
+                }
+            }
         }
     }
+
+
+    if (signInStatus is Result.Error) {
+            Toast.makeText(context, (signInStatus as Result.Error).message, Toast.LENGTH_SHORT).show()
+        }
+
     if(signInStatus is Result.Loading) {
         Box(
             modifier = Modifier

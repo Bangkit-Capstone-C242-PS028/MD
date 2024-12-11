@@ -45,7 +45,6 @@ fun AppNavHost(navController: NavHostController) {
     val sharedViewModel = SharedViewModel()
     val viewModel: AuthViewModel = hiltViewModel()
     val roles by viewModel.roles.observeAsState("PATIENT")
-    val isOpen = rememberSaveable { mutableStateOf(false) }
 
     NavHost(navController, startDestination = "splash") {
         composable(
@@ -65,15 +64,20 @@ fun AppNavHost(navController: NavHostController) {
                 ) + fadeOut(animationSpec = tween(1000)) // Menambahkan fade-out
             }
         ) {
-            SplashScreen(navController) {
-                isOpen.value = true
-                navController.navigate("main") {
-                    popUpTo("splash") { inclusive = true }
-                }
-            }
+            SplashScreen(navController)
         }
 
-
+        composable(
+            "main",
+            enterTransition = {
+                slideInVertically(initialOffsetY = { 1000 }) + fadeIn(animationSpec = tween(500))
+            },
+            exitTransition = {
+                slideOutVertically(targetOffsetY = { -1000 }) + fadeOut(animationSpec = tween(500))
+            }
+        ) {
+            MainScreen(navController)
+        }
 
         composable(
             "onBoard",
@@ -124,17 +128,7 @@ fun AppNavHost(navController: NavHostController) {
             })
         }
 
-        composable(
-            "main",
-            enterTransition = {
-                slideInVertically(initialOffsetY = { 1000 }) + fadeIn(animationSpec = tween(500))
-            },
-            exitTransition = {
-                slideOutVertically(targetOffsetY = { -1000 }) + fadeOut(animationSpec = tween(500))
-            }
-        ) {
-            MainScreen(navController)
-        }
+
 
         composable(
             "scan_full",

@@ -20,11 +20,16 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 import androidx.appcompat.widget.Toolbar
+import com.bangkit.dermascan.ui.forum.ForumViewModel
 
 class ForumAddActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityForumAddBinding
     private val viewModel by viewModels<ForumAddViewModel> {
+        ViewModelFactory.getInstance(this)
+    }
+
+    private val viewModelForum by viewModels<ForumViewModel> {
         ViewModelFactory.getInstance(this)
     }
 
@@ -50,10 +55,12 @@ class ForumAddActivity : AppCompatActivity() {
     private fun setupObservers() {
         viewModel.uploadResult.observe(this) { isSuccess ->
             showLoading(false)
+            setResult(Activity.RESULT_OK)
             if (isSuccess) {
                 showToast(getString(R.string.forum_created))
                 // Kirim hasil ke ForumActivity untuk update data
-                setResult(Activity.RESULT_OK)  // Menandakan bahwa forum berhasil dibuat
+                  // Menandakan bahwa forum berhasil dibuat
+                viewModelForum.getForumsPager()
                 finish() // Menutup ForumAddActivity dan kembali ke ForumActivity
             } else {
                 viewModel.errorMessage.value?.let { showToast(it) }
@@ -63,6 +70,7 @@ class ForumAddActivity : AppCompatActivity() {
 
     private fun setupButtonListener() {
         binding.buttonAdd.setOnClickListener {
+            showLoading(true)
             val title = binding.edAddTitle.editText?.text.toString()
             val content = binding.edAddContent.editText?.text.toString()
 

@@ -7,6 +7,7 @@ import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -21,13 +22,17 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -46,6 +51,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.compose.AsyncImage
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
@@ -55,6 +63,7 @@ import com.bangkit.dermascan.R
 import com.bangkit.dermascan.data.model.response.DoctorData
 import com.bangkit.dermascan.data.model.response.UserData
 import com.bangkit.dermascan.ui.main.feeds.AddTopBar
+import com.bangkit.dermascan.ui.main.home.SkinLesionItemWithShimmer
 import com.bangkit.dermascan.ui.main.profile.settings.SettingsViewModel
 import com.bangkit.dermascan.ui.theme.Black
 import com.bangkit.dermascan.ui.theme.Blue
@@ -65,6 +74,7 @@ import com.bangkit.dermascan.ui.theme.White
 import com.bangkit.dermascan.util.Result
 import com.bangkit.dermascan.util.formatDate
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConsultationsScreen(navController: NavController) {
     val context = LocalContext.current
@@ -75,68 +85,166 @@ fun ConsultationsScreen(navController: NavController) {
     val isDarkMode by settingsViewModel.isDarkTheme.collectAsState(initial = false)
 
     // Mengambil data dokter saat composable pertama kali dipanggil
-    val doctorsResult by viewModel.doctors.observeAsState(Result.Idle)
-
+//    val doctorsResult by viewModel.doctors.observeAsState(Result.Idle)
+    val doctorPaging : LazyPagingItems<UserData> = viewModel.consul.collectAsLazyPagingItems()
     // LaunchedEffect untuk mengambil dokter
-    LaunchedEffect(Unit) {
-        viewModel.getDoctors()
-    }
-
-    // Gunakan Surface untuk background tema
-    Surface(
-        color = if (isDarkMode) MaterialTheme.colorScheme.background
-        else MaterialTheme.colorScheme.surface,
-        contentColor = if (isDarkMode) MaterialTheme.colorScheme.onBackground
-        else MaterialTheme.colorScheme.onSurface
-    ) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            // TopAppBar
-            AddTopBar("Consultations", navController)
-
-            // Konten utama
-            Column(
-                modifier = Modifier
-                    .padding(top = 16.dp, start = 16.dp, end = 16.dp),
-                // Tambahkan warna background sesuai mode
-//                backgroundColor = if (isDarkMode)
-//                    MaterialTheme.colorScheme.background
-//                else MaterialTheme.colorScheme.surface
-            ) {
-                when (doctorsResult) {
-                    is Result.Loading -> {
-                        CircularProgressIndicator(
-                            modifier = Modifier.align(Alignment.CenterHorizontally),
-                            color = if (isDarkMode)
-                                MaterialTheme.colorScheme.primary
-                            else MaterialTheme.colorScheme.primary
-                        )
+//    LaunchedEffect(Unit) {
+//        viewModel.getDoctors()
+//    }
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Skin Lesion History") },
+                navigationIcon = {
+                    IconButton(onClick = { navController.navigateUp() }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
-                    is Result.Error -> {
-                        Text(
-                            text = (doctorsResult as Result.Error).message,
-                            color = if (isDarkMode)
-                                MaterialTheme.colorScheme.error
-                            else Color.Red
-                        )
-                    }
-                    is Result.Success -> {
-                        val doctors = (doctorsResult as Result.Success<List<UserData>>).data
-                        LazyColumn {
-                            items(doctors) { doctor ->
-                                // Tambahkan parameter isDarkMode jika perlu
-                                DoctorItem(
-                                    context = context,
-                                    doctor = doctor,
-                                    isDarkMode = isDarkMode
+                }
+            )
+        }
+    ) { paddingValues ->
+        LazyColumn(
+            modifier = Modifier
+                .padding(paddingValues)
+                .padding(horizontal = 16.dp)
+        ) {
+            // Render items
+            items(doctorPaging.itemCount) { index ->
+                doctorPaging[index]?.let { doctorData ->
+//                    SkinLesionItem(
+//                        navController = navController,
+//                        skinLesion = lesion
+//                    )
+                    DoctorItem(
+                        context = context,
+                        doctor = doctorData,
+                        isDarkMode = isDarkMode
+                    )
+                }
+            }
+
+            // Handle loading and error states
+            doctorPaging.apply {
+                when {
+                    loadState.refresh is LoadState.Loading -> {
+                        items(5) {
+
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                SkinLesionItemWithShimmer(
+                                    isLoading = true,
+                                    modifier = Modifier.padding(end = 8.dp)
                                 )
                             }
                         }
                     }
-                    else -> { /* Idle State, Nothing to display */ }
+
+                    loadState.refresh is LoadState.Error -> {
+                        val error = doctorPaging.loadState.refresh as LoadState.Error
+                        item {
+                            ErrorStateComponent(
+                                message = error.error.localizedMessage
+                                    ?: "Failed to load skin lesion history",
+                                onRetry = { doctorPaging.retry() }
+                            )
+                        }
+                    }
+
+                    loadState.append is LoadState.Loading -> {
+                        item {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
+                        }
+                    }
+
+                    loadState.append is LoadState.Error -> {
+                        val error = doctorPaging.loadState.append as LoadState.Error
+                        item {
+                            ErrorStateComponent(
+                                message = error.error.localizedMessage
+                                    ?: "Failed to load more skin lesions",
+                                onRetry = { doctorPaging.retry() }
+                            )
+                        }
+                    }
+                }
+            }
+
+            // Empty state handling
+            if (doctorPaging.itemCount == 0 && doctorPaging.loadState.refresh !is LoadState.Loading) {
+                item {
+                    EmptyStateComponent()
                 }
             }
         }
     }
+    // Gunakan Surface untuk background tema
+//    Surface(
+//        color = if (isDarkMode) MaterialTheme.colorScheme.background
+//        else MaterialTheme.colorScheme.surface,
+//        contentColor = if (isDarkMode) MaterialTheme.colorScheme.onBackground
+//        else MaterialTheme.colorScheme.onSurface
+//    ) {
+//        Column(modifier = Modifier.fillMaxSize()) {
+//            // TopAppBar
+//            AddTopBar("Consultations", navController)
+//
+//            // Konten utama
+//            Column(
+//                modifier = Modifier
+//                    .padding(top = 16.dp, start = 16.dp, end = 16.dp),
+//                // Tambahkan warna background sesuai mode
+////                backgroundColor = if (isDarkMode)
+////                    MaterialTheme.colorScheme.background
+////                else MaterialTheme.colorScheme.surface
+//            ) {
+//                when (doctorsResult) {
+//                    is Result.Loading -> {
+//                        CircularProgressIndicator(
+//                            modifier = Modifier.align(Alignment.CenterHorizontally),
+//                            color = if (isDarkMode)
+//                                MaterialTheme.colorScheme.primary
+//                            else MaterialTheme.colorScheme.primary
+//                        )
+//                    }
+//                    is Result.Error -> {
+//                        Text(
+//                            text = (doctorsResult as Result.Error).message,
+//                            color = if (isDarkMode)
+//                                MaterialTheme.colorScheme.error
+//                            else Color.Red
+//                        )
+//                    }
+//                    is Result.Success -> {
+//                        val doctors = (doctorsResult as Result.Success<List<UserData>>).data
+//                        LazyColumn {
+//                            items(doctors) { doctor ->
+//                                // Tambahkan parameter isDarkMode jika perlu
+//                                DoctorItem(
+//                                    context = context,
+//                                    doctor = doctor,
+//                                    isDarkMode = isDarkMode
+//                                )
+//                            }
+//                        }
+//                    }
+//                    else -> { /* Idle State, Nothing to display */ }
+//                }
+//            }
+//        }
+//    }
 }
 
 

@@ -8,12 +8,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.bangkit.dermascan.data.model.response.ArticleItem
 import com.bangkit.dermascan.data.repository.ApiRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
+import kotlinx.coroutines.flow.Flow
 @HiltViewModel
 class ArticleViewModel @Inject constructor(
     private val apiRepository: ApiRepository
@@ -28,6 +30,10 @@ class ArticleViewModel @Inject constructor(
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> = _errorMessage
 
+    val articlePager : Flow<PagingData<ArticleItem>>  = apiRepository
+        .getArticlePager()
+        .flow
+        .cachedIn(viewModelScope)
     fun showArticles() {
         _isLoading.value = true
         _errorMessage.value = null

@@ -5,9 +5,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.bangkit.dermascan.data.model.response.ForumDetail
 import com.bangkit.dermascan.data.model.response.ForumReply
 import com.bangkit.dermascan.data.repository.ApiRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class ForumDetailViewModel(
@@ -25,6 +31,9 @@ class ForumDetailViewModel(
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: MutableLiveData<String?> = _errorMessage
 
+    private val _forumRepliesPager = MutableStateFlow<Flow<PagingData<ForumReply>>?>(null)
+    val forumRepliesPager: StateFlow<Flow<PagingData<ForumReply>>?> = _forumRepliesPager.asStateFlow()
+
     fun showForumDetail(id: String) {
         _isLoading.value = true
         _errorMessage.value = null
@@ -32,7 +41,8 @@ class ForumDetailViewModel(
             try {
                 val response = apiRepository.getForumDetail(id)
                 _forum.value = response.data!!
-                fetchForumReplies(id)
+//                fetchForumReplies(id)
+                getForumReplies(id)
                 Log.d("ForumDetailViewModel", "Forum details loaded successfully!")
             } catch (e: Exception) {
                 _errorMessage.value = e.message
@@ -48,7 +58,7 @@ class ForumDetailViewModel(
         viewModelScope.launch {
             try {
                 apiRepository.createForumReply(forumId, content)
-                fetchForumReplies(forumId)
+                _forumRepliesPager.value = getForumReplies(forumId)
             } catch (e: Exception) {
                 _errorMessage.value = e.message
             } finally {
@@ -57,6 +67,14 @@ class ForumDetailViewModel(
         }
     }
 
+    private fun getForumReplies(forumId: String): Flow<PagingData<ForumReply>> {
+         val pagerFlow = apiRepository.getForumRepliesPager(forumId)
+            .flow
+            .cachedIn(viewModelScope)
+
+        _forumRepliesPager.value = pagerFlow
+        return pagerFlow
+    }
 
     private suspend fun fetchForumReplies(forumId: String) {
         try {

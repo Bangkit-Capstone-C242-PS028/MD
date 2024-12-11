@@ -14,7 +14,7 @@ val Black = Color(0xFF000000)
 val TextInp = Color(0xFFECF1FF)
 val GreenWA = Color(0xFF40C351)
 val docInp = Color(0xFFECF1FF)
-
+val SplashBg = Color(0xFF273590)
 val Purple40 = Color(0xFF6650a4)
 val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)

@@ -1,8 +1,11 @@
+@file:Suppress("DEPRECATION")
+
 package com.bangkit.dermascan.ui.main.forum
 
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
@@ -18,6 +21,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bangkit.dermascan.databinding.ActivityForumBinding
 import com.bangkit.dermascan.ui.ViewModelFactory
@@ -26,6 +32,11 @@ import com.bangkit.dermascan.ui.forum.ForumAdapter
 import com.bangkit.dermascan.ui.forum.ForumViewModel
 import com.bangkit.dermascan.ui.forumAdd.ForumAddActivity
 import com.bangkit.dermascan.ui.main.feeds.ComposeArticleScreen
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -48,15 +59,16 @@ fun ForumScreen(roles: String){
     )
 }
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 fun ComposeForumScreen(roles: String) {
     val context = LocalContext.current
     val viewModel = ViewModelFactory.getInstance(context).create(ForumViewModel::class.java)
 
-    // Observe data changes, loading state, and error messages in Compose
-    val forumResponse by viewModel.listForum.observeAsState(emptyList())
-    val isLoading by viewModel.isLoading.observeAsState(false)
+
     val errorMessage by viewModel.errorMessage.observeAsState(null)
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val adapter = ForumAdapter()
 
     // Show error toast if error message exists
     errorMessage?.let {
@@ -66,51 +78,79 @@ fun ComposeForumScreen(roles: String) {
     // Handle the visibility of the floating action button based on roles
     val fabVisibility = if (roles != "PATIENT") View.GONE else View.VISIBLE
     val activityResultLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()) { result ->
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
+            Log.d("ForumScreen", result.resultCode.toString())
             // Panggil fungsi untuk memperbarui data
-            viewModel.showForums()
+//            viewModel.refreshForums()
+            lifecycleOwner.lifecycleScope.launch {
+                // Menggunakan collectLatest untuk mengumpulkan PagingData yang diterbitkan oleh Flow
+                viewModel.forumsPager
+                    .filterNotNull()
+                    .flatMapLatest { it }
+                    .collectLatest {
+                        pagingData -> adapter.submitData(pagingData)
+                    }
+            }
         }
     }
     // Use AndroidView to display RecyclerView, but let Compose handle the data and UI updates
     AndroidView(
         modifier = Modifier.fillMaxSize(),
-        factory = { ctx ->
-            val binding = ActivityForumBinding.inflate(LayoutInflater.from(ctx))
+        factory = {
+            val binding = ActivityForumBinding.inflate(LayoutInflater.from(context))
             val view = binding.root
 
             // Setup RecyclerView and adapter
-            val adapter = ForumAdapter()
-            binding.rvForums.adapter = adapter
-            binding.rvForums.layoutManager = LinearLayoutManager(ctx)
 
+            binding.rvForums.adapter = adapter
+            binding.rvForums.layoutManager = LinearLayoutManager(context)
+
+            binding.swipeRefreshLayout.setOnRefreshListener {
+                adapter.refresh()
+            }
+            adapter.addLoadStateListener { loadState ->
+                binding.swipeRefreshLayout.isRefreshing = loadState.refresh is LoadState.Loading
+                if (loadState.refresh is LoadState.NotLoading) {
+                    binding.rvForums.scrollToPosition(0)
+                }
+            }
+
+            lifecycleOwner.lifecycleScope.launch {
+                // Menggunakan collectLatest untuk mengumpulkan PagingData yang diterbitkan oleh Flow
+                viewModel.forumsPager
+                    .filterNotNull()
+                    .flatMapLatest { it }
+                    .collectLatest { pagingData ->
+                        adapter.submitData(pagingData)
+                    }
+            }
 
             // FloatingActionButton click listener
             binding.fabAddForum.apply {
                 visibility = fabVisibility
                 setOnClickListener {
-                    val intent = Intent(ctx, ForumAddActivity::class.java)
+                    val intent = Intent(context, ForumAddActivity::class.java)
                     activityResultLauncher.launch(intent)
                 }
             }
 
-            // Show the RecyclerView and loading progress bar based on state
-            if (isLoading) {
-                binding.progressBar.visibility = View.VISIBLE
-            } else {
-                binding.progressBar.visibility = View.INVISIBLE
-            }
 
             view
         },
-        update = { view ->
-            // Update RecyclerView when forumResponse data changes
-            val binding = ActivityForumBinding.bind(view)
-            val adapter = binding.rvForums.adapter as ForumAdapter
-            adapter.submitList(forumResponse)
+        update = {
 
-            // Fetch data if it's necessary, for example when the screen is first loaded
-            viewModel.showForums()
+            lifecycleOwner.lifecycleScope.launch {
+                // Menggunakan collectLatest untuk mengumpulkan PagingData yang diterbitkan oleh Flow
+                viewModel.forumsPager
+                    .filterNotNull()
+                    .flatMapLatest { it }
+                    .collectLatest { pagingData ->
+                        adapter.submitData(pagingData)
+                    }
+            }
+
         }
     )
 

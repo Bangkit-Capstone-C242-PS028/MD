@@ -6,25 +6,30 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bangkit.dermascan.R
 import com.bangkit.dermascan.databinding.ActivityForumDetailBinding
 import com.bangkit.dermascan.ui.ViewModelFactory
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.launch
 
 class ForumDetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivityForumDetailBinding
+    private var forumId : String ?= null
     private val viewModel by viewModels<ForumDetailViewModel> {
         ViewModelFactory.getInstance(this)
     }
-
+//    private lateinit var forumRepliesAdapter: ForumRepliesAdapterPaging
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityForumDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        // Get forum ID from Intent
-//        val forumId = intent.getStringExtra("FORUM_ID") ?: return
-        val forumId = intent.getStringExtra("FORUM_ID")
+        val adapter = ForumRepliesAdapterPaging()
+        forumId = intent.getStringExtra("FORUM_ID") ?: return
         if (forumId.isNullOrBlank()) {
             Log.e("ForumDetailActivity", "Invalid Forum ID received!")
             Toast.makeText(this, "Error: Invalid Forum ID", Toast.LENGTH_SHORT).show()
@@ -34,26 +39,38 @@ class ForumDetailActivity : AppCompatActivity() {
             Log.d("ForumDetailActivity", "Forum ID received: $forumId")
         }
 
-        setupObservers()
-        setupReplySection(forumId)
+        setupObservers(adapter)
+        setupReplySection(forumId!!)
 
-        // Load Forum Details and Replies
-        viewModel.showForumDetail(forumId)
+        viewModel.showForumDetail(forumId!!)
     }
 
-    private fun setupObservers() {
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun setupObservers(adapter : ForumRepliesAdapterPaging) {
         viewModel.forum.observe(this) { forum ->
             binding.tvTitleDetail.text = forum.title
             binding.tvContentDetail.text = forum.content
         }
-
-        viewModel.replies.observe(this) { replies ->
-            val adapter = ForumRepliesAdapter(replies)
-            binding.rvReplies.adapter = adapter
-            binding.rvReplies.layoutManager = LinearLayoutManager(this)
+        // Inisialisasi adapter
+        binding.rvReplies.layoutManager = LinearLayoutManager(this)
+        binding.rvReplies.adapter = adapter
+//        lifecycleScope.launch {
+//            if (forumId != null) {
+//                viewModel.getForumReplies(forumId!!).collectLatest { pagingData ->
+//                    Log.d("ForumDetailActivity", "Paging data received: $pagingData")
+//                    adapter.submitData( pagingData)
+//                }
+//            }
+//
+//        }
+        lifecycleScope.launch {
+            viewModel.forumRepliesPager
+                .filterNotNull()
+                .flatMapLatest { it }
+                .collectLatest { pagingData ->
+                    adapter.submitData(pagingData)
+                }
         }
-
-        viewModel.isLoading.observe(this) { showLoading(it) }
 
         viewModel.errorMessage.observe(this) {
             if (!it.isNullOrEmpty()) {

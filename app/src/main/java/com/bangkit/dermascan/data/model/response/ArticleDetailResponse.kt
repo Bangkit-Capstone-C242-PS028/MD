@@ -1,6 +1,8 @@
 package com.bangkit.dermascan.data.model.response
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 
 data class ArticleDetailResponse(
     @field:SerializedName("statusCode")
@@ -13,6 +15,7 @@ data class ArticleDetailResponse(
     val data: ArticleDetail? = null
 )
 
+@Parcelize
 data class ArticleDetail(
     @field:SerializedName("id")
     val id: String? = null,
@@ -36,5 +39,5 @@ data class ArticleDetail(
     val name: String? = null,
 
     @field:SerializedName("avatar")
-    val avatar: Any? = null
-)
+    val avatar: String? = null
+): Parcelable

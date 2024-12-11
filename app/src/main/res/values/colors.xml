@@ -11,7 +11,7 @@
     <color name="blue">#2260FF</color>
     <color name="white">#FFFFFF</color>
     <color name="light_blue">#CAD6FF</color>
-
+    <color name="bg_splash">#273590FF</color>
     <!-- Warna untuk mode terang -->
     <color name="background">#FFFFFF</color>
     <color name="text">#000000</color>

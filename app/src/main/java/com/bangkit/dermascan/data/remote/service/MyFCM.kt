@@ -61,7 +61,7 @@ class MyFCM : FirebaseMessagingService() {
         val notificationId = System.currentTimeMillis().toInt()
 
         // Intent untuk membuka aplikasi saat notifikasi di-tap
-        val intent = Intent(this, ArticleActivity::class.java) // Ganti dengan activity yang sesuai
+        val intent = Intent(this, MainActivity::class.java) // Ganti dengan activity yang sesuai
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
         val pendingIntent = PendingIntent.getActivity(
@@ -77,14 +77,12 @@ class MyFCM : FirebaseMessagingService() {
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         // Buat Notification Channel jika di Android Oreo ke atas
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                channelId,
-                "Article Notifications",
-                NotificationManager.IMPORTANCE_HIGH
-            )
-            notificationManager.createNotificationChannel(channel)
-        }
+        val channel = NotificationChannel(
+            channelId,
+            "Article Notifications",
+            NotificationManager.IMPORTANCE_HIGH
+        )
+        notificationManager.createNotificationChannel(channel)
 
         // Bangun notifikasi
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
@@ -102,7 +100,7 @@ class MyFCM : FirebaseMessagingService() {
         val notificationId = System.currentTimeMillis().toInt()
 
         // Intent untuk membuka aplikasi saat notifikasi di-tap
-        val intent = Intent(this, ArticleActivity::class.java)
+        val intent = Intent(this, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
         val pendingIntent = PendingIntent.getActivity(
@@ -116,14 +114,12 @@ class MyFCM : FirebaseMessagingService() {
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                channelId,
-                "Article Notifications",
-                NotificationManager.IMPORTANCE_HIGH
-            )
-            notificationManager.createNotificationChannel(channel)
-        }
+        val channel = NotificationChannel(
+            channelId,
+            "Article Notifications",
+            NotificationManager.IMPORTANCE_HIGH
+        )
+        notificationManager.createNotificationChannel(channel)
 
         // Muat gambar menggunakan Glide
         Glide.with(this)

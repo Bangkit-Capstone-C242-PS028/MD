@@ -19,13 +19,16 @@ import com.bangkit.dermascan.data.model.requestBody.UserRequest
 import com.bangkit.dermascan.data.model.response.AddToFavoritesResponse
 
 import com.bangkit.dermascan.data.model.response.ArticleDetailResponse
+import com.bangkit.dermascan.data.model.response.ArticleItem
 import com.bangkit.dermascan.data.model.response.ArticleResponse
 import com.bangkit.dermascan.data.model.response.BaseResponse
 import com.bangkit.dermascan.data.model.response.CreateForumReplyResponse
 import com.bangkit.dermascan.data.model.response.ErrorResponse
 import com.bangkit.dermascan.data.model.response.FileUploadResponse
 import com.bangkit.dermascan.data.model.response.ForumDetailResponse
+import com.bangkit.dermascan.data.model.response.ForumItem
 import com.bangkit.dermascan.data.model.response.ForumRepliesResponse
+import com.bangkit.dermascan.data.model.response.ForumReply
 import com.bangkit.dermascan.data.model.response.ForumResponse
 import com.bangkit.dermascan.data.model.response.ForumUploadResponse
 import com.bangkit.dermascan.data.model.response.GetDoctorResponse
@@ -38,6 +41,10 @@ import com.bangkit.dermascan.data.model.response.SkinLesionsData
 import com.bangkit.dermascan.data.model.response.SkinLesionsResponse
 import com.bangkit.dermascan.data.model.response.UserData
 import com.bangkit.dermascan.data.model.response.UserResponse
+import com.bangkit.dermascan.data.remote.pagination.ArticlePagingSource
+import com.bangkit.dermascan.data.remote.pagination.ConsultationPagingSource
+import com.bangkit.dermascan.data.remote.pagination.ForumPagingSource
+import com.bangkit.dermascan.data.remote.pagination.ForumRepliesPagingSource
 import com.bangkit.dermascan.data.remote.pagination.SkinLesionsPagingSource
 import com.bangkit.dermascan.data.remote.service.ApiService
 import com.google.gson.Gson
@@ -264,16 +271,78 @@ class ApiRepository(private val apiService: ApiService) {
     fun getSkinLesionsPager(): Pager<Int, SkinLesionItem> {
         return Pager(
             config = PagingConfig(
-                pageSize = 5, // Ukuran halaman
+                pageSize = 10, // Ukuran halaman
+                initialLoadSize = 10,
+                prefetchDistance = 1,
                 enablePlaceholders = false
             ),
             pagingSourceFactory = { SkinLesionsPagingSource(apiService) }
         )
     }
+    fun getArticlePager(): Pager<Int, ArticleItem>{
+        return Pager(
+            config = PagingConfig(
+                pageSize = 10, // Ukuran halaman
+                initialLoadSize = 10,
+                prefetchDistance = 1,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = { ArticlePagingSource(apiService) }
+        )
+    }
+
+    fun getForumPager(): Pager<Int, ForumItem>{
+        return Pager(
+            config = PagingConfig(
+                pageSize = 10, // Ukuran halaman
+                initialLoadSize = 10,
+                prefetchDistance = 1,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = { ForumPagingSource(apiService) }
+        )
+    }
+
+    fun getConsultationPager(): Pager<Int, UserData>{
+        return Pager(
+            config = PagingConfig(
+                pageSize = 10, // Ukuran halaman
+                initialLoadSize = 10,
+                prefetchDistance = 1,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = { ConsultationPagingSource(apiService) }
+        )
+    }
+
+    fun getForumRepliesPager(forumId: String): Pager<Int, ForumReply>{
+        return Pager(
+            config = PagingConfig(
+                pageSize = 10, // Ukuran halaman
+                initialLoadSize = 10,
+                prefetchDistance = 1,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = { ForumRepliesPagingSource(forumId, apiService) }
+        )
+    }
+
+    suspend fun getForumReplies(forumId: String, page: Int = 1, limit: Int = 10): ForumRepliesResponse {
+        return try {
+            val response = apiService.getForumReplies(forumId, page)
+            Log.d("ForumRepository", "Forum replies retrieved: $response")
+            response
+        } catch (e: HttpException) {
+            val jsonInString = e.response()?.errorBody()?.string()
+            val errorBody = Gson().fromJson(jsonInString, ErrorResponse::class.java)
+            Log.e("ForumRepository", "Error retrieving replies: ${e.message}")
+            throw Exception(errorBody.message)
+        }
+    }
 
     suspend fun getSkinLesions(
         page: Int = 1,
-        limit: Int = 100
+        limit: Int = 3
     ): Flow<Result<List<SkinLesionItem>>?> = flow {
         try {
             val response = apiService.getSkinLesions(page = page, limit = limit)
@@ -463,18 +532,7 @@ class ApiRepository(private val apiService: ApiService) {
         }
     }
 
-    suspend fun getForumReplies(forumId: String, page: Int = 1, limit: Int = 100): ForumRepliesResponse {
-        return try {
-            val response = apiService.getForumReplies(forumId, page, limit)
-            Log.d("ForumRepository", "Forum replies retrieved: $response")
-            response
-        } catch (e: HttpException) {
-            val jsonInString = e.response()?.errorBody()?.string()
-            val errorBody = Gson().fromJson(jsonInString, ErrorResponse::class.java)
-            Log.e("ForumRepository", "Error retrieving replies: ${e.message}")
-            throw Exception(errorBody.message)
-        }
-    }
+
 
     suspend fun addToFavorites(articleId: String): AddToFavoritesResponse {
         return try {

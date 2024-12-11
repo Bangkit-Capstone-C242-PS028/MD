@@ -139,6 +139,7 @@ class ArticleDetailActivity : AppCompatActivity() {
         return when (item.itemId) {
             android.R.id.home -> {
                 onBackPressed()
+                finish()
                 true
             }
 

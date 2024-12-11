@@ -92,7 +92,7 @@ interface ApiService {
     @GET("users")
     suspend fun getAllDoctor(
         @Query("page") page: Int ?= 1,
-        @Query("limit") size: Int ?= 100,
+        @Query("limit") size: Int ?= 3,
         @Query("role") role: String? = "DOCTOR",
 
         ): Response<GetDoctorResponse>
@@ -100,8 +100,8 @@ interface ApiService {
 
     @GET("articles")
     suspend fun getArticles(
-        @Query("page") page: Int = 1,
-        @Query("limit") limit: Int = 100
+        @Query("page") page: Int ?= 1,
+        @Query("limit") limit: Int ?= 3
     ): ArticleResponse
 
     @GET("articles/{articleId}")
@@ -127,32 +127,6 @@ interface ApiService {
         @Path("articleId") articleId: String
     ): RemoveFromFavoritesResponse
 
-    //FORUMS
-//    @POST("forums")
-//    suspend fun createForum(@Body forumRequest: ForumRequest): Response<BaseResponse<ForumCreatedResponse>>
-//
-//    @GET("forums")
-//    suspend fun getAllForums(
-//        @Query("page") page: Int ?= 1,
-//        @Query("size") size: Int ?= 10,
-//        @Query("role") role: String? = null
-//    ): Response<ForumResponse>
-//
-//    @GET("forums/{articleId}")
-//    suspend fun getForumDetail(
-//        @Path("articleId") articleId: String
-//    ): Response<BaseResponse<ForumData>>
-//
-//    @PATCH("forums/{articleId}")
-//    suspend fun updateForum(
-//        @Path("articleId") articleId: String,
-//        @Body forumRequest: ForumRequest
-//    ): Response<BaseResponse<ForumData>>
-//
-//    @DELETE("forums/{articleId}")
-//    suspend fun deleteForum(
-//        @Path("articleId") articleId: String
-//    ): Response<BaseResponse<ForumResponse>>
 
     @POST("forums")
     suspend fun createForum(
@@ -161,8 +135,8 @@ interface ApiService {
 
     @GET("forums")
     suspend fun getForums(
-        @Query("page") page: Int = 1,
-        @Query("limit") limit: Int = 100
+        @Query("page") page: Int ?= 1,
+        @Query("limit") limit: Int ?= 3
     ): ForumResponse
 
     @GET("forums/my")
@@ -182,8 +156,8 @@ interface ApiService {
     @GET("forums/{forumId}/replies")
     suspend fun getForumReplies(
         @Path("forumId") forumId: String,
-        @Query("page") page: Int = 1,
-        @Query("limit") limit: Int = 100
+        @Query("page") page: Int ?= 1,
+        @Query("limit") limit: Int ?= 3
     ): ForumRepliesResponse
 
     //uploadSkinLesionImg
@@ -195,8 +169,8 @@ interface ApiService {
 
     @GET("skin-lesions/my")
     suspend fun getSkinLesions(
-        @Query("page") page: Int,
-        @Query("limit") limit: Int
+        @Query("page") page: Int ?= 1,
+        @Query("limit") limit: Int ?= 3
     ): Response<SkinLesionsResponse>
 
     @GET("skin-lesions/{id}")

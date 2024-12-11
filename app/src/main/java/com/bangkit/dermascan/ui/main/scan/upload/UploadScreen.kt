@@ -82,7 +82,7 @@ fun UploadScreen(
     LaunchedEffect(uploadResult) {
 
         if (uploadResult is Result.Success) {
-            Toast.makeText(context, "Upload berhasil ", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Upload successful", Toast.LENGTH_SHORT).show()
             onSuccessClick() // Callback untuk pindah halaman setelah upload sukses
         }
     }
@@ -147,7 +147,7 @@ fun UploadScreen(
                 // Status upload result
                 when (uploadResult) {
                     is Result.Idle -> {
-                        Text("Silahkan Tekan Tombol Upload, untuk mengunggah gambar 😁",
+                        Text("Please press the upload button to upload the image 😁",
                             color = MaterialTheme.colorScheme.onBackground,
                             textAlign = TextAlign.Center,
                             fontSize = Typography.bodyMedium.fontSize)

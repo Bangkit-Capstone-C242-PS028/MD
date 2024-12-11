@@ -102,14 +102,6 @@ fun SkinLesionHistoryScreen(navController: NavController) {
                         navController = navController,
                         skinLesion = lesion
                     )
-//                    Toast.makeText(context, "INI PAKE PAGING", Toast.LENGTH_SHORT).show()
-//                    LesionHistoryCard(
-//                        lesion = lesion,
-//                        onClick = {
-//                            // Navigate to detail screen if needed
-//                            // navController.navigate("lesion_detail/${lesion.id}")
-//                        }
-//                    )
                 }
             }
 

@@ -1,5 +1,6 @@
 package com.bangkit.dermascan.ui.forumDetail
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -14,6 +15,7 @@ class ForumRepliesAdapter(private val replies: List<ForumReply>) :
     inner class ReplyViewHolder(private val binding: ItemRepliesCardBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
+        @SuppressLint("SetTextI18n")
         fun bind(reply: ForumReply) {
             binding.tvResponderName.text = "${reply.responder?.firstName} ${reply.responder?.lastName}"
             binding.tvResponderRole.text = reply.responderRole

@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat.startActivity
 import androidx.core.util.Pair
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -42,7 +43,9 @@ class ArticleAdapter : ListAdapter<ArticleItem, ArticleAdapter.ViewHolder>(DIFF_
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val article = getItem(position)
-        holder.bind(article)
+        if (article != null) {
+            holder.bind(article)
+        }
 
         holder.itemView.setOnClickListener {
             val optionsCompat: ActivityOptionsCompat =
@@ -55,7 +58,9 @@ class ArticleAdapter : ListAdapter<ArticleItem, ArticleAdapter.ViewHolder>(DIFF_
             val context = holder.itemView.context
 
             val intent = Intent(context, ArticleDetailActivity::class.java)
-            intent.putExtra(ArticleDetailActivity.EXTRA_ARTICLE_ID, article.id)
+            if (article != null) {
+                intent.putExtra(ArticleDetailActivity.EXTRA_ARTICLE_ID, article.id)
+            }
             startActivity(context, intent, optionsCompat.toBundle())
         }
     }

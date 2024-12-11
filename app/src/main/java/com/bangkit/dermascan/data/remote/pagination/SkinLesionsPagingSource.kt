@@ -12,7 +12,7 @@ class SkinLesionsPagingSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, SkinLesionItem> {
         val page = params.key ?: 1
         return try {
-            val response = apiService.getSkinLesions(page = page, limit = 5)
+            val response = apiService.getSkinLesions(page = page, limit = params.loadSize)
             if (response.isSuccessful) {
                 val body = response.body()
                 val data = body?.data?.lesions ?: emptyList()

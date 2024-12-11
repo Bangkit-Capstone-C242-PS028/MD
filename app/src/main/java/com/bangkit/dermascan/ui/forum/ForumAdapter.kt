@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -13,7 +14,7 @@ import com.bangkit.dermascan.databinding.ItemForumCardBinding
 import com.bangkit.dermascan.ui.forumDetail.ForumDetailActivity
 import com.bangkit.dermascan.util.formatTime
 
-class ForumAdapter : ListAdapter<ForumItem, ForumAdapter.ViewHolder>(DIFF_CALLBACK) {
+class ForumAdapter : PagingDataAdapter<ForumItem, ForumAdapter.ViewHolder>(DIFF_CALLBACK) {
 
     class ViewHolder(private val binding: ItemForumCardBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -44,11 +45,13 @@ class ForumAdapter : ListAdapter<ForumItem, ForumAdapter.ViewHolder>(DIFF_CALLBA
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val forum = getItem(position)
-        holder.bind(forum)
+        if (forum != null) {
+            holder.bind(forum)
+        }
 
         holder.itemView.setOnClickListener {
             val context = holder.itemView.context
-            val forumId = forum.id
+            val forumId = forum?.id
 
             if (!forumId.isNullOrBlank()) {
                 val intent = Intent(context, ForumDetailActivity::class.java).apply {
