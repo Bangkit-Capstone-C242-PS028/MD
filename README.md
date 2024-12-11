@@ -33,7 +33,7 @@ DermaScan leverages state-of-the-art AI technology, including **Grad-CAM visuali
 ## Tech Stack
 
 - **Language**: Kotlin 🦾
-- **Architecture**: MVVM (Model-View-ViewModel) 🏗️
+- **Architecture**: MVVM (Model-View-ViewModel) with repository 🏗️
 - **Data Persistence**: Room Database 💾
 - **UI Framework**: Jetpack Compose ✨
 - **Hybrid Approach**: Jetpack Compose & XML 🔄
