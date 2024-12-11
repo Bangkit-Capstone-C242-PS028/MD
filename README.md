@@ -16,9 +16,9 @@ DermaScan leverages state-of-the-art AI technology, including **Grad-CAM visuali
 - **Skin Lesion Analysis**: Upload images and receive detailed results with Grad-CAM heatmaps. 🔍🌈
 - **Cloud Data Synchronization**: Seamless data storage and synchronization across devices. ☁️💾
 - **Notifications**:
-  - Updates on articles. 📰
-  - Doctor-approved results. 👩‍⚕️✔️
-  - Skin lesion analysis results. 🧑‍⚕️📊
+ - Updates on articles. 📰
+ - Doctor-approved results. 👩‍⚕️✔️
+ - Skin lesion analysis results. 🧑‍⚕️📊
 - **Forums for Patients**: Create and join forums to share experiences and connect with others. 🗣️💬
 - **Article Creation for Doctors**: Publish and manage medical articles. ✍️📚
 - **AI-Powered Chatbot**: Interact with a chatbot using Gemini API for quick answers and guidance. 🤖💬
