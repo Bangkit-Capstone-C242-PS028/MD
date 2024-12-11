@@ -34,6 +34,7 @@ DermaScan leverages state-of-the-art AI technology, including **Grad-CAM visuali
 - **Architecture**: MVVM (Model-View-ViewModel)
 - **Data Persistence**: Room Database
 - **UI Framework**: Jetpack Compose
+- **Hybrid Approach**: Jetpack Compose & XML
 - **Networking**: Retrofit
 - **State Management**: LiveData and Flow
 - **Dependency Injection**: Hilt
@@ -72,3 +73,9 @@ To install and use the app:
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+
+## Contiributors
+
+[Kemas Khairunsyah - Universitas Ahmad Dahlan]
+[Rangga Gumilang - Universitas Negeri Surabaya]
