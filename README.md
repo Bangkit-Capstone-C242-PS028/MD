@@ -38,6 +38,7 @@ DermaScan leverages state-of-the-art AI technology, including **Grad-CAM visuali
 - **UI Framework**: Jetpack Compose ✨
 - **Hybrid Approach**: Jetpack Compose & XML 🔄
 - **Networking**: Retrofit 🌐
+- **UserPreference & SettingsPreference**: DataStore👝
 - **State Management**: LiveData and Flow 📊
 - **Dependency Injection**: Hilt 🔋
 - **Image Loading**: Coil, Glide 🖼️
