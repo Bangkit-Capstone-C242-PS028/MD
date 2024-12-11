@@ -24,6 +24,8 @@ DermaScan leverages state-of-the-art AI technology, including **Grad-CAM visuali
 - **AI-Powered Chatbot**: Interact with a chatbot using Gemini API for quick answers and guidance. 🤖💬
 - **Gamification**: Earn points for completing activities and tasks. 🏅🎮
 - **Doctor Consultation**: Schedule and manage consultations with healthcare professionals. 📅👨‍⚕️
+- **Customize Your Profile**: Personalize your profile by add (first name, last name,profile picture, etc.). 🖼️👤✨
+
 - **Light and Dark Mode**: Choose your preferred theme. 🌞🌙
 
 ---
