@@ -4,6 +4,7 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bangkit.dermascan.data.database.FavoriteArticle
@@ -20,8 +21,8 @@ class ArticleDetailViewModel(
     private val mFavoriteArticleRepository: FavoriteArticleRepository =
         FavoriteArticleRepository(application)
 
-    private val _article = MutableLiveData<ArticleDetail>()
-    val article: LiveData<ArticleDetail> = _article
+    private val _article = MutableLiveData<ArticleDetail?>()
+    val article: MutableLiveData<ArticleDetail?> = _article
 
     private val _favoriteArticle = MutableLiveData<FavoriteArticle?>()
     val favoriteArticle: LiveData<FavoriteArticle?> = _favoriteArticle
@@ -35,6 +36,9 @@ class ArticleDetailViewModel(
     private val _favoriteStatus = MutableLiveData<Result<String>>()
     val favoriteStatus: LiveData<Result<String>> = _favoriteStatus
 
+    fun getFavoriteArticleById(id: String): LiveData<FavoriteArticle> {
+        return mFavoriteArticleRepository.getFavoriteArticleById(id)
+    }
     fun showArticleDetail(id: String) {
         _isLoading.value = true
         _errorMessage.value = null
@@ -42,12 +46,14 @@ class ArticleDetailViewModel(
             try {
                 val response = apiRepository.getArticleDetail(id)
                 if (response.data != null) {
-                    _article.value = response.data!!
+                    _article.value = response.data
 
-                    // Cek favorit artikel
-                    mFavoriteArticleRepository.getFavoriteArticleById(id).observeForever { favoriteArticle ->
+                    val observer = Observer<FavoriteArticle?> { favoriteArticle ->
                         _favoriteArticle.value = favoriteArticle
                     }
+                    mFavoriteArticleRepository.getFavoriteArticleById(id).observeForever(observer)
+// Remove observer after setting value
+                    mFavoriteArticleRepository.getFavoriteArticleById(id).removeObserver(observer)
                 } else {
                     _errorMessage.value = "Article not found"
                 }

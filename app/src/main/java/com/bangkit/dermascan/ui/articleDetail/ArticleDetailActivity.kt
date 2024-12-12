@@ -2,6 +2,7 @@ package com.bangkit.dermascan.ui.articleDetail
 
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
@@ -31,7 +32,7 @@ class ArticleDetailActivity : AppCompatActivity() {
     private val viewModel by viewModels<ArticleDetailViewModel> {
         ViewModelFactory.getInstance(this)
     }
-
+    private var currentThemeMode: Int = AppCompatDelegate.getDefaultNightMode()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -39,17 +40,20 @@ class ArticleDetailActivity : AppCompatActivity() {
         // Inisialisasi SettingsViewModel
         settingsViewModel = ViewModelProvider(this)[SettingsViewModel::class.java]
 
-        // Observasi tema
         lifecycleScope.launch {
-            val isDarkMode = settingsViewModel.isDarkTheme.first() // Mengambil nilai pertama saja
-            // Terapkan tema berdasarkan nilai awal
-            if (isDarkMode) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            val isDarkMode = settingsViewModel.isDarkTheme.first() // Ambil nilai awal
+            val newThemeMode = if (isDarkMode) {
+                AppCompatDelegate.MODE_NIGHT_YES
             } else {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                AppCompatDelegate.MODE_NIGHT_NO
             }
-            // Recreate activity untuk menerapkan tema
-            recreate()
+
+            // Hanya lakukan perubahan jika tema berubah
+            if (currentThemeMode != newThemeMode) {
+                currentThemeMode = newThemeMode
+                AppCompatDelegate.setDefaultNightMode(newThemeMode)
+                recreate() // Buat ulang hanya jika ada perubahan tema
+            }
         }
 
 
@@ -68,9 +72,10 @@ class ArticleDetailActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         val articleId = intent.getStringExtra(EXTRA_ARTICLE_ID)
-
+        Log.e("ArticleDetailActivityID", "Article ID: $articleId")
         if (articleId != null) {
             viewModel.showArticleDetail(articleId)
+            Log.e("ArticleDetailActivity", "Article ID: $articleId")
         }else {
             // Tampilkan pesan error atau finish activity
             Toast.makeText(this, "Article ID not found", Toast.LENGTH_SHORT).show()
@@ -78,13 +83,16 @@ class ArticleDetailActivity : AppCompatActivity() {
         }
 
         viewModel.article.observe(this) { articleResponse ->
-            binding.tvTitledetail.text = articleResponse.title
-            binding.tvContextdetail.text = articleResponse.content
+            if (articleResponse != null) {
+                binding.tvTitledetail.text = articleResponse.title
+                binding.tvContextdetail.text = articleResponse.content
 
-            Glide.with(binding.ivDetailPhoto.context)
-                .load(articleResponse.imageUrl)
-                .placeholder(R.drawable.img_placeholder)
-                .into(binding.ivDetailPhoto)
+                Glide.with(binding.ivDetailPhoto.context)
+                    .load(articleResponse.imageUrl)
+                    .placeholder(R.drawable.img_placeholder)
+                    .into(binding.ivDetailPhoto)
+            }
+
         }
         showLoading(false)
 //        viewModel.isLoading.observe(this) {
