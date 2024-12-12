@@ -12,15 +12,7 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <com.google.android.material.progressindicator.LinearProgressIndicator
-            android:id="@+id/progressIndicator"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:indeterminate="true"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="parent" />
+
 
 <!--        <androidx.appcompat.widget.Toolbar-->
 <!--            android:id="@+id/toolbar"-->
@@ -139,6 +131,16 @@
         </com.google.android.material.textfield.TextInputLayout>
 
 
+        <ProgressBar
+            android:id="@+id/progressIndicator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:layout_editor_absoluteY="374dp"
+            tools:ignore="MissingConstraints" />
+
         <Button
             android:id="@+id/button_add"
             android:layout_width="0dp"
@@ -154,6 +156,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>
 
-
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </ScrollView>

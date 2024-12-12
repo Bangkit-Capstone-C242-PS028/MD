@@ -80,7 +80,7 @@ fun ChatScreen() {
             if (chatMessages.isEmpty()) {
                 item {
                     Text(
-                        text = "Mulai percakapan baru",
+                        text = "Start new chat",
                         style = Typography.titleLarge,
                         color = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier.fillMaxWidth().wrapContentWidth(Alignment.CenterHorizontally).padding(16.dp)
@@ -108,7 +108,7 @@ fun ChatScreen() {
             CustomTextField(
                 value = userMessage,
                 onValueChange = { userMessage.value = it },
-                label = "Masukkan pesan",
+                label = "Enter Message",
                 modifier = Modifier
                     .weight(1f)
                     .padding(end = 8.dp)
@@ -134,7 +134,7 @@ fun ChatScreen() {
                 modifier = Modifier
                     .height(60.dp) // Menjaga ukuran tombol tetap konsisten
             ) {
-                Text("Kirim")
+                Text("Send")
             }
         }
     }

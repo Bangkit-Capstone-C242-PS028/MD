@@ -138,12 +138,16 @@ fun ArticleAdd(navController: NavController) {
                 viewModel.setImageUri(imageUri)
                 launcherIntentCamera.launch(imageUri)
             }
-
+            binding.progressIndicator.visibility = View.VISIBLE
             // Listener untuk tombol upload
             binding.buttonAdd.setOnClickListener {
+
                 if (viewModel.currentImageUri.value == null) {
                     Toast.makeText(context, "Choose image first", Toast.LENGTH_SHORT).show()
                 } else {
+                    binding.buttonAdd.isEnabled = false
+//                    binding.showLoading(true)
+                    binding.progressIndicator.visibility = View.VISIBLE
                     GlobalScope.launch {
                         // Menjalankan fungsi suspend di luar siklus hidup
                         uploadArticle(binding, context, viewModel)
@@ -168,7 +172,9 @@ fun ArticleAdd(navController: NavController) {
 //                    val intent = Intent(context, MainActivity::class.java)
 //                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
 //                    context.startActivity(intent)
+                    context.showToast("Article Uploaded")
                     navController.navigate("main")
+
                 } else {
                     Log.d("ArticleAddActivity", viewModel.errorMessage.value.toString())
 //                    viewModel.errorMessage.value?.let { }

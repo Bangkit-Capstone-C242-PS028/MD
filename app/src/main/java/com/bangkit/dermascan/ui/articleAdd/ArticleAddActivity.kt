@@ -80,6 +80,7 @@ class ArticleAddActivity : AppCompatActivity() {
                 startActivity(intent)
 //                navController.navigate("main")
             } else {
+
                 viewModel.errorMessage.value?.let { showToast(it) }
             }
         }

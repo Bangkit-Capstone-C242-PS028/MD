@@ -202,7 +202,6 @@ fun EditProfileScreen(navController: NavController){
 //                        navController.navigate("main") {
 //                            popUpTo("editProfile") { inclusive = true }
 //                        }
-                            navController.navigateUp()
                         }
 
                         Result.Idle -> {}
