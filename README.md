@@ -1,6 +1,13 @@
+<div align="center">
+  <img src="![Fix DermaScan Logo]" alt="Logo DermaScan" style="width: 20%;">
+  <h1>Mobile Application</h1>
+  <p>DermaScan is an Android application designed to assist users in detecting and managing skin lesions. With its modern and user-friendly interface, the app empowers both patients and doctors with advanced tools for analysis, collaboration, and consultation. 🩺💡
+</p>
+</div>
+
 # DermaScan
 
-**DermaScan** is an Android application designed to assist users in detecting and managing skin lesions. With its modern and user-friendly interface, the app empowers both patients and doctors with advanced tools for analysis, collaboration, and consultation. 🩺💡
+
 
 ![PostGithubpng](https://github.com/user-attachments/assets/b3b77016-b737-4d60-97a6-a73d44f38e2a)
 
