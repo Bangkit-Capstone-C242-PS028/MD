@@ -2,7 +2,8 @@
 
 **DermaScan** is an Android application designed to assist users in detecting and managing skin lesions. With its modern and user-friendly interface, the app empowers both patients and doctors with advanced tools for analysis, collaboration, and consultation. 🩺💡
 
----
+---![PostGithubpng](https://github.com/user-attachments/assets/b3b77016-b737-4d60-97a6-a73d44f38e2a)
+
 
 ## About
 
@@ -66,13 +67,6 @@ To install and use the app:
 
 ---
 
-## Screenshots
-
-| Home Screen            | Analysis Result          |
-|-------------------------|--------------------------|
-| ![Home](screenshots/home.png) | ![Result](screenshots/result.png) |
-
----
 
 ## License
 
