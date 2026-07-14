@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#CAD6FF"
+    android:background="@color/light_blue"
     android:padding="16dp">
 
     <!-- ScrollView untuk Konten Utama -->
@@ -43,13 +43,13 @@
                         android:layout_height="wrap_content"
                         android:textSize="20sp"
                         android:textStyle="bold"
-                        android:textColor="#2260FF"
+                        android:textColor="@color/blue"
                         tools:text="Forum Title" />
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="2dp"
                         android:layout_marginTop="12dp"
-                        android:background="#CAD6FF"
+                        android:background="@color/light_blue"
                         app:layout_constraintTop_toBottomOf="@id/tvTitleDetail"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent" />
@@ -60,7 +60,7 @@
                         android:layout_height="wrap_content"
                         android:textSize="16sp"
                         android:layout_marginTop="8dp"
-                        android:textColor="#2260FF"
+                        android:textColor="@color/blue"
                         tools:text="Discussion content goes here..." />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -73,7 +73,7 @@
                 android:text="Replies"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:textColor="#2260FF" />
+                android:textColor="@color/blue" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvReplies"
@@ -109,8 +109,8 @@
                 android:hint="Write a reply..."
                 android:inputType="textMultiLine"
                 android:padding="12dp"
-                android:textColor="#2260FF"
-                android:textColorHint="#CAD6FF"
+                android:textColor="@color/blue"
+                android:textColorHint="@color/light_blue"
                 android:background="@drawable/edittext_background"
                 android:layout_marginEnd="8dp" />
 
@@ -120,7 +120,7 @@
                 android:layout_height="48dp"
                 android:background="@drawable/bg_circle_button"
                 android:src="@drawable/ic_send"
-                app:tint="#2260FF" />
+                app:tint="@color/blue" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 

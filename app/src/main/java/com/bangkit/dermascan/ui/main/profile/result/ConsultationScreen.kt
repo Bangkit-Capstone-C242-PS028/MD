@@ -47,6 +47,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -71,6 +74,9 @@ import com.bangkit.dermascan.ui.theme.GreenWA
 import com.bangkit.dermascan.ui.theme.LightBlue
 import com.bangkit.dermascan.ui.theme.Typography
 import com.bangkit.dermascan.ui.theme.White
+import com.bangkit.dermascan.ui.theme.CardBgDark
+import com.bangkit.dermascan.ui.theme.BorderGray
+import androidx.compose.foundation.border
 import com.bangkit.dermascan.util.Result
 import com.bangkit.dermascan.util.formatDate
 
@@ -94,7 +100,7 @@ fun ConsultationsScreen(navController: NavController) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Skin Lesion History") },
+                title = { Text("Consultations") },
                 navigationIcon = {
                     IconButton(onClick = { navController.navigateUp() }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -250,142 +256,109 @@ fun ConsultationsScreen(navController: NavController) {
 
 @Composable
 fun DoctorItem(context: Context, doctor: UserData, isDarkMode: Boolean) {
-
-
     Card(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-        shape = RoundedCornerShape(8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = if (isDarkMode) LightBlue else Blue,
-            contentColor = if (isDarkMode) Black else White
-        )
+            containerColor = if (isDarkMode) CardBgDark else LightBlue,
+            contentColor = if (isDarkMode) White else Blue
+        ),
+        border = androidx.compose.foundation.BorderStroke(1.dp, if (isDarkMode) Color.DarkGray else BorderGray),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
-        Row(Modifier.padding(bottom = 4.dp, top = 16.dp)
-            .align(Alignment.CenterHorizontally),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+        Column(
+            modifier = Modifier.padding(16.dp)
         ) {
-            // Menampilkan foto dokter jika tersedia
-            AsyncImage(
-                model = doctor.photoUrl ?: R.drawable.ic_account,
-//                model = "https://storage.googleapis.com/dermascan-cloud-storage/articles%2FzSyL1AsuhkVejKQG6UjsfdcLFYr2%2FyT_X30U21f0HE1jMO9uPJ",
-                contentDescription = "Doctor's Photo",
-                modifier = Modifier
-                    .size(100.dp)
-                    .clip(CircleShape)
-                    .background(Black)
-            )
-            Spacer(modifier = Modifier.width(30.dp))
-            Column(modifier = Modifier.padding(bottom = 10.dp, top = 10.dp)
-                .background(
-                    shape = RoundedCornerShape(8.dp),
-                    color = if (isDarkMode) Color.Gray else Color.DarkGray
-                ).padding(16.dp)
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
             ) {
-
-//                Spacer(modifier = Modifier.height(8.dp))
-
-                // Menampilkan nama dokter
-                Text(
-                    text = "dr. ${doctor.firstName} ${doctor.lastName}",
-                    style = Typography.titleLarge,
-                    fontSize = 18.sp,
-                    color = if (isDarkMode) Black else White
+                // Doctor Photo with circular border
+                AsyncImage(
+                    model = doctor.photoUrl ?: R.drawable.ic_account,
+                    contentDescription = "Doctor's Photo",
+                    modifier = Modifier
+                        .size(80.dp)
+                        .clip(CircleShape)
+                        .background(if (isDarkMode) Color.Gray.copy(alpha = 0.2f) else White.copy(alpha = 0.5f))
+                        .border(2.dp, Blue, CircleShape),
+                    contentScale = ContentScale.Crop
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.width(16.dp))
 
-                // Menampilkan spesialisasi dan tempat kerja
-                doctor.doctor?.specialization?.let {
-                    Text(text = "Specialization: $it", style = Typography.bodyMedium,
-                        color = if (isDarkMode) Black else White
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
-                doctor.doctor?.workplace?.let {
-                    Text(text = "Workplace: $it", style = Typography.bodyMedium,
-                        color = if (isDarkMode) Black else White
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                // Menampilkan tanggal lahir (dob) jika ada
-                Text(text = "Date of Birth: ${doctor.dob?.let { formatDate(it) }}", style = Typography.bodyMedium,
-                    color = if (isDarkMode) Black else White
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-                // Menampilkan alamat jika ada
-                doctor.address?.let {
-                    Text(text = "Address: $it", style = Typography.bodyMedium,
-                        color = if (isDarkMode) Black else White
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center,
-                    modifier =
-                    Modifier.align(
-                        Alignment.CenterHorizontally
-                    )
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                    modifier = Modifier.weight(1f)
                 ) {
-                    // Menampilkan status verifikasi jika sudah diverifikasi
-                    if (doctor.doctor?.isVerified == true) {
-                        Text(text = "Verified", color = Color.Green, style = Typography.bodyLarge)
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_doc_check),
-                            contentDescription = "Verified",
-                            tint = Color.Green,
-                            modifier = Modifier.size(40.dp)
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Text(
+                            text = "dr. ${doctor.firstName} ${doctor.lastName}",
+                            style = Typography.titleLarge,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = if (isDarkMode) White else Blue
                         )
-                    }else{
-                        Text(text = "Not Verified", color = Color.Red, style = Typography.bodyLarge)
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_un_checked),
-                            contentDescription = "Verified",
-                            tint = Color.Red,
-                            modifier = Modifier.size(40.dp)
+                        
+                        // Verification Checkmark
+                        if (doctor.doctor?.isVerified == true) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_doc_check),
+                                contentDescription = "Verified",
+                                tint = Color(0xFF16A34A),
+                                modifier = Modifier.size(18.dp)
+                            )
+                        } else {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_un_checked),
+                                contentDescription = "Not Verified",
+                                tint = Color(0xFFDC2626),
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                    }
 
+                    doctor.doctor?.specialization?.let {
+                        Text(
+                            text = it,
+                            style = Typography.bodyMedium,
+                            fontWeight = FontWeight.Medium,
+                            color = if (isDarkMode) Color.LightGray else Color.DarkGray
                         )
                     }
+
+                    doctor.doctor?.workplace?.let {
+                        Text(
+                            text = "Workplace: $it",
+                            style = Typography.bodySmall,
+                            color = if (isDarkMode) Color.LightGray else Color.Gray
+                        )
+                    }
+
+                    Text(
+                        text = "Address: ${doctor.address ?: "-"}",
+                        style = Typography.bodySmall,
+                        color = if (isDarkMode) Color.LightGray else Color.Gray,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
                 }
             }
-        }
-        WhatsAppButton(context,
-            doctor,
-            Modifier
-            .wrapContentSize()
-            .align(Alignment.CenterHorizontally)
-            .padding(bottom = 12.dp),
-            isDarkMode)
-        // Tombol untuk menghubungi lewat WhatsApp
-//        Button(
-//            onClick = {
-//                if (doctor.doctor?.phoneNumber.isNullOrBlank()) {
-//                    Toast.makeText(context, "No phone number available", Toast.LENGTH_SHORT).show()
-//                    return@Button
-//                }else{
-//                    openWhatsApp(context, doctor.doctor?.phoneNumber!!)
-//                }
-////                openWhatsApp(context, "6287840012446")
-////                doctor.doctor?.phoneNumber?.let {  }
-//                      },
-//            modifier = Modifier.wrapContentSize().align(Alignment.CenterHorizontally).padding(bottom = 12.dp),
-//            colors = androidx.compose.material3.ButtonDefaults.buttonColors(
-//                containerColor = Blue,
-//                contentColor = LightBlue
-//            )
-//        ) {
-////                Text(text = "Chat with Dr. ${doctor.firstName} ${doctor.lastName}")
-//            Text(text = "Start Chat with Dr.${doctor.firstName + " " + doctor.lastName}"
-//                , style = Typography.bodyMedium,
-//            )
-//        }
 
+            Spacer(modifier = Modifier.height(16.dp))
+
+            WhatsAppButton(
+                context = context,
+                doctor = doctor,
+                modifier = Modifier.fillMaxWidth(),
+                isDarkMode = isDarkMode
+            )
+        }
     }
 }
 
@@ -396,82 +369,42 @@ fun WhatsAppButton(
     modifier: Modifier,
     isDarkMode: Boolean
 ) {
-    if (!isDarkMode) {
-        Button(
-            onClick = {
-                if (doctor.doctor?.phoneNumber.isNullOrBlank()) {
-                    Toast.makeText(context, "No phone number available", Toast.LENGTH_SHORT).show()
-                } else {
-                    openWhatsApp(context, doctor.doctor?.phoneNumber!!)
-                }
-            },
-            modifier = modifier,
-            colors = androidx.compose.material3.ButtonDefaults.buttonColors(
-                containerColor = GreenWA,
-                contentColor = LightBlue
-            )
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.align(alignment = Alignment.CenterVertically)) {
-                Text(
-                    text = "Start Consultation",
-                    style = Typography.bodyMedium,
-                    color = White
-                )
-                Spacer(modifier = Modifier.size(8.dp))
-                val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.icons_whatsapp))
-                LottieAnimation(
-                    composition = composition,
-                    iterations = LottieConstants.IterateForever,
-                    modifier = Modifier
-                        .size(30.dp)
-                        .align(Alignment.CenterVertically)
-//                    .align(Alignment.) // Posisi animasi di tengah
-                )
-
-
+    val buttonColor = if (isDarkMode) Color(0xFF2E7D32) else Color(0xFF40C351)
+    Button(
+        onClick = {
+            if (doctor.doctor?.phoneNumber.isNullOrBlank()) {
+                Toast.makeText(context, "No phone number available", Toast.LENGTH_SHORT).show()
+            } else {
+                openWhatsApp(context, doctor.doctor?.phoneNumber!!)
             }
-        }
-    }else{
-        Button(
-            onClick = {
-                if (doctor.doctor?.phoneNumber.isNullOrBlank()) {
-                    Toast.makeText(context, "No phone number available", Toast.LENGTH_SHORT).show()
-                } else {
-                    openWhatsApp(context, doctor.doctor?.phoneNumber!!)
-                }
-            },
-            modifier = modifier,
-            colors = androidx.compose.material3.ButtonDefaults.buttonColors(
-                containerColor = Color.Gray,
-                contentColor = LightBlue
-            )
+        },
+        modifier = modifier,
+        colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+            containerColor = buttonColor,
+            contentColor = White
+        ),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.align(alignment = Alignment.CenterVertically)) {
-                Text(
-                    text = "Start Consultation",
-                    style = Typography.bodyMedium,
-                    color = White
-                )
-                Spacer(modifier = Modifier.size(8.dp))
-                val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.icons_whatsapp_blck))
-                LottieAnimation(
-                    composition = composition,
-                    iterations = LottieConstants.IterateForever,
-                    modifier = Modifier
-                        .size(30.dp)
-                        .align(Alignment.CenterVertically)
-//                    .align(Alignment.) // Posisi animasi di tengah
-                )
-
-
-            }
+            Text(
+                text = "Start Consultation",
+                style = Typography.labelLarge,
+                fontWeight = FontWeight.Bold,
+                color = White
+            )
+            Spacer(modifier = Modifier.size(8.dp))
+            val rawRes = if (isDarkMode) R.raw.icons_whatsapp_blck else R.raw.icons_whatsapp
+            val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(rawRes))
+            LottieAnimation(
+                composition = composition,
+                iterations = LottieConstants.IterateForever,
+                modifier = Modifier.size(24.dp)
+            )
         }
     }
-
 }
 //data class Doctor(val name: String, val phoneNumber: String)
 

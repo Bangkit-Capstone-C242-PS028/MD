@@ -7,9 +7,12 @@ import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,6 +22,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -32,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -54,7 +59,7 @@ import kotlinx.coroutines.launch
 import com.bangkit.dermascan.util.Result
 @OptIn(DelicateCoroutinesApi::class)
 @Composable
-fun LoginScreen(context: Context, onLoginSuccess: () -> Unit) {
+fun LoginScreen(context: Context, onLoginSuccess: () -> Unit, onRegisterClick: () -> Unit = {}) {
     val viewModel : AuthViewModel = hiltViewModel()
 
     val email = rememberSaveable { mutableStateOf("") }
@@ -104,30 +109,27 @@ fun LoginScreen(context: Context, onLoginSuccess: () -> Unit) {
         return true
     }
 
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 24.dp) // Padding di sekitar layar
+            .verticalScroll(rememberScrollState())
+            .background(MaterialTheme.colorScheme.background)
+            .padding(horizontal = 32.dp, vertical = 24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
+        Spacer(modifier = Modifier.height(48.dp))
+
         // Teks "Hello!" di bagian atas
         Text(
             text = "Hello!",
             style = Typography.titleLarge,
             fontSize = 34.sp,
             color = Blue,
-            modifier = Modifier
-                .align(Alignment.TopCenter) // Posisikan teks di atas tengah
-                .padding(top = 72.dp) // Beri jarak dari atas
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 24.dp)
         )
-    }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally, // Elemen rata tengah secara horizontal
-        verticalArrangement = Arrangement.Center // Mengatur jarak antar elemen
-    ) {
         Box(
             modifier = Modifier
                 .size(200.dp)// Mengabaikan klik di background
@@ -141,60 +143,61 @@ fun LoginScreen(context: Context, onLoginSuccess: () -> Unit) {
                     .align(Alignment.Center) // Posisi animasi di tengah
             )
         }
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
+
+        CustomTextField(value = email, label = "Email",emailError = emailError, onValueChange = { validateEmail(it) })
+        CustomTextField(
+            value = password,
+            label = "Password",
+            passwordError = passwordError,
+            passwordVisibility = passwordVisibility,
+            onPasswordVisibilityToggle = { passwordVisibility = !passwordVisibility },
+            onValueChange = { validatePassword(it) },
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Login Button
+        Button(
+            onClick = {
+                if (validateInputs()) {
+                    viewModel.signIn(email.value, password.value)
+                } else {
+                    Toast.makeText(context, "Input belum valid", Toast.LENGTH_SHORT).show()
+                }
+            },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Blue,
+                contentColor = White
+            ),
+            shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(52.dp)
         ) {
-            CustomTextField(value = email, label = "Email",emailError = emailError, onValueChange = { validateEmail(it) })
-            CustomTextField(
-                value = password,
-                label = "Password",
-                passwordError = passwordError,
-                passwordVisibility = passwordVisibility,
-                onPasswordVisibilityToggle = { passwordVisibility = !passwordVisibility },
-                onValueChange = { validatePassword(it) },
-            )
-
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Login Button
-            Button(
-                onClick = {
-//                    if(signInStatus is Result.Success){
-//                        Toast.makeText(context, "Login berhasil", Toast.LENGTH_SHORT).show()
-//                        onLoginSuccess()
-//                    }
-                    if (validateInputs()) {
-                        viewModel.signIn(email.value, password.value)
-
-                    }else{
-                        Toast.makeText(context, "Input belum valid", Toast.LENGTH_SHORT).show()
-                    }
-
-//                    when (signInStatus) {
-//                        is Result.Error -> {
-//                            // Tampilkan pesan error
-//                            Toast.makeText(context, (signInStatus as Result.Error).message, Toast.LENGTH_SHORT).show()
-//                        }
-//
-//                        else-> {}
-//                    }
-
-                },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Blue,
-                    contentColor = White
-                ),
-                modifier = Modifier
-                    .width(207.dp)
-                    .height(45.dp)
-            ) {
-                Text("Login", fontSize = 16.sp)
-            }
-
-
+            Text("Login", fontSize = 18.sp, fontWeight = FontWeight.Bold)
         }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = "Don't have an account? ",
+                color = if (isSystemInDarkTheme()) White.copy(alpha = 0.7f) else Black.copy(alpha = 0.7f),
+                fontSize = 14.sp
+            )
+            Text(
+                text = "Sign Up",
+                color = Blue,
+                fontWeight = FontWeight.Bold,
+                fontSize = 14.sp,
+                modifier = Modifier.clickable { onRegisterClick() }
+            )
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
     }
 
     if (signInStatus is Result.Success) {

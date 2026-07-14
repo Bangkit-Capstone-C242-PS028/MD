@@ -109,6 +109,8 @@ fun AppNavHost(navController: NavHostController) {
                     popUpTo("onBoard") { inclusive = true }
                     launchSingleTop = true
                 }
+            }, onRegisterClick = {
+                navController.navigate("register")
             })
         }
 
@@ -122,6 +124,10 @@ fun AppNavHost(navController: NavHostController) {
             }
         ) {
             RegisterScreen(onRegisterSuccess = {
+                navController.navigate("login") {
+                    popUpTo("register") { inclusive = true }
+                }
+            }, onLoginClick = {
                 navController.navigate("login") {
                     popUpTo("register") { inclusive = true }
                 }

@@ -4,6 +4,7 @@ import android.util.Log
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,13 +15,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ListAlt
 import androidx.compose.material.icons.filled.Error
-import androidx.compose.material.icons.filled.ListAlt
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -44,10 +47,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Divider
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
@@ -71,11 +80,16 @@ import com.bangkit.dermascan.util.formatTimestampToGMT
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 
+import com.bangkit.dermascan.ui.main.profile.settings.SettingsViewModel
+import com.bangkit.dermascan.ui.theme.*
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SkinLesionHistoryScreen(navController: NavController) {
     val skinLesionViewModel: SkinLesionViewModel = hiltViewModel()
     val lesionsPaging: LazyPagingItems<SkinLesionItem> = skinLesionViewModel.skinLesion.collectAsLazyPagingItems()
+    val settingsViewModel: SettingsViewModel = hiltViewModel()
+    val isDarkMode by settingsViewModel.isDarkTheme.collectAsState(initial = false)
 
     val context = LocalContext.current
     Scaffold(
@@ -86,12 +100,19 @@ fun SkinLesionHistoryScreen(navController: NavController) {
                     IconButton(onClick = { navController.navigateUp() }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = if (isDarkMode) CardBgDark else Blue,
+                    titleContentColor = if (isDarkMode) White else LightBlue,
+                    navigationIconContentColor = if (isDarkMode) White else White
+                )
             )
-        }
+        },
+        containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
+                .fillMaxSize()
                 .padding(paddingValues)
                 .padding(horizontal = 16.dp)
         ) {
@@ -100,7 +121,8 @@ fun SkinLesionHistoryScreen(navController: NavController) {
                 lesionsPaging[index]?.let { lesion ->
                     SkinLesionItem(
                         navController = navController,
-                        skinLesion = lesion
+                        skinLesion = lesion,
+                        isDarkMode = isDarkMode
                     )
                 }
             }
@@ -175,145 +197,147 @@ fun SkinLesionHistoryScreen(navController: NavController) {
 fun SkinLesionItem(
     navController: NavController,
     skinLesion: SkinLesionItem,
+    isDarkMode: Boolean,
     modifier: Modifier = Modifier
 ) {
-    Column(
+    Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(16.dp)
-            .background(
-                color = LightBlue,
-                shape = RoundedCornerShape(12.dp)
-            )
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(vertical = 8.dp),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = if (isDarkMode) CardBgDark else LightBlue,
+            contentColor = if (isDarkMode) White else Blue
+        ),
+        border = androidx.compose.foundation.BorderStroke(1.dp, if (isDarkMode) Color.DarkGray else BorderGray),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
-        // Display processed image if available, otherwise original image
-
-        val imageUrl = skinLesion.processedImageUrl ?: skinLesion.originalImageUrl
-
-
-        // Image using Glide with AndroidView
-        AsyncImage(
-            model = imageUrl,
-            contentDescription = "Skin Lesion Image",
-            modifier = Modifier
-                .size(200.dp)
-                .clip(RoundedCornerShape(8.dp))
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // Classification and Status
-        Text(
-            text = "Classification: ${skinLesion?.classification.let { it ?: "Loading..." }}",
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .background(
-                    color = White,
-                    shape = RoundedCornerShape(12.dp)
-                )
-                .padding(horizontal = 12.dp, vertical = 6.dp),
-            color = Blue
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = "Description: ${skinLesion?.description.let { it ?: "No Description" } }",
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .background(
-                    color = Blue,
-                    shape = RoundedCornerShape(12.dp)
-                )
-                .padding(horizontal = 12.dp, vertical = 6.dp),
-            color = White
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = "Status: ${skinLesion.status}",
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier
-                .background(
-                    color = White,
-                    shape = RoundedCornerShape(8.dp)
-                )
-                .padding(horizontal = 12.dp, vertical = 6.dp),
-            color = Blue
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Dates
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(horizontal = 8.dp)
+            modifier = Modifier.padding(16.dp)
         ) {
-            Text(
-                text = "Created At: ${formatTimestampToGMT(skinLesion.createdAt)}",
-                style = MaterialTheme.typography.bodySmall,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .background(
-                        color = Blue,
-                        shape = RoundedCornerShape(8.dp)
-                    )
-                    .padding(horizontal = 12.dp, vertical = 6.dp),
-                color = White
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                val imageUrl = skinLesion.processedImageUrl ?: skinLesion.originalImageUrl
 
+                AsyncImage(
+                    model = imageUrl,
+                    contentDescription = "Skin Lesion Image",
+                    modifier = Modifier
+                        .size(90.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .border(1.dp, if (isDarkMode) Color.DarkGray else BorderGray, RoundedCornerShape(12.dp)),
+                    contentScale = ContentScale.Crop
+                )
+
+                Spacer(modifier = Modifier.width(12.dp))
+
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(6.dp),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(
+                        text = skinLesion.classification ?: "Classification: Unknown",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = if (isDarkMode) White else Blue,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+
+                    // Status Badge
+                    Surface(
+                        color = when (skinLesion.status?.uppercase()) {
+                            "SUCCESS" -> Color(0xFFE8F5E9)
+                            "PENDING" -> Color(0xFFFFF3E0)
+                            else -> Color(0xFFFFEBEE)
+                        },
+                        contentColor = when (skinLesion.status?.uppercase()) {
+                            "SUCCESS" -> Color(0xFF2E7D32)
+                            "PENDING" -> Color(0xFFE65100)
+                            else -> Color(0xFFC62828)
+                        },
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Text(
+                            text = skinLesion.status ?: "PENDING",
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        )
+                    }
+                }
+            }
+
+            if (skinLesion.description != null && skinLesion.description.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    text = skinLesion.description,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = if (isDarkMode) Color.LightGray else Color.DarkGray,
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+            Divider(color = Blue.copy(alpha = 0.1f))
             Spacer(modifier = Modifier.height(8.dp))
 
-            Text(
-                text = "Processed At: ${skinLesion?.processedAt?.let { formatTimestampToGMT(it) } ?: "Loading..."}",
-                style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .background(
-                        color = White,
-                        shape = RoundedCornerShape(8.dp)
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column {
+                    Text(
+                        text = "Created At",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = if (isDarkMode) Color.LightGray else Color.Gray
                     )
-                    .padding(horizontal = 12.dp, vertical = 6.dp),
-                color = Blue
-            )
-        }
-//
-//        Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = formatTimestampToGMT(skinLesion.createdAt),
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Medium,
+                        color = if (isDarkMode) LightBlue else Blue
+                    )
+                }
+                Column(horizontalAlignment = Alignment.End) {
+                    Text(
+                        text = "Processed At",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = if (isDarkMode) Color.LightGray else Color.Gray
+                    )
+                    Text(
+                        text = skinLesion.processedAt?.let { formatTimestampToGMT(it) } ?: "-",
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Medium,
+                        color = if (isDarkMode) LightBlue else Blue
+                    )
+                }
+            }
 
-//        // Additional Information
-//        Text(
-//            text = "Patient ID: ${skinLesion.patientUid}",
-//            style = MaterialTheme.typography.bodySmall,
-//            color = Color.Gray,
-//            textAlign = TextAlign.Center
-//        )
+            Spacer(modifier = Modifier.height(16.dp))
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Button for Consultation
-        Button(
-            onClick = {
-                // Handle consultation navigation or action here
-                // For example, navigate to a consultation screen
-                 navController.navigate("consultation")
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Blue,
-                contentColor = LightBlue
-            )
-        ) {
-            Text(text = "Consultation",
-                style = Typography.labelLarge,
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp)
+            // Button for Consultation
+            Button(
+                onClick = {
+                     navController.navigate("consultation")
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Blue,
+                    contentColor = White
+                )
+            ) {
+                Text(text = "Consultation",
+                    style = Typography.labelLarge,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp)
+            }
         }
     }
 }
@@ -362,7 +386,7 @@ fun EmptyStateComponent() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Icon(
-                imageVector = Icons.Default.ListAlt,
+                imageVector = Icons.AutoMirrored.Filled.ListAlt,
                 contentDescription = "No Lesions",
                 modifier = Modifier.size(48.dp),
                 tint = MaterialTheme.colorScheme.secondary

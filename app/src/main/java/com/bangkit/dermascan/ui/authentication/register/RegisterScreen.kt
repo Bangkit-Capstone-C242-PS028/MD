@@ -47,13 +47,19 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.foundation.isSystemInDarkTheme
+import com.bangkit.dermascan.ui.theme.CardBgDark
+import com.bangkit.dermascan.ui.theme.BorderGray
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
@@ -74,7 +80,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
@@ -105,7 +111,7 @@ import java.util.Locale
 //@Preview(showSystemUi = true)
 @SuppressLint("DefaultLocale")
 @Composable
-fun RegisterScreen(onRegisterSuccess: () -> Unit) {
+fun RegisterScreen(onRegisterSuccess: () -> Unit, onLoginClick: () -> Unit = {}) {
     val context = LocalContext.current
     val registerViewModel: AuthViewModel = hiltViewModel()
     val scrollState = rememberScrollState()
@@ -217,35 +223,27 @@ fun RegisterScreen(onRegisterSuccess: () -> Unit) {
     }
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 24.dp) // Padding di sekitar layar
-    ) {
-        // Teks "Hello!" di bagian atas
-        Text(
-            text = "Hello!",
-            style = Typography.titleLarge,
-            fontSize = 34.sp,
-            color = Blue,
-            modifier = Modifier
-                .align(Alignment.TopCenter) // Posisikan teks di atas tengah
-                .padding(top = 72.dp) // Beri jarak dari atas
-        )
-    }
-
-    Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         Column(
             modifier = Modifier
                 .verticalScroll(scrollState)
-                .padding(24.dp)  // Menambahkan padding di sekeliling kolom
+                .padding(horizontal = 24.dp, vertical = 24.dp)
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(48.dp))
+
+            // Teks "Hello!" di bagian atas
+            Text(
+                text = "Hello!",
+                style = Typography.titleLarge,
+                fontSize = 34.sp,
+                color = Blue,
+                modifier = Modifier.padding(bottom = 24.dp)
+            )
 
             CustomTextField(value = firstName, label = "First Name")
             CustomTextField(value = lastName, label = "Last Name")
@@ -387,16 +385,36 @@ fun RegisterScreen(onRegisterSuccess: () -> Unit) {
                     containerColor = Blue,
                     contentColor = White
                 ),
+                shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp),
                 modifier = Modifier
-                    .width(207.dp)  // Mengatur lebar tombol
-                    .height(45.dp)
+                    .fillMaxWidth()
+                    .height(52.dp)
             ) {
-                Text("Sign Up", fontSize = 16.sp)
+                Text("Sign Up", fontSize = 18.sp, fontWeight = FontWeight.Bold)
             }
 
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = "Already have an account? ",
+                    color = if (isSystemInDarkTheme()) White.copy(alpha = 0.7f) else Black.copy(alpha = 0.7f),
+                    fontSize = 14.sp
+                )
+                Text(
+                    text = "Log In",
+                    color = Blue,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
+                    modifier = Modifier.clickable { onLoginClick() }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
         }
-
-
     }
     if (signupState is Result.Loading || signupResult is Result.Loading) {
         Box(
@@ -585,283 +603,210 @@ fun CustomTextField(
     onValueChange: (String) -> Unit = {},
     selectedDate: MutableState<String> = mutableStateOf(""),
     showDatePicker:MutableState<Boolean> = mutableStateOf(false),
-
 ) {
-//    val passTemp = remember { mutableStateOf("") }
+    val isDark = isSystemInDarkTheme()
+    val defaultTextInp = if (isDark) CardBgDark else TextInp
+    val textStyleColor = if (isDark) White else Black
+
     when (label) {
         "Mobile Number (Format : 62812*****)" -> {
-            val isValid = remember { mutableStateOf(true) }
-            Surface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                shape = MaterialTheme.shapes.medium,
-                color = TextInp,
-                shadowElevation = 1.dp
-            ) {
-                TextField(
-                    value = value.value,
-                    onValueChange =
-                    {
-                        value.value = it
-//                        isValid.value = validatePhoneNumber(it)
-                        onValueChange(it)
-                    },
-                    label = {
-                        Text(label,
-                            style = Typography.labelLarge,
-                            color = Blue
+            OutlinedTextField(
+                value = value.value,
+                onValueChange = {
+                    value.value = it
+                    onValueChange(it)
+                },
+                label = { Text(label, style = Typography.labelLarge.copy(color = Blue)) },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Phone
+                ),
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Blue,
+                    unfocusedBorderColor = if (isDark) Color.Gray else BorderGray,
+                    focusedContainerColor = defaultTextInp,
+                    unfocusedContainerColor = defaultTextInp,
+                    cursorColor = Blue
+                ),
+                textStyle = Typography.bodyMedium.copy(
+                    color = textStyleColor,
+                    fontWeight = FontWeight.Medium
+                ),
+                isError = mobileError.isNotEmpty(),
+                supportingText = {
+                    if (mobileError.isNotEmpty()) {
+                        Text(
+                            text = mobileError,
+                            color = Color.Red,
+                            style = Typography.bodySmall
                         )
-                    },
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Phone
-                    ),
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = TextInp,
-                        unfocusedContainerColor = TextInp,
-                        disabledContainerColor = TextInp,
-                        focusedIndicatorColor = Blue,
-                        focusedLabelColor = Blue,
-                        cursorColor = Blue
-                    ),
-                    textStyle = Typography.bodyMedium.copy(
-                        color = Black,
-                        fontWeight = FontWeight.Medium
-                    ),
-                    isError = mobileError.isNotEmpty(),
-                    supportingText = {
-                        if (mobileError.isNotEmpty()) {
-                            Text(
-                                text = mobileError,
-                                color = Color.Red,
-                                style = Typography.bodySmall,
-                                modifier = Modifier.padding(start = 8.dp, top = 4.dp)
-                            )
-                        }
                     }
-                )
-
-            }
+                }
+            )
         }
         "Email" -> {
-            Surface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                shape = MaterialTheme.shapes.medium,
-                color = TextInp,
-                shadowElevation = 1.dp
-            ) {
-                TextField(
-                    value = value.value,
-                    onValueChange = {
-                        value.value = it
-                        onValueChange(it)
-                    },
-                    label = {
-                        Text(label,
-                            style = Typography.labelLarge.copy(color = Blue)
-                        )
-                    },
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Email
-                    ),
-                    isError = emailError.isNotEmpty(),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = TextInp,
-                        unfocusedContainerColor = TextInp,
-                        focusedIndicatorColor = Blue,
-                        cursorColor = Blue
-                    ),
-                    textStyle = Typography.bodyMedium.copy(
-                        color = Black,
-                        fontWeight = FontWeight.Medium
-                    ),
-                    supportingText = {
-                        if (emailError.isNotEmpty()) {
-                            Text(
-                                text = emailError,
-                                color = Color.Red,
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        }
-                    }
-                )
-            }
-        }
-
-        "Password" ->{
-//            passTemp.value = value.value
-            Surface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                shape = MaterialTheme.shapes.medium,
-                color = TextInp,
-                shadowElevation = 1.dp
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    TextField(
-                        value = value.value,
-                        onValueChange = {
-                            value.value = it
-                            onValueChange(it)
-                        },
-                        label = {
-                            Text(label,
-                                style = Typography.labelLarge.copy(color = Blue)
-                            )
-                        },
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            keyboardType = KeyboardType.Password
-                        ),
-                        visualTransformation = if (passwordVisibility)
-                            VisualTransformation.None
-                        else
-                            PasswordVisualTransformation(),
-                        isError = passwordError.isNotEmpty(),
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = TextInp,
-                            unfocusedContainerColor = TextInp,
-                            focusedIndicatorColor = Blue,
-                            cursorColor = Blue
-                        ),
-                        textStyle = Typography.bodyMedium.copy(
-                            color = Black,
-                            fontWeight = FontWeight.Medium
-                        ),
-                        supportingText = {
-                            if (passwordError.isNotEmpty()) {
-                                Text(
-                                    text = passwordError,
-                                    color = Color.Red,
-                                    style = MaterialTheme.typography.bodySmall
-                                )
-                            }else if(!isValidePassword(value.value)){
-                                Text(
-                                    text = "Password must be contain a mix of upper and lower case letters, numbers, and special characters",
-                                    color = Color.Red,
-                                    style = MaterialTheme.typography.bodySmall
-                                )
-                            }
-                        },
-                        modifier = Modifier.weight(1f)
-                    )
-                    IconButton(onClick = onPasswordVisibilityToggle) {
-                        Icon(
-                            imageVector = if (passwordVisibility)
-                                Icons.Default.Visibility
-                            else
-                                Icons.Default.VisibilityOff,
-                            contentDescription = "Toggle password visibility"
+            OutlinedTextField(
+                value = value.value,
+                onValueChange = {
+                    value.value = it
+                    onValueChange(it)
+                },
+                label = { Text(label, style = Typography.labelLarge.copy(color = Blue)) },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Email
+                ),
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Blue,
+                    unfocusedBorderColor = if (isDark) Color.Gray else BorderGray,
+                    focusedContainerColor = defaultTextInp,
+                    unfocusedContainerColor = defaultTextInp,
+                    cursorColor = Blue
+                ),
+                textStyle = Typography.bodyMedium.copy(
+                    color = textStyleColor,
+                    fontWeight = FontWeight.Medium
+                ),
+                isError = emailError.isNotEmpty(),
+                supportingText = {
+                    if (emailError.isNotEmpty()) {
+                        Text(
+                            text = emailError,
+                            color = Color.Red,
+                            style = Typography.bodySmall
                         )
                     }
                 }
-            }
+            )
         }
-       "Confirm Password" ->{
 
-            Surface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                shape = MaterialTheme.shapes.medium,
-                color = TextInp,
-                shadowElevation = 1.dp
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    TextField(
-                        value = value.value,
-                        onValueChange = {
-                            value.value = it
-                            onValueChange(it)
-                        },
-                        label = {
-                            Text(label,
-                                style = Typography.labelLarge.copy(color = Blue)
-                            )
-                        },
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            keyboardType = KeyboardType.Password
-                        ),
-                        visualTransformation = if (passwordVisibility)
-                            VisualTransformation.None
-                        else
-                            PasswordVisualTransformation(),
-                        isError = passwordError.isNotEmpty(),
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = TextInp,
-                            unfocusedContainerColor = TextInp,
-                            focusedIndicatorColor = Blue,
-                            cursorColor = Blue
-                        ),
-                        textStyle = Typography.bodyMedium.copy(
-                            color = Black,
-                            fontWeight = FontWeight.Medium
-                        ),
-                        supportingText = {
-                            if (passwordError.isNotEmpty()) {
-                                Text(
-                                    text = passwordError,
-                                    color = Color.Red,
-                                    style = MaterialTheme.typography.bodySmall
-                                )
-                            }else if (passwordValue != value.value) {
-                                Text(
-                                    text = "Password and Confirm Password must be the same",
-                                    color = Color.Red,
-                                    style = MaterialTheme.typography.bodySmall
-                                )
-                            }
-                        },
-                        modifier = Modifier.weight(1f)
-                    )
+        "Password" -> {
+            OutlinedTextField(
+                value = value.value,
+                onValueChange = {
+                    value.value = it
+                    onValueChange(it)
+                },
+                label = { Text(label, style = Typography.labelLarge.copy(color = Blue)) },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Password
+                ),
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Blue,
+                    unfocusedBorderColor = if (isDark) Color.Gray else BorderGray,
+                    focusedContainerColor = defaultTextInp,
+                    unfocusedContainerColor = defaultTextInp,
+                    cursorColor = Blue
+                ),
+                textStyle = Typography.bodyMedium.copy(
+                    color = textStyleColor,
+                    fontWeight = FontWeight.Medium
+                ),
+                trailingIcon = {
                     IconButton(onClick = onPasswordVisibilityToggle) {
                         Icon(
-                            imageVector = if (passwordVisibility)
-                                Icons.Default.Visibility
-                            else
-                                Icons.Default.VisibilityOff,
+                            imageVector = if (passwordVisibility) Icons.Default.Visibility else Icons.Default.VisibilityOff,
                             contentDescription = "Toggle password visibility"
                         )
                     }
+                },
+                isError = passwordError.isNotEmpty() || (value.value.isNotEmpty() && !isValidePassword(value.value)),
+                supportingText = {
+                    if (passwordError.isNotEmpty()) {
+                        Text(
+                            text = passwordError,
+                            color = Color.Red,
+                            style = Typography.bodySmall
+                        )
+                    } else if (value.value.isNotEmpty() && !isValidePassword(value.value)) {
+                        Text(
+                            text = "Password must contain a mix of upper and lower case letters, numbers, and special characters",
+                            color = Color.Red,
+                            style = Typography.bodySmall
+                        )
+                    }
                 }
-            }
+            )
         }
+
+        "Confirm Password" -> {
+            OutlinedTextField(
+                value = value.value,
+                onValueChange = {
+                    value.value = it
+                    onValueChange(it)
+                },
+                label = { Text(label, style = Typography.labelLarge.copy(color = Blue)) },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Password
+                ),
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Blue,
+                    unfocusedBorderColor = if (isDark) Color.Gray else BorderGray,
+                    focusedContainerColor = defaultTextInp,
+                    unfocusedContainerColor = defaultTextInp,
+                    cursorColor = Blue
+                ),
+                textStyle = Typography.bodyMedium.copy(
+                    color = textStyleColor,
+                    fontWeight = FontWeight.Medium
+                ),
+                trailingIcon = {
+                    IconButton(onClick = onPasswordVisibilityToggle) {
+                        Icon(
+                            imageVector = if (passwordVisibility) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                            contentDescription = "Toggle password visibility"
+                        )
+                    }
+                },
+                isError = passwordError.isNotEmpty() || (passwordValue != value.value),
+                supportingText = {
+                    if (passwordError.isNotEmpty()) {
+                        Text(
+                            text = passwordError,
+                            color = Color.Red,
+                            style = Typography.bodySmall
+                        )
+                    } else if (passwordValue != value.value && value.value.isNotEmpty()) {
+                        Text(
+                            text = "Password and Confirm Password must be the same",
+                            color = Color.Red,
+                            style = Typography.bodySmall
+                        )
+                    }
+                }
+            )
+        }
+
         "Birthday (dd-MM-yyyy)" -> {
-
-
-            // Trigger to show date picker
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(vertical = 8.dp)
                     .clickable {
                         showDatePicker.value = true
                     },
-                shape = MaterialTheme.shapes.medium,
-                color = TextInp,
+                shape = RoundedCornerShape(12.dp),
+                color = defaultTextInp,
                 shadowElevation = 1.dp
             ) {
                 Box(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        // Calendar Icon
                         Icon(
                             imageVector = Icons.Filled.CalendarToday,
                             contentDescription = "Select Date",
-                            modifier = Modifier.size(20.dp), // Set the size of the icon
+                            modifier = Modifier.size(20.dp),
                             tint = if (value.value.isEmpty()) Blue.copy(0.5f) else Blue
                         )
-
-                        Spacer(modifier = Modifier.width(8.dp)) // Space between the icon and text
-
-                        // Text displaying the selected date or hint
+                        Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = value.value.ifEmpty { "Birthday (yyyy-MM-dd)" },
                             style = Typography.bodyMedium.copy(
@@ -876,44 +821,38 @@ fun CustomTextField(
             if (showDatePicker.value) {
                 val datePickerState = rememberDatePickerState(initialDisplayMode = DisplayMode.Input)
 
-                // Dialog untuk memilih tanggal
                 AlertDialog(
                     modifier = Modifier
                         .wrapContentWidth()
                         .background(MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(24.dp)),
                     onDismissRequest = { showDatePicker.value = false },
-
                     text = {
                         Column (
-                            modifier = Modifier
-                                .wrapContentWidth()// Set width of the dialog
+                            modifier = Modifier.wrapContentWidth()
                         ){
                             BoxWithConstraints {
                                 val scale = remember(this.maxWidth) { if (this.maxWidth > 360.dp) 1f else (this.maxWidth / 360.dp) }
-
                                 Box(modifier = Modifier.requiredWidthIn(min = 360.dp).requiredHeightIn(min = 200.dp)) {
-                                    // Scale in case the width is too large for the screen
                                     DatePicker(
                                         modifier = Modifier
                                             .scale(scale)
-                                            .heightIn(min = 200.dp, max = 500.dp), // Adjust the height as needed
+                                            .heightIn(min = 200.dp, max = 500.dp),
                                         state = datePickerState,
                                         title = {
                                             Text(
                                                 "Select Your Birthday",
-                                                style = Typography.titleLarge.copy(color = Blue) // Custom title style
+                                                style = Typography.titleLarge.copy(color = Blue)
                                             )
                                         },
                                         headline = {
                                             Text(
                                                 "Choose your date",
-                                                style = Typography.bodyMedium.copy(color = Black)
+                                                style = Typography.bodyMedium.copy(color = textStyleColor)
                                             )
                                         },
                                         showModeToggle = true,
                                     )
                                 }
-
                             }
                         }
                     },
@@ -922,7 +861,7 @@ fun CustomTextField(
                             onClick = {
                                 val selectedMillis = datePickerState.selectedDateMillis ?: return@Button
                                 value.value = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                                    .format(Date(selectedMillis)) // Format tanggal yang dipilih
+                                    .format(Date(selectedMillis))
                                 showDatePicker.value = false
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = Blue)
@@ -940,49 +879,33 @@ fun CustomTextField(
                     }
                 )
             }
-
         }
 
         else -> {
-            Surface(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                shape = MaterialTheme.shapes.medium,
-                color = TextInp,
-                shadowElevation = 1.dp
-            ) {
-                TextField(
-                    value = value.value,
-                    onValueChange = { value.value = it },
-                    label = {
-                        Text(
-                            label,
-                            style = Typography.labelLarge.copy(color = Blue)
-                        )
-                    },
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = keyboardType
-                    ),
-                    modifier = modifier.fillMaxWidth(),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = TextInp,
-                        unfocusedContainerColor = TextInp,
-                        disabledContainerColor = TextInp,
-                        focusedIndicatorColor = Blue,
-                        focusedLabelColor = Blue,
-                        cursorColor = Blue
-                    ),
-                    textStyle = Typography.bodyMedium.copy(
-                        color = Black,
-                        fontWeight = FontWeight.Medium
-                    ),
-                    visualTransformation = visualTransformation,
-                    trailingIcon = trailingIcon
-                )
-            }
+            OutlinedTextField(
+                value = value.value,
+                onValueChange = { value.value = it },
+                label = { Text(label, style = Typography.labelLarge.copy(color = Blue)) },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = keyboardType
+                ),
+                shape = RoundedCornerShape(12.dp),
+                modifier = modifier.fillMaxWidth().padding(vertical = 4.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Blue,
+                    unfocusedBorderColor = if (isDark) Color.Gray else BorderGray,
+                    focusedContainerColor = defaultTextInp,
+                    unfocusedContainerColor = defaultTextInp,
+                    cursorColor = Blue
+                ),
+                textStyle = Typography.bodyMedium.copy(
+                    color = textStyleColor,
+                    fontWeight = FontWeight.Medium
+                ),
+                visualTransformation = visualTransformation,
+                trailingIcon = trailingIcon
+            )
         }
-//        "Email" -> CustomEmailInput(value = value, onValueChange = { validateEmail(it) })
     }
 }
 

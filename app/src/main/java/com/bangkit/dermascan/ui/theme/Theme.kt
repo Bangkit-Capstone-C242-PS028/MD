@@ -16,20 +16,20 @@ import com.bangkit.dermascan.data.pref.DataStoreManager
 
 private val DarkColorScheme = darkColorScheme(
     primary = Blue,
-    secondary = LightBlue,
-    tertiary = White,
-    background = Black,
-    surface = Black,
+    secondary = SecondaryTeal,
+    tertiary = LightTeal,
+    background = BgDark,
+    surface = CardBgDark,
     onPrimary = White,
-    onSecondary = Blue,
-    onTertiary = LightBlue,
+    onSecondary = White,
+    onTertiary = DarkBlue,
     onBackground = White,
     onSurface = White,
 )
 
 private val LightColorScheme = lightColorScheme(
     primary = Blue,
-    secondary = LightBlue,
+    secondary = SecondaryTeal,
     tertiary = TextInp,
     background = White,
     surface = TextInp,
@@ -42,7 +42,7 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun DermaScanTheme(
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val context = LocalContext.current

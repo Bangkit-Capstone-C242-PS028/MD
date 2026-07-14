@@ -2,29 +2,36 @@ package com.bangkit.dermascan.ui.onBoard
 
 import android.content.ContentValues.TAG
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil3.compose.AsyncImage
 import com.bangkit.dermascan.R
 import com.bangkit.dermascan.ui.authentication.AuthViewModel
 import com.bangkit.dermascan.ui.theme.*
@@ -35,150 +42,112 @@ fun OnBoardScreen(navController: NavController, onLoginSuccess: () -> Unit) {
     val context = LocalContext.current
     val viewModel : AuthViewModel = hiltViewModel()
 
-
-//    val signInResult = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-//        if (result.resultCode == Activity.RESULT_OK) {
-//            val dataArticles: Intent? = result.dataArticles
-//            viewModel.handleSignInResult(dataArticles)
-//        }
-//    }
-//
-//    val signInStatus by viewModel.signInStatus.observeAsState()
-
-
-
-//    val auth : FirebaseAuth = FirebaseAuth.getInstance()
-//    val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
-//    val auth: FirebaseAuth = Firebase.auth
     Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.TopCenter  // Menempatkan teks di bagian atas tengah
-    ) {
-        Text(
-            text = "Hello!",  // Nama aplikasi
-            style = Typography.titleLarge,
-            fontSize = 34.sp,  // Ukuran teks
-            color = Blue,
-            modifier = Modifier.padding(top = 72.dp)  // Memberikan jarak dari bagian atas
-        )
-    }
-    // UI untuk LoginScreen di sini
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier.padding(16.dp)  // Menambahkan padding agar konten tidak terlalu rapat dengan tepi layar
+            verticalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 32.dp, vertical = 48.dp)
         ) {
-
-            // Nama aplikasi dan deskripsi
-            Text(
-                text = stringResource(id = R.string.app_name),  // Mengambil string dari resource"DermaScan",  // Nama aplikasi
-                style = Typography.titleLarge,
-                fontSize = 58.sp,// Gaya teks untuk nama aplikasi
-                color = Blue,
-                modifier = Modifier.padding(bottom = 50.dp)  // Padding bawah agar tidak terlalu dekat dengan deskripsi
-            )
-            Text(
-                text = "Scan your skin health with ease.",  // Deskripsi aplikasi
-                style = Typography.bodyMedium,  // Gaya teks untuk deskripsi
-                color = if (isSystemInDarkTheme()) White else Black,
-                modifier = Modifier.padding(bottom = 32.dp)  // Padding bawah agar ada jarak antara deskripsi dan tombol
-            )
-
-            // Tombol Log In
-            Button(
-                onClick = {
-                    onLoginSuccess()
-                    navController.navigate("login") {
-                        popUpTo("onBoard") {
-                            inclusive = false
-                        }
-                    }
-                },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Blue, // Warna latar belakang tombol
-                    contentColor = White // Warna teks di dalam tombol
-                ),
-                modifier = Modifier
-                    .width(207.dp)  // Mengatur lebar tombol agar memenuhi lebar layar
-                    .height(45.dp)  // Mengatur tinggi tombol
+            // Header Space or Top Hello
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(top = 24.dp)
             ) {
-                Text("Log In", fontSize = 24.sp)
+                Text(
+                    text = "Hello!",
+                    style = Typography.titleLarge,
+                    fontSize = 24.sp,
+                    color = Blue,
+                    fontWeight = FontWeight.Bold
+                )
             }
 
-            Spacer(modifier = Modifier.height(24.dp))  // Spacer untuk memberi jarak antar tombol
-
-            // Tombol Sign Up
-            Button(
-                onClick = {
-                    navController.navigate("register") {
-                        popUpTo("onBoard") {
-                            inclusive = false
-                        }
-                    }
-                },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = LightBlue, // Warna latar belakang tombol
-                    contentColor = Blue // Warna teks di dalam tombol
-                ),
-                modifier = Modifier
-                    .width(207.dp)  // Mengatur lebar tombol agar memenuhi lebar layar
-                    .height(45.dp)  // Mengatur tinggi tombol
+            // Center Illustration/Logo
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier.weight(1f)
             ) {
-                Text("Sign Up", fontSize = 24.sp)
+                AsyncImage(
+                    model = R.drawable.derma_scan_logo,
+                    contentDescription = "Logo",
+                    modifier = Modifier.size(240.dp),
+                    placeholder = painterResource(id = R.drawable.ic_launcher_foreground),
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = stringResource(id = R.string.app_name),
+                    style = Typography.titleLarge,
+                    fontSize = 44.sp,
+                    color = Blue,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Scan your skin health with ease.",
+                    style = Typography.bodyMedium,
+                    fontSize = 16.sp,
+                    color = if (isSystemInDarkTheme()) White else Black.copy(alpha = 0.7f),
+                    textAlign = TextAlign.Center
+                )
             }
 
-            Spacer(modifier = Modifier.height(24.dp))  // Spacer untuk memberi jarak antar tombol
+            // Bottom CTAs
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Button(
+                    onClick = {
+                        onLoginSuccess()
+                        navController.navigate("login") {
+                            popUpTo("onBoard") {
+                                inclusive = false
+                            }
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Blue,
+                        contentColor = White
+                    ),
+                    shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp)
+                ) {
+                    Text("Log In", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                }
 
-//            Button(
-//                onClick = {
-//                    // Tambahkan fungsi untuk Sign In with Google di sini
-//                    val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-//                        .requestIdToken(context.getString(R.string.default_web_client_id)) // Ambil dari Firebase Console
-//                        .requestEmail()
-//                        .build()
-//
-//                    val googleSignInClient = GoogleSignIn.getClient(context, gso)
-//
-//                    // Memulai proses sign-in
-//                    val signInIntent = googleSignInClient.signInIntent
-//                    signInResult.launch(signInIntent) // Meluncurkan intent sign-in
-//                },
-//                colors = ButtonDefaults.buttonColors(
-//                    containerColor = Blue, // Warna latar belakang tombol
-//                    contentColor = LightBlue // Warna teks di dalam tombol
-//                ),
-//                modifier = Modifier
-//                    .wrapContentHeight()
-//                    .width(207.dp)  // Lebar tombol
-////                    .height(50.dp)  // Tinggi tombol
-//            ) {
-//                Row(verticalAlignment = Alignment.CenterVertically) {
-//                    // Tambahkan ikon Google
-//                    Icon(
-//                        painter = painterResource(id = R.drawable.ic_google), // Pastikan kamu menambahkan ikon Google ke drawable
-//                        contentDescription = "Google Icon",
-//                        modifier = Modifier.width(50.dp), // Ukuran ikon
-//                        tint = Color.Unspecified // Membuat warna ikon mengikuti warna aslinya dari file drawable
-//                    )
-//                    Spacer(modifier = Modifier.width(8.dp)) // Spasi antara ikon dan teks
-//                    Text("Sign In with Google", fontSize = 16.sp)
-//                }
-//            }
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Button(
+                    onClick = {
+                        navController.navigate("register") {
+                            popUpTo("onBoard") {
+                                inclusive = false
+                            }
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = LightBlue,
+                        contentColor = Blue
+                    ),
+                    shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp)
+                ) {
+                    Text("Sign Up", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                }
+            }
         }
     }
-
-    // Menavigasi ke mainScreen setelah login berhasil
-//    LaunchedEffect(signInStatus) {
-//        if (signInStatus == true) {
-//            navController.navigate("main") {
-//                popUpTo("onBoard") { inclusive = true }
-//            }
-//        }
-//    }
 }
 
 

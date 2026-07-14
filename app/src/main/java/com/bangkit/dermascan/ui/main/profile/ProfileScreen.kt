@@ -16,6 +16,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.Surface
+import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.AccountCircle
@@ -30,6 +34,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
@@ -54,101 +59,105 @@ import coil3.compose.AsyncImage
 import com.bangkit.dermascan.data.pref.UserModel
 import com.bangkit.dermascan.ui.authentication.AuthViewModel
 import com.bangkit.dermascan.ui.theme.Typography
+import com.bangkit.dermascan.ui.main.profile.settings.SettingsViewModel
 import com.bangkit.dermascan.util.Result
+
+import androidx.compose.foundation.border
+import androidx.compose.material3.CardDefaults
+import com.bangkit.dermascan.ui.theme.*
 
 @Composable
 fun ProfileScreen(navController: NavController) {
     val context = LocalContext.current
     val viewModel: AuthViewModel = hiltViewModel()
-
     val roles by viewModel.roles.observeAsState("PATIENT")
+    val settingsViewModel: SettingsViewModel = hiltViewModel()
+    val isDark by settingsViewModel.isDarkTheme.collectAsState(initial = false)
 
-
-    Scaffold { paddingValues ->
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        containerColor = MaterialTheme.colorScheme.background
+    ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 8.dp)
                 .padding(paddingValues)
-                .padding(vertical = 16.dp),
+                .padding(vertical = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // Profile Header
             item {
-                ProfileHeader(viewModel)
-                Spacer(modifier = Modifier.height(34.dp))
+                ProfileHeader(viewModel, isDark)
+                Spacer(modifier = Modifier.height(32.dp))
             }
 
-            // Menu Items
+            // Menu Items Container
             item {
-                ProfileMenuItem(
-                    icon = Icons.Default.Person,
-                    title = "Edit Profile",
-                    onClick = {
-                        navController.navigate("editProfile")
-                    }
-                )
-            }
-
-            if (roles != "DOCTOR") {
-                item {
-                    ProfileMenuItem(
-                        icon = Icons.Default.History,
-                        title = "Skin Lesion History",
-                        onClick = {
-                            navController.navigate("skinLesionHistory")
+                androidx.compose.material3.Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = if (isDark) CardBgDark else White
+                    ),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, if (isDark) Color.DarkGray else BorderGray)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                    ) {
+                        ProfileMenuItem(
+                            icon = Icons.Default.Person,
+                            title = "Edit Profile",
+                            onClick = {
+                                navController.navigate("editProfile")
+                            }
+                        )
+                        
+                        if (roles != "DOCTOR") {
+                            ProfileMenuItem(
+                                icon = Icons.Default.History,
+                                title = "Skin Lesion History",
+                                onClick = {
+                                    navController.navigate("skinLesionHistory")
+                                }
+                            )
                         }
-                    )
+
+                        ProfileMenuItem(
+                            icon = Icons.Default.Settings,
+                            title = "Settings",
+                            onClick = {
+                                navController.navigate("settings")
+                            }
+                        )
+
+                        ProfileMenuItem(
+                            icon = Icons.AutoMirrored.Filled.Logout,
+                            title = "Logout",
+                            onClick = {
+                                viewModel.signOut(context)
+                                navController.navigate("onBoard") {
+                                    popUpTo("main") { inclusive = true }
+                                }
+                            },
+                            isLogout = true
+                        )
+                    }
                 }
-            }
-
-            item {
-                ProfileMenuItem(
-                    icon = Icons.Default.Settings,
-                    title = "Settings",
-                    onClick = {
-                        navController.navigate("settings")
-//                        Toast.makeText(context, "Settings Feature is Coming Soon", Toast.LENGTH_SHORT).show()
-                    }
-                )
-            }
-
-//            item {
-//                ProfileMenuItem(
-//                    icon = Icons.Default.Lock,
-//                    title = "Change Password",
-//                    onClick = {
-//                        navController.navigate("changePassword")
-//                    }
-//                )
-//            }
-
-            item {
-                ProfileMenuItem(
-                    icon = Icons.AutoMirrored.Filled.Logout,
-                    title = "Logout",
-                    onClick = {
-                        viewModel.signOut(context)
-                        navController.navigate("onBoard") {
-                            popUpTo("main") { inclusive = true }
-                        }
-                    },
-                    isLogout = true
-                )
             }
         }
     }
 }
 
 @Composable
-fun ProfileHeader(viewModel: AuthViewModel) {
-//    var userData by remember { mutableStateOf<UserData?>(null) }
+fun ProfileHeader(viewModel: AuthViewModel, isDark: Boolean = false) {
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var isLoading by remember { mutableStateOf(true) }
     var userData by remember { mutableStateOf<UserModel?>(null) }
-    var points by remember { mutableIntStateOf(0) }
     var imgUrl by remember { mutableStateOf<String?>(null) }
-//    val userData: UserData
+
     LaunchedEffect(Unit) {
         viewModel.fetchUserDetail { result ->
             when (result) {
@@ -166,17 +175,12 @@ fun ProfileHeader(viewModel: AuthViewModel) {
                          specialization = result.data.doctor?.specialization ?: "Not Doctor",
                          workplace = result.data.doctor?.workplace ?: "Not Doctor"
                     )
-//                    points = result.data.points!!
                     imgUrl = result.data.photoUrl
                     Log.e("FetchUserDetail", "Success user details: $result")
-//                    saveUserData(userData)
-//                    _signInStatus.value = Result.Success(true)  // Sign-in berhasil
                 }
                 is Result.Error -> {
                     Log.e("FetchUserDetail", "Error fetching user details: ${result.message}")
-//                    _signInStatus.value = Result.Error("Error fetching user details")
                 }
-
                 Result.Idle -> {}
                 Result.Loading -> {}
             }
@@ -187,28 +191,27 @@ fun ProfileHeader(viewModel: AuthViewModel) {
         modifier = Modifier.fillMaxWidth()
     ) {
         var showFullImage by remember { mutableStateOf(false) }
-        // Gantikan Icon dengan AsyncImage untuk memuat gambar profil
         val userSession by viewModel.getSession().observeAsState()
-        val profileImageUrl: String? =
-            userSession?.profileImageUrl  // Ambil URL gambar profil dari session
-        val points by viewModel.points.observeAsState(0)
+        val profileImageUrl: String? = userSession?.profileImageUrl
+
         if (!profileImageUrl.isNullOrBlank()) {
-            // Jika URL gambar valid (tidak null atau kosong), tampilkan gambar profil
             AsyncImage(
-                model = profileImageUrl,  // Gambar yang diambil dari URL
+                model = profileImageUrl,
                 contentDescription = "Profile Picture",
                 modifier = Modifier
-                    .size(100.dp)
+                    .size(110.dp)
                     .clip(CircleShape)
-                    .clickable { showFullImage = true }, // Membuat gambar berbentuk lingkaran
-                contentScale = ContentScale.Crop // Agar gambar terpotong membentuk lingkaran
+                    .border(3.dp, Blue, CircleShape)
+                    .clickable { showFullImage = true },
+                contentScale = ContentScale.Crop
             )
         } else {
-            // Jika URL gambar null atau kosong, tampilkan ikon default
             Icon(
                 imageVector = Icons.Default.AccountCircle,
                 contentDescription = "Profile Picture",
-                modifier = Modifier.size(100.dp),
+                modifier = Modifier
+                    .size(110.dp)
+                    .border(3.dp, Blue, CircleShape),
                 tint = Color.Gray
             )
         }
@@ -219,42 +222,52 @@ fun ProfileHeader(viewModel: AuthViewModel) {
                     modifier = Modifier
                         .width(300.dp)
                         .height(300.dp)
-                        .clickable { showFullImage = false } // Klik untuk menutup fullscreen
+                        .clickable { showFullImage = false }
                 ) {
                     AsyncImage(
                         model = profileImageUrl,
                         contentDescription = "Full Profile Picture",
                         modifier = Modifier
                             .fillMaxWidth()
-                            .aspectRatio(1f), // Atur aspek rasio jika diperlukan
+                            .aspectRatio(1f),
                         contentScale = ContentScale.Fit
                     )
                 }
             }
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         if (userSession?.firstName != null && userSession?.lastName != null) {
-
-//            val point = userData?.point
             Text(
                 text = " ${userSession!!.firstName} ${userSession!!.lastName}",
-                style = Typography.bodyMedium,
+                style = Typography.titleLarge,
+                fontSize = 24.sp,
+                color = if (isDark) White else Black,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(4.dp))
             userSession!!.email?.let {
                 Text(
                     text = it,
-                    style = Typography.bodyMedium
+                    style = Typography.bodyMedium,
+                    color = if (isDark) White.copy(alpha = 0.6f) else Black.copy(alpha = 0.6f)
                 )
             }
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = "Point : ${userData?.point}",
-                style = Typography.bodyMedium
-            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Surface(
+                color = Blue.copy(alpha = 0.1f),
+                contentColor = Blue,
+                shape = RoundedCornerShape(24.dp),
+                modifier = Modifier.padding(top = 4.dp)
+            ) {
+                Text(
+                    text = "Point: ${userData?.point ?: 0}",
+                    style = Typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)
+                )
+            }
         }
     }
 }

@@ -37,7 +37,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="12sp"
-            android:textColor="#CAD6FF"
+            android:textColor="@color/light_blue"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvResponderName"
             tools:text="Patient" />
@@ -62,7 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:textSize="12sp"
-            android:textColor="#CAD6FF"
+            android:textColor="@color/light_blue"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvReplyContent"
             tools:text="2 hours ago" />
@@ -72,7 +72,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="12dp"
-            android:background="#CAD6FF"
+            android:background="@color/light_blue"
             app:layout_constraintTop_toBottomOf="@id/tvReplyDate"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />

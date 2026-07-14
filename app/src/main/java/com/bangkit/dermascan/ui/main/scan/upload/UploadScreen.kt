@@ -19,6 +19,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -107,7 +109,7 @@ fun UploadScreen(
                         .fillMaxWidth()
                         .height(360.dp)
                         .clip(RoundedCornerShape(16.dp))
-                        .border(1.dp, Blue),
+                        .border(1.dp, if (isDarkMode) Color.DarkGray else BorderGray, RoundedCornerShape(16.dp)),
                     contentAlignment = Alignment.Center
                 ) {
                     AsyncImage(
@@ -119,7 +121,7 @@ fun UploadScreen(
                     Log.d("UploadScreen.kt", "onCreate called uri : $compressedImageBytes")
                 }
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(32.dp))
 
                 // Tombol Upload
                 Button(
@@ -133,12 +135,18 @@ fun UploadScreen(
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp), // Menambahkan padding horizontal untuk tombol
-                    colors = ButtonDefaults.buttonColors(Blue),
+                        .height(52.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Blue,
+                        contentColor = White
+                    ),
                     enabled = compressedImageBytes != null
                 ) {
                     Text("Upload Image",
-                        color = MaterialTheme.colorScheme.onPrimary
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = White
                     )
                 }
 

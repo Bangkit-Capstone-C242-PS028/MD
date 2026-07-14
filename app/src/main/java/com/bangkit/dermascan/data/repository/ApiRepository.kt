@@ -380,7 +380,11 @@ class ApiRepository(private val apiService: ApiService) {
             }
 
             Log.e("API Exception", "Error: $errorMessage", e)
-            emit(Result.Error(parseErrorMessage(errorMessage)))
+            if (e is IOException) {
+                emit(Result.Error(errorMessage))
+            } else {
+                emit(Result.Error(parseErrorMessage(errorMessage)))
+            }
         }
     }.flowOn(Dispatchers.IO)
 

@@ -24,6 +24,8 @@ import androidx.navigation.NavController
 import com.bangkit.dermascan.ui.main.feeds.AddTopBar
 import com.bangkit.dermascan.ui.theme.*
 
+import androidx.compose.foundation.background
+
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel = hiltViewModel() ){
@@ -36,6 +38,7 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel = 
             Column(
                 modifier = Modifier
                     .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background)
                     .padding(innerPadding)
                     .padding(16.dp),
                 verticalArrangement = Arrangement.Top,

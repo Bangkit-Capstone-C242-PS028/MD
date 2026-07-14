@@ -1,0 +1,44 @@
+
+The technology behind Derma Scan :
+
+firstly, we use Kotlin programming language. 
+
+secondly, Architecture using MVVM with Repository Pattern.
+
+thirdly, Data Persistence using Room Database.
+
+fourthly, UI Framework using Jetpack Compose and XML
+
+fifthly, Networking using Retrofit for handles API interactions seamlessly.
+
+sixthly, Hilt for simplifies dependency injection.
+
+Lastly, we use firebase for authentication
+
+next we will display the demo video.
+
+
+### Demo VIDEO ###
+
+first we will demonstrate as a patient role. user should be sign up and login first for using the application
+ 
+main feature of patient is:
+-create a forum for discussion and asking about skin lesion or something,
+
+and other patient or doctor can be replies the forum.
+
+next feature, Patients can upload image of skin lesion and the result will be visible after a few seconds,
+
+and then the patient can consult with a doctor via WhatsApp.
+
+Next we will show the doctor's registration, doctors should to send WhatsApp number and a Doctor's Registration Certificate (STR) document,
+
+when the doctor has logged in, he will be held first on the verification page to wait for his files to be verified, 
+
+then the admin will verify the doctor's documents, and then the doctor can access the application
+
+and then we will demonstrate the main doctor feature like create a article , reply forum, chat bot and customize profile
+
+alright that's all.
+
+

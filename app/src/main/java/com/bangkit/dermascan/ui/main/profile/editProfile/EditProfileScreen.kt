@@ -45,6 +45,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -239,12 +240,13 @@ fun EditProfileScreen(navController: NavController){
                             containerColor = Blue,
                             contentColor = White
                         ),
+                        shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp),
                         modifier = Modifier
-                            .width(207.dp)
-                            .height(45.dp),
+                            .fillMaxWidth()
+                            .height(52.dp),
                         enabled = isButtonEnabled
                     ) {
-                        Text("Update Profile", fontSize = 16.sp)
+                        Text("Update Profile", fontSize = 18.sp, fontWeight = FontWeight.Bold)
                     }
                 }
             }

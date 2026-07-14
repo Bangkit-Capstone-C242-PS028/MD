@@ -50,7 +50,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:backgroundTint="#CAD6FF"
+        android:backgroundTint="@color/light_blue"
 
         android:contentDescription="@string/fab_addarticle_content_desc"
         android:src="@drawable/ic_add_o"

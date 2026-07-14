@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.imageResource
@@ -69,11 +70,17 @@ fun SplashScreen(navController: NavController) {
 
     }
 
+    val gradientBrush = Brush.verticalGradient(
+        colors = listOf(
+            SplashBg,
+            Blue
+        )
+    )
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(SplashBg),
+            .background(gradientBrush),
         contentAlignment = Alignment.Center
     ) {
         Column(

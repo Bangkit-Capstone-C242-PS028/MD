@@ -49,7 +49,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.bangkit.dermascan.ui.article.ArticleActivity
@@ -61,6 +61,7 @@ import com.bangkit.dermascan.ui.main.forum.ForumScreen
 import com.bangkit.dermascan.ui.navigation.AppNavHost
 //import com.bangkit.dermascan.ui.scan.PhotoActivity
 import com.bangkit.dermascan.ui.theme.*
+import com.bangkit.dermascan.ui.main.profile.settings.SettingsViewModel
 import com.bangkit.dermascan.ui.main.scan.upload.SharedViewModel
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
@@ -127,6 +128,17 @@ fun MainScreen( navController: NavHostController) {
     val roles by authViewModel.roles.observeAsState("PATIENT")
     val result = authViewModel.isVerified.observeAsState(Result.Idle)
     val context = LocalContext.current
+    
+    val settingsViewModel: SettingsViewModel = hiltViewModel()
+    val isDarkMode by settingsViewModel.isDarkTheme.collectAsState(initial = false)
+
+    val navBarColor = if (isDarkMode) CardBgDark else Blue
+    val topAppBarBgColor = if (isDarkMode) CardBgDark else Blue
+    val selectedIconColor = if (isDarkMode) Blue else White
+    val unselectedIconColor = if (isDarkMode) Color.Gray.copy(alpha = 0.6f) else LightBlue
+    val selectedTextColor = if (isDarkMode) Blue else White
+    val unselectedTextColor = if (isDarkMode) Color.Gray.copy(alpha = 0.6f) else LightBlue
+    val topAppBarTextColor = if (isDarkMode) White else LightBlue
     // Panggil ViewModel untuk memuat status verifikasi saat pertama kali memuat
 
 
@@ -206,9 +218,9 @@ fun MainScreen( navController: NavHostController) {
                     Text(text = items[selectedItem].title)
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Blue,
-                    titleContentColor = LightBlue,
-                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
+                    containerColor = topAppBarBgColor,
+                    titleContentColor = topAppBarTextColor,
+                    navigationIconContentColor = if (isDarkMode) White else MaterialTheme.colorScheme.onPrimary
                 ),
                 actions = {
                     if(items[selectedItem].title == "Home"){
@@ -218,8 +230,8 @@ fun MainScreen( navController: NavHostController) {
 //                                Toast.makeText(context, "FAB Clicked", Toast.LENGTH_SHORT).show()
                                 navController.navigate("favoriteArticle")
                             },
-                            containerColor = LightBlue,
-                            contentColor = Blue,
+                            containerColor = if (isDarkMode) BgDark else LightBlue,
+                            contentColor = if (isDarkMode) Blue else Blue,
                             shape = CircleShape,
                             modifier = Modifier
                                 .size(40.dp) // Ukuran FAB lebih kecil agar sesuai di TopAppBar
@@ -270,7 +282,7 @@ fun MainScreen( navController: NavHostController) {
                                     lineTo(width, height) // Garis vertikal ke bawah
                                     close()
                                 },
-                                color = Blue // Warna NavigationBar
+                                color = navBarColor // Warna NavigationBar
                             )
                         }
 
@@ -280,7 +292,7 @@ fun MainScreen( navController: NavHostController) {
                         ) {
                             items.forEachIndexed { index, item ->
                                 if (index == 2) { // Index untuk FAB (Scan)
-                                    Spacer(modifier = Modifier.weight(0.5f))
+                                    Spacer(modifier = Modifier.weight(1f))
                                 } else {
                                     NavigationBarItem(
                                         icon = {
@@ -303,11 +315,11 @@ fun MainScreen( navController: NavHostController) {
                                             Text(item.title, modifier = Modifier.offset(y = (0).dp))
                                         },
                                         colors = NavigationBarItemDefaults.colors(
-                                            selectedIconColor = LightBlue,
-                                            unselectedIconColor = LightBlue,
-                                            selectedTextColor = White,
-                                            unselectedTextColor = LightBlue,
-                                            indicatorColor = Blue
+                                            selectedIconColor = selectedIconColor,
+                                            unselectedIconColor = unselectedIconColor,
+                                            selectedTextColor = selectedTextColor,
+                                            unselectedTextColor = unselectedTextColor,
+                                            indicatorColor = if (isDarkMode) LightBlue else Blue
                                         ),
                                         selected = selectedItem == index,
                                         onClick = { selectedItem = index },
@@ -320,7 +332,7 @@ fun MainScreen( navController: NavHostController) {
                     } else {
                         // Jika roles adalah "DOCTOR", tidak tampilkan cekungan
                         NavigationBar(
-                            containerColor = Blue,
+                            containerColor = navBarColor,
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             items.forEachIndexed { index, item ->
@@ -345,11 +357,11 @@ fun MainScreen( navController: NavHostController) {
                                         Text(item.title, modifier = Modifier.offset(y = (0).dp))
                                     },
                                     colors = NavigationBarItemDefaults.colors(
-                                        selectedIconColor = LightBlue,
-                                        unselectedIconColor = LightBlue,
-                                        selectedTextColor = White,
-                                        unselectedTextColor = LightBlue,
-                                        indicatorColor = Blue
+                                        selectedIconColor = selectedIconColor,
+                                        unselectedIconColor = unselectedIconColor,
+                                        selectedTextColor = selectedTextColor,
+                                        unselectedTextColor = unselectedTextColor,
+                                        indicatorColor = if (isDarkMode) LightBlue else Blue
                                     ),
                                     selected = selectedItem == index,
                                     onClick = { selectedItem = index },
@@ -368,7 +380,7 @@ fun MainScreen( navController: NavHostController) {
                         .align(Alignment.TopCenter)
                                 .offset(y = (-34).dp)
                                 .padding(10.dp),
-                            containerColor = Blue,
+                            containerColor = navBarColor,
                             shape = CircleShape,
                             elevation = FloatingActionButtonDefaults.elevation(0.dp)
                         ) {

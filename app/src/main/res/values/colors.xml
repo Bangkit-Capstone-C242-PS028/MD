@@ -7,14 +7,14 @@
     <color name="teal_700">#FF018786</color>
 
 
-    <color name="black">#FF000000</color>
-    <color name="blue">#2260FF</color>
+    <color name="black">#0F172A</color>
+    <color name="blue">#0284C7</color>
     <color name="white">#FFFFFF</color>
-    <color name="light_blue">#CAD6FF</color>
-    <color name="bg_splash">#273590FF</color>
+    <color name="light_blue">#E0F2FE</color>
+    <color name="bg_splash">#0C4A6E</color>
     <!-- Warna untuk mode terang -->
     <color name="background">#FFFFFF</color>
-    <color name="text">#000000</color>
+    <color name="text">#0F172A</color>
 
 
 </resources>

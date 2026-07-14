@@ -19,6 +19,15 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -33,12 +42,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bangkit.dermascan.ui.authentication.register.CustomTextField
 import com.bangkit.dermascan.ui.theme.Black
@@ -99,42 +110,46 @@ fun ChatScreen() {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 8.dp)
-                .imePadding()// Padding vertikal untuk memberi jarak antara input dan tombol
-            ,
+                .padding(horizontal = 8.dp, vertical = 8.dp)
+                .imePadding(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Input field untuk pesan pengguna
-            CustomTextField(
-                value = userMessage,
+            OutlinedTextField(
+                value = userMessage.value,
                 onValueChange = { userMessage.value = it },
-                label = "Enter Message",
+                placeholder = { Text("Tulis pesan...", color = Color.Gray, fontSize = 13.sp) },
                 modifier = Modifier
                     .weight(1f)
-                    .padding(end = 8.dp)
-//                    .imePadding()// Memberikan jarak antara input dan tombol kirim
+                    .padding(end = 8.dp),
+                shape = RoundedCornerShape(24.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Blue,
+                    unfocusedBorderColor = LightBlue,
+                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surface
+                ),
+                maxLines = 4
             )
 
-            // Tombol Kirim
-            Button(
+            // Tombol Kirim bulat dengan ikon
+            IconButton(
                 onClick = {
                     if (userMessage.value.isNotBlank()) {
-                        // Kirim pesan ke ViewModel
                         viewModel.sendMessage(userMessage.value)
-
-                        // Reset input setelah mengirim pesan
                         userMessage.value = ""
                     }
                 },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Blue,
-                    contentColor = White
-                ),
-                shape = RoundedCornerShape(8.dp),
                 modifier = Modifier
-                    .height(60.dp) // Menjaga ukuran tombol tetap konsisten
+                    .size(48.dp)
+                    .background(color = Blue, shape = CircleShape)
             ) {
-                Text("Send")
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.Send,
+                    contentDescription = "Send",
+                    tint = White,
+                    modifier = Modifier.size(24.dp)
+                )
             }
         }
     }
@@ -203,10 +218,10 @@ fun ChatBubble(message: String, isUser: Boolean) {
     val density = LocalDensity.current.density
     val screenWidth = LocalConfiguration.current.screenWidthDp * density // Lebar layar dalam piksel
 
-    // Menghitung offset untuk AI
+    // Menghitung offset untuk animasi masuk (slide dari samping)
     val offsetX by animateFloatAsState(
-        targetValue = if (isUser) 1f else -minOf(screenWidth / 2, 8f), // Membatasi offset untuk AI agar tidak keluar dari layar
-        animationSpec = tween(durationMillis = 500, easing = FastOutSlowInEasing)
+        targetValue = if (isVisible) 0f else (if (isUser) 50f else -50f),
+        animationSpec = tween(durationMillis = 400, easing = FastOutSlowInEasing)
     )
 
     Box(
@@ -226,6 +241,7 @@ fun ChatBubble(message: String, isUser: Boolean) {
             style = Typography.bodyMedium,
             color = if (isUser) White else Black,
             modifier = Modifier
+                .widthIn(max = 280.dp)
                 .background(
                     color = if (isUser) Blue else LightBlue,
                     shape = if (isUser) userBubbleShape else botBubbleShape

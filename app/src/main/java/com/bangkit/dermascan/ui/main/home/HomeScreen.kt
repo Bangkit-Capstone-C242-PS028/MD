@@ -52,9 +52,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Divider
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -244,26 +250,35 @@ fun HomeScreen(navController: NavController, roles: String?) {
 
                 }
                 is Result.Error -> {
-                    Scaffold { paddingValues ->
-                        Log.e("SkinLesionHistoryScreen", "Error: ${result.message}")
+                    Log.e("SkinLesionHistoryScreen", "Error: ${result.message}")
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "History:",
+                            style = Typography.titleLarge,
+                            modifier = Modifier.align(Alignment.Start)
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
                         Text(
                             text = result.message,
-                            modifier = Modifier
-                                .padding(paddingValues)
-                                .fillMaxSize()
+                            color = Color.Red,
+                            textAlign = TextAlign.Center
                         )
                     }
                 }
 
                 Result.Idle -> {}
-                else -> {}
             }
 
 
-            Spacer(modifier = Modifier.height((-16).dp))
+            Spacer(modifier = Modifier.height(0.dp))
             val viewModel : ArticleViewModel = hiltViewModel()
             AndroidView(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().height(340.dp),
                 factory = { _ ->
                     // Inflate layout XML yang sudah ada
                     val binding = ActivityArticleBinding.inflate(LayoutInflater.from(context))
@@ -348,7 +363,8 @@ fun HomeScreen(navController: NavController, roles: String?) {
                 AndroidView(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 8.dp), // Memberikan jarak kecil di atas AndroidView
+                        .height(340.dp)
+                        .padding(top = 8.dp),
                     factory = { _ ->
                         val binding = ActivityArticleBinding.inflate(LayoutInflater.from(context))
                         val view = binding.root
@@ -402,202 +418,189 @@ fun SkinLesionItemWithShimmer(
     modifier: Modifier = Modifier
 ) {
     if (isLoading) {
-        // Implementasi Shimmer Effect dengan Modifier
-        Box(
-            modifier = Modifier
-                .width(400.dp)
-                .height(250.dp)
-                .padding(8.dp)
-                .clip(RoundedCornerShape(18.dp)) // Bentuk kontainer utama
-        ) {
-            // Layer shimmer di bawah
-            ShimmerEffect(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.LightGray, shape = RoundedCornerShape(18.dp))
+        Card(
+            modifier = modifier
+                .width(320.dp)
+                .clip(RoundedCornerShape(16.dp)),
+            colors = CardDefaults.cardColors(
+                containerColor = LightBlue.copy(alpha = 0.5f)
             )
-
-            // Konten di atas shimmer
-            Row(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
             ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    ShimmerEffect(
+                        modifier = Modifier
+                            .size(90.dp)
+                            .background(Color.LightGray.copy(alpha = 0.3f), shape = RoundedCornerShape(12.dp))
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        ShimmerEffect(
+                            modifier = Modifier
+                                .fillMaxWidth(0.8f)
+                                .height(20.dp)
+                                .background(Color.LightGray.copy(alpha = 0.3f), shape = RoundedCornerShape(8.dp))
+                        )
+                        ShimmerEffect(
+                            modifier = Modifier
+                                .width(60.dp)
+                                .height(16.dp)
+                                .background(Color.LightGray.copy(alpha = 0.3f), shape = RoundedCornerShape(8.dp))
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(12.dp))
                 ShimmerEffect(
                     modifier = Modifier
-                        .size(200.dp)
-                        .background(Color.LightGray.copy(alpha = 0.3f), shape = RoundedCornerShape(18.dp))
+                        .fillMaxWidth()
+                        .height(14.dp)
+                        .background(Color.LightGray.copy(alpha = 0.3f), shape = RoundedCornerShape(8.dp))
                 )
-//                Box(
-//                    modifier = Modifier
-//                        .size(200.dp)
-//                        .background(Color.Gray.copy(alpha = 0.3f), shape = RoundedCornerShape(8.dp))
-//                )
-
-                Spacer(modifier = Modifier.width(16.dp))
-
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    modifier = Modifier.weight(1f)
+                Spacer(modifier = Modifier.height(12.dp))
+                Divider(color = Blue.copy(alpha = 0.1f))
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     ShimmerEffect(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .height(50.dp)
-                            .background(Color.LightGray.copy(alpha = 0.3f), shape = RoundedCornerShape(18.dp))
+                            .width(80.dp)
+                            .height(16.dp)
+                            .background(Color.LightGray.copy(alpha = 0.3f), shape = RoundedCornerShape(8.dp))
                     )
-//                    Box(
-//                        modifier = Modifier
-//                            .fillMaxWidth()
-//                            .height(50.dp)
-//                            .background(Color.Gray.copy(alpha = 0.3f), shape = RoundedCornerShape(4.dp))
-//                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
                     ShimmerEffect(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .height(50.dp)
-                            .background(Color.LightGray.copy(alpha = 0.3f), shape = RoundedCornerShape(18.dp))
+                            .width(80.dp)
+                            .height(16.dp)
+                            .background(Color.LightGray.copy(alpha = 0.3f), shape = RoundedCornerShape(8.dp))
                     )
-//                    Box(
-//                        modifier = Modifier
-//                            .fillMaxWidth(0.5f)
-//                            .height(16.dp)
-//                            .background(Color.Gray.copy(alpha = 0.3f), shape = RoundedCornerShape(4.dp))
-//                    )
                 }
             }
         }
-
-
     } else {
-        // Konten asli setelah loading selesai (sama seperti sebelumnya)
-        Column(
-            horizontalAlignment = Alignment.Start,
-            modifier = Modifier
-                .width(420.dp)
-                .padding(16.dp)
-//                .background(
-//                color = LightBlue,
-//                shape = RoundedCornerShape(12.dp)
-//            ).padding(4.dp),
-
-        ){
-
-            Row(
-                modifier = modifier
-                    .width(400.dp)
-                    .background(
-                        color = LightBlue,
-                        shape = RoundedCornerShape(12.dp)
-                    )
-                    .padding(8.dp)
-                    .align(Alignment.CenterHorizontally),
-                verticalAlignment = Alignment.CenterVertically
+        Card(
+            modifier = modifier
+                .width(320.dp)
+                .clip(RoundedCornerShape(16.dp)),
+            colors = CardDefaults.cardColors(
+                containerColor = LightBlue
+            )
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
             ) {
-                val imageUrl = skinLesion?.processedImageUrl.takeIf { it?.isNotEmpty() ?: false }
-                    ?: skinLesion?.originalImageUrl
-
-                AsyncImage(
-                    model = imageUrl,
-                    contentDescription = "Skin Lesion Image",
-                    modifier = Modifier
-                        .size(200.dp)
-                        .clip(RoundedCornerShape(8.dp)).align(Alignment.CenterVertically)
-                )
-
-                Spacer(modifier = Modifier.width(16.dp))
-
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.weight(1f)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(
-                        textAlign = TextAlign.Center,
-                        text = "Classification: ${skinLesion?.classification ?: "Loading..."}",
-                        style = MaterialTheme.typography.bodyMedium,
+                    val imageUrl = skinLesion?.processedImageUrl.takeIf { it?.isNotEmpty() ?: false }
+                        ?: skinLesion?.originalImageUrl
+
+                    AsyncImage(
+                        model = imageUrl,
+                        contentDescription = "Skin Lesion Image",
                         modifier = Modifier
-                            .background(
-                                color = White,
-                                shape = RoundedCornerShape(18.dp),
-                            ).padding(8.dp),
-                        color = Blue,
-                        fontWeight = FontWeight.Bold,
+                            .size(90.dp)
+                            .clip(RoundedCornerShape(12.dp)),
+                        contentScale = ContentScale.Crop
+                    )
+
+                    Spacer(modifier = Modifier.width(12.dp))
+
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(6.dp),
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(
+                            text = skinLesion?.classification ?: "Classification: Unknown",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = Blue,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
 
-                    Spacer(modifier = Modifier.height(18.dp))
+                        // Status Badge
+                        Surface(
+                            color = when (skinLesion?.status?.uppercase()) {
+                                "SUCCESS" -> Color(0xFFE8F5E9)
+                                "PENDING" -> Color(0xFFFFF3E0)
+                                else -> Color(0xFFFFEBEE)
+                            },
+                            contentColor = when (skinLesion?.status?.uppercase()) {
+                                "SUCCESS" -> Color(0xFF2E7D32)
+                                "PENDING" -> Color(0xFFE65100)
+                                else -> Color(0xFFC62828)
+                            },
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text(
+                                text = skinLesion?.status ?: "PENDING",
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.SemiBold,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                            )
+                        }
+                    }
+                }
 
+                if (skinLesion?.description != null && skinLesion.description.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(12.dp))
                     Text(
-                        textAlign = TextAlign.Center,
-                        text = "Description: ${skinLesion?.description ?: "No Description"}",
+                        text = skinLesion.description,
                         style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier
-                            .background(
-                                color = Blue,
-                                shape = RoundedCornerShape(18.dp),
-                            ).padding(8.dp),
-                        color = White,
-                        fontWeight = FontWeight.Bold,
-                    )
-
-                    Spacer(modifier = Modifier.height(18.dp))
-
-                    Text(
-                        textAlign = TextAlign.Center,
-                        text = "Status: ${skinLesion?.status ?: "Loading..."}",
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier
-                            .background(
-                                color = White,
-                                shape = RoundedCornerShape(18.dp)
-                            ).padding(8.dp),
-                        color = Blue
-
+                        color = Color.DarkGray,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
-            }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.padding(
-                    start = 4.dp,
-                    end = 4.dp,
-                    bottom = 4.dp
-                ).align(Alignment.CenterHorizontally)
 
-            ){
-                Text(
-                    textAlign = TextAlign.Center,
-                    text = "Created At: \n${skinLesion?.createdAt?.let { formatTimestampToGMT(it) } ?: "Loading..."}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier
-                        .background(
-                            color = Blue,
-                            shape = RoundedCornerShape(18.dp),
-                        ).padding(8.dp),
+                Spacer(modifier = Modifier.height(12.dp))
+                Divider(color = Blue.copy(alpha = 0.1f))
+                Spacer(modifier = Modifier.height(8.dp))
 
-                    color = White,
-                )
-
-                Spacer(modifier = Modifier.width(16.dp))
-
-                Text(
-                    textAlign = TextAlign.Center,
-                    text = "Processed At: \n${skinLesion?.processedAt?.let { formatTimestampToGMT(it) } ?: "Loading..."}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier
-                        .background(
-                            color = Blue,
-                            shape = RoundedCornerShape(18.dp)
-                        ).padding(8.dp),
-                    color = White
-                )
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column {
+                        Text(
+                            text = "Created At",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = Color.Gray
+                        )
+                        Text(
+                            text = skinLesion?.createdAt?.let { formatTimestampToGMT(it) } ?: "-",
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Medium,
+                            color = Blue
+                        )
+                    }
+                    Column(horizontalAlignment = Alignment.End) {
+                        Text(
+                            text = "Processed At",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = Color.Gray
+                        )
+                        Text(
+                            text = skinLesion?.processedAt?.let { formatTimestampToGMT(it) } ?: "-",
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Medium,
+                            color = Blue
+                        )
+                    }
+                }
             }
         }
-
     }
 }
 
@@ -644,7 +647,7 @@ fun SkinLesionItem(
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
                     .background(
-                        color = Color.Blue.copy(alpha = 0.1f),
+                        color = Blue.copy(alpha = 0.1f),
                         shape = RoundedCornerShape(12.dp)
                     )
                     .padding(horizontal = 12.dp, vertical = 6.dp)
@@ -657,7 +660,7 @@ fun SkinLesionItem(
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier
                     .background(
-                        color = Color.Blue.copy(alpha = 0.2f),
+                        color = Blue.copy(alpha = 0.2f),
                         shape = RoundedCornerShape(8.dp)
                     )
                     .padding(horizontal = 12.dp, vertical = 6.dp)

@@ -11,6 +11,7 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bangkit.dermascan.R
 import com.bangkit.dermascan.data.model.response.ArticleItem
 
@@ -38,6 +39,21 @@ class ArticleAdapter : ListAdapter<ArticleItem, ArticleAdapter.ViewHolder>(DIFF_
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =
             ItemArticleCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        
+        // Dynamically adjust item width if it is inside a horizontal list
+        val layoutManager = (parent as? RecyclerView)?.layoutManager as? LinearLayoutManager
+        if (layoutManager != null && layoutManager.orientation == LinearLayoutManager.HORIZONTAL) {
+            val density = parent.context.resources.displayMetrics.density
+            val widthInPx = (280 * density).toInt()
+            val layoutParams = binding.root.layoutParams
+            if (layoutParams != null) {
+                layoutParams.width = widthInPx
+                binding.root.layoutParams = layoutParams
+            } else {
+                binding.root.layoutParams = ViewGroup.LayoutParams(widthInPx, ViewGroup.LayoutParams.WRAP_CONTENT)
+            }
+        }
+        
         return ViewHolder(binding)
     }
 
